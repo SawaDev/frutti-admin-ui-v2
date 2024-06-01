@@ -9,10 +9,10 @@ export const detailSchema = z.object({
   }),
   image: z.string({ required_error: 'Post rasmini yuklang' }),
   capacity: z.object({
-    uz: z.string({ required_error: "O'zbek tilidagi sig'imini kiriting" }),
-    ru: z.string({ required_error: "Rus tilidagi sig'imini kiriting" }),
-    en: z.string({ required_error: "Ingliz tilidagi sig'imini kiriting" }),
-  }),
+    uz: z.string().optional(),
+    ru: z.string().optional(),
+    en: z.string().optional(),
+  }).optional(),
   mass: z.number().optional(),
   pure_mass: z.number().optional(),
   total_mass: z.number().optional(),
@@ -67,4 +67,11 @@ export const postSchema = z.object({
       }),
     }).optional()
   ).optional()
+});
+
+export const copySchema = z.object({
+  count: z
+    .number({ required_error: "Nusxalar sonini kiriting!" })
+    .min(1, {message: "Nusxalar sonini kamida 1 ta bo'lishi kerak!"})
+    .max(10, {message: "Nusxalar sonini ko'pi bilan 10 ta bo'la oladi!"})
 });

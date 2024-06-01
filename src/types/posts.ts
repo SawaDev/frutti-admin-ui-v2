@@ -1,4 +1,4 @@
-import { detailSchema, postSchema } from "@/schema/posts";
+import { copySchema, detailSchema, postSchema } from "@/schema/posts";
 import { z } from "zod";
 
 export interface Localized {
@@ -45,3 +45,4 @@ export interface GetSinglePostResponse {
 
 export type PostType = z.infer<typeof postSchema> 
 export type DetailType = z.infer<typeof detailSchema> 
+export type CopyType = z.infer<typeof copySchema> 

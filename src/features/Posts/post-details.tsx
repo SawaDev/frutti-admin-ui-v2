@@ -25,22 +25,23 @@ import {
 } from "@/components/ui/tabs"
 import {
   Sheet,
-  SheetContent,
 } from "@/components/ui/sheet"
+import React, { useState } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { postSchema } from "@/schema/posts"
-import { DetailType, GetSinglePostResponse, PostType } from "@/types/posts"
 import { zodResolver } from "@hookform/resolvers/zod"
-import React, { useState } from "react"
 import { useForm } from "react-hook-form"
+import { DetailType, GetSinglePostResponse, PostType } from "@/types/posts"
 import { MoreHorizontal, PlusCircle } from "lucide-react"
 import usePosts from "@/hooks/usePosts"
 import { useParams } from "react-router-dom"
 import { AddDetail } from "./add-details"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { EditDetail } from "./edit-details"
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog"
+import CopyDialog from "./copy-dialog"
 
 interface PostDetailsProps {
   data: GetSinglePostResponse["data"]
@@ -49,10 +50,13 @@ interface PostDetailsProps {
 export const PostDetails: React.FC<PostDetailsProps> = ({ data }) => {
   const [addSheetOpen, setAddSheetOpen] = useState(false)
   const [details, setDetails] = useState<DetailType | undefined>(undefined)
+  const [copy, setCopy] = useState<string | undefined>(undefined)
+  const [deleteItem, setDeleteItem] = useState<string | undefined>(undefined)
   const params = useParams()
-  const { updatePostMutation } = usePosts()
+  const { updatePostMutation, deleteDetailMutation } = usePosts()
 
   const updatePost = updatePostMutation(params.id)
+  const deleteDetail = deleteDetailMutation(params.id)
 
   const formDefaults = {
     name: {
@@ -75,6 +79,13 @@ export const PostDetails: React.FC<PostDetailsProps> = ({ data }) => {
 
   const onSubmit = async (values: PostType) => {
     await updatePost.mutateAsync(values)
+  }
+
+  const handleDeleteDetail = () => {
+    deleteDetail.mutateAsync(deleteItem)
+      .then(() => {
+        setDeleteItem(undefined)
+      })
   }
 
   return (
@@ -213,7 +224,7 @@ export const PostDetails: React.FC<PostDetailsProps> = ({ data }) => {
                               {detail.total_mass ?? '-'}
                             </TableCell>
                             <TableCell>
-                              {detail.expiration_date ? `${detail.expiration_date / 12} oy` : '-'}
+                              {detail.expiration_date ? `${detail.expiration_date} oy` : '-'}
                             </TableCell>
                             <TableCell>
                               {detail.volume ?? '-'}
@@ -232,7 +243,11 @@ export const PostDetails: React.FC<PostDetailsProps> = ({ data }) => {
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
                                   <DropdownMenuItem onClick={() => setDetails(detail)}>O'zgartirish</DropdownMenuItem>
-                                  <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800">O'chirish</DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => setCopy(detail.id)}>Nusxalash</DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => setDeleteItem(detail.id)}
+                                    className="focus:bg-red-100 focus:text-red-800"
+                                  >O'chirish</DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </TableCell>
@@ -257,15 +272,26 @@ export const PostDetails: React.FC<PostDetailsProps> = ({ data }) => {
         </form>
       </Form>
       <Sheet onOpenChange={setAddSheetOpen} open={addSheetOpen}>
-        <SheetContent>
-          <AddDetail setOpen={setAddSheetOpen} id={params.id} />
-        </SheetContent>
+        <AddDetail setOpen={setAddSheetOpen} id={params.id} />
       </Sheet>
+      <Dialog onOpenChange={() => setCopy(undefined)} open={copy ? true : false}>
+        <CopyDialog postId={params.id} detailId={copy} setCopy={setCopy}/>
+      </Dialog>
+      <Dialog onOpenChange={() => setDeleteItem(undefined)} open={deleteItem ? true : false}>
+        <DialogContent>
+          <DialogHeader>
+            Siz ushbu to'ldiruvchi postni o'chirmoqchimisiz?
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={handleDeleteDetail} variant={"destructive"}>
+              O'chirish
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {details && (
         <Sheet onOpenChange={() => setDetails(undefined)} open={details ? true : false}>
-          <SheetContent>
-            <EditDetail setOpen={setDetails} id={params.id} details={details} />
-          </SheetContent>
+          <EditDetail setOpen={setDetails} id={params.id} details={details} />
         </Sheet>
       )}
     </Tabs>

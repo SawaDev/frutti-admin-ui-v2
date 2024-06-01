@@ -62,106 +62,161 @@ const usePosts = () => {
     }
   })
 
-  const updatePostMutation = (id: string | undefined) => useMutation<GetSinglePostResponse, AxiosError, PostType, () => void>({
-    mutationFn: async (data) => {
-      try {
-        const response = await api.patch(
-          `/posts/${id}`,
-          data
-        );
-        if (response?.data) {
+  const updatePostMutation = (id: string | undefined) =>
+    useMutation<GetSinglePostResponse, AxiosError, PostType, () => void>({
+      mutationFn: async (data) => {
+        try {
+          const response = await api.patch(
+            `/posts/${id}`,
+            data
+          );
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli saqlandi!"
+            })
+          }
+          return response.data;
+        } catch (error: any) {
           toast({
-            description: "Muvaffaqiyatli saqlandi!"
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
           })
         }
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["posts", id] })
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", id] })
-    }
-  })
+    })
 
-  const deletePostMutation = (id: number | undefined) => useMutation({
-    mutationFn: async () => {
-      try {
-        const response = await api.delete(`/posts/${id}`);
-        if (response?.data) {
+  const deletePostMutation = (id: number | undefined) =>
+    useMutation({
+      mutationFn: async () => {
+        try {
+          const response = await api.delete(`/posts/${id}`);
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli o'chirildi!"
+            })
+          }
+          return response.data;
+        } catch (error: any) {
           toast({
-            description: "Muvaffaqiyatli o'chirildi!"
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
           })
         }
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["posts"] })
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] })
-    }
-  })
+    })
 
-  const createDetailMutation = (id: string | undefined) => useMutation({
-    mutationFn: async (data: DetailType) => {
-      try {
-        const response = await api.post(
-          `/posts/${id}/details`,
-          data
-        );
-        if (response?.data) {
+  const createDetailMutation = (id: string | undefined) =>
+    useMutation({
+      mutationFn: async (data: DetailType) => {
+        try {
+          const response = await api.post(
+            `/posts/${id}/details`,
+            data
+          );
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli yaratildi!"
+            })
+          }
+          return response.data;
+        } catch (error: any) {
           toast({
-            description: "Muvaffaqiyatli yaratildi!"
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
           })
         }
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["posts", id] })
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", id] })
-    }
-  })
+    })
 
-  const updateDetailMutation = (id: string | undefined, detailId: string | undefined) => useMutation<GetSinglePostResponse, AxiosError, DetailType, () => void>({
-    mutationFn: async (data) => {
-      try {
-        const response = await api.patch(
-          `/posts/${id}/details/${detailId}`,
-          data
-        );
-        if (response?.data) {
+  const updateDetailMutation = (id: string | undefined, detailId: string | undefined) =>
+    useMutation<GetSinglePostResponse, AxiosError, DetailType, () => void>({
+      mutationFn: async (data) => {
+        try {
+          const response = await api.patch(
+            `/posts/${id}/details/${detailId}`,
+            data
+          );
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli o'zgartirildi!"
+            })
+          }
+          return response.data;
+        } catch (error: any) {
           toast({
-            description: "Muvaffaqiyatli o'zgartirildi!"
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
           })
         }
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["posts", id] })
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", id] })
-    }
-  })
+    })
+
+  const copyDetailMutation = (id: string | undefined, detailId: string | undefined) =>
+    useMutation<GetSinglePostResponse, AxiosError, { count: number }, () => void>({
+      mutationFn: async (data) => {
+        try {
+          const response = await api.post(
+            `/posts/${id}/details/${detailId}/copy`,
+            data
+          );
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli yaratilindi!"
+            })
+          }
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          })
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["posts", id] })
+      }
+    })
+
+  const deleteDetailMutation = (id: string | undefined) =>
+    useMutation({
+      mutationFn: async (detailId: string | undefined) => {
+        try {
+          const response = await api.delete(`/posts/${id}/details/${detailId}`);
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli o'chirildi!"
+            })
+          }
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          })
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["posts", id] })
+      }
+    })
 
   return {
     getAllPostsQuery,
@@ -170,7 +225,9 @@ const usePosts = () => {
     updatePostMutation,
     deletePostMutation,
     createDetailMutation,
-    updateDetailMutation
+    updateDetailMutation,
+    copyDetailMutation,
+    deleteDetailMutation
   }
 };
 

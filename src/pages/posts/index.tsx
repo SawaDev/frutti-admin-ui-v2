@@ -88,6 +88,7 @@ const Posts = () => {
   const onSubmit = (values: z.infer<typeof postSchema>) => {
     createPost.mutateAsync(values).then(() => {
       setOpenSheet(false)
+      form.reset()
     })
   }
 
@@ -240,8 +241,8 @@ const Posts = () => {
                       control={form.control}
                       name="published"
                       render={({ field }) => (
-                        <FormItem className="flex items-center gap-4">
-                          <FormLabel>Published</FormLabel>
+                        <FormItem className="col-span-3 flex items-center gap-4">
+                          <FormLabel>E'lon qilish</FormLabel>
                           <FormControl>
                             <Switch
                               checked={field.value}
