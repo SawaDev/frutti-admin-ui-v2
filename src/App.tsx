@@ -4,12 +4,19 @@ import MainLayout from './layouts/MainLayout';
 import Posts from './pages/posts';
 import EditPost from './pages/posts/EditPost';
 import { Toaster } from './components/ui/toaster';
+import Login from './pages/login';
+import useAuthStore from './store/auth';
 
 function App() {
+  const { token } = useAuthStore()
 
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      {!token ? (
+        <Routes>
+          <Route path='/*' element={<Login />} />
+        </Routes>
+      ) : (
         <MainLayout>
           <Routes>
             <Route path='/'>
@@ -19,9 +26,9 @@ function App() {
             </Route>
           </Routes>
         </MainLayout>
-        <Toaster />
-      </BrowserRouter>
-    </>
+      )}
+      <Toaster />
+    </BrowserRouter>
   )
 }
 

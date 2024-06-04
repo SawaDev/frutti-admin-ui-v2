@@ -1,0 +1,7 @@
+const post = [
+  [
+    {
+      name: "sardor"
+    }
+  ]
+]

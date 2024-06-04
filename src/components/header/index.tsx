@@ -18,8 +18,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import CustomLink from "@/components/customLink"
+import useAuthStore from "@/store/auth"
 
 const Header = () => {
+  const { logout } = useAuthStore()
+
   return (
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 z-50 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
@@ -45,8 +48,11 @@ const Header = () => {
         <CustomLink to="/analytics">
           Analytics
         </CustomLink>
+        <CustomLink to="/users">
+          Foydalanuvchilar
+        </CustomLink>
         <CustomLink to="/posts">
-          Posts
+          Postlar
         </CustomLink>
       </nav>
       <Sheet>
@@ -84,8 +90,11 @@ const Header = () => {
             <CustomLink to="/analytics">
               Analytics
             </CustomLink>
+            <CustomLink to="/users">
+              Foydalanuvchilar
+            </CustomLink>
             <CustomLink to="/posts">
-              Posts
+              Postlar
             </CustomLink>
           </nav>
         </SheetContent>
@@ -114,7 +123,7 @@ const Header = () => {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
