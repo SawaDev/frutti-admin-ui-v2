@@ -1,11 +1,6 @@
 import { copySchema, detailSchema, postSchema } from "@/schema/posts";
 import { z } from "zod";
-
-export interface Localized {
-  uz: string
-  ru: string
-  en: string
-}
+import { Localized } from "./other";
 
 export interface Details {
   id: string

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -55,16 +54,15 @@ import {
 } from "@/components/ui/sheet"
 
 import NoItems from '@/features/NoItems'
+import useUsers from "@/hooks/useUsers"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TAB_LANGUAGES } from "@/constants/tabs"
 import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
-import usePosts from "@/hooks/usePosts"
-import { Textarea } from "@/components/ui/textarea"
-import { postSchema } from "@/schema/posts"
 import { format } from "date-fns"
-import { PostType } from "@/types/posts"
+import { UserType } from "@/types/users"
+import { userSchema } from "@/schema/users"
+import MultiSelect from "@/components/ui/multi-select"
+import { permissionOptions } from "@/constants/options"
+import { toast } from "@/components/ui/use-toast"
 
 const Users = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
@@ -72,28 +70,37 @@ const Users = () => {
 
   const navigate = useNavigate()
 
-  const { getAllPostsQuery, createPostMutation, deletePostMutation } = usePosts()
+  const { getAllUsersQuery, createUserMutation, deleteUserMutation } = useUsers()
 
-  const { data, isLoading, isError } = getAllPostsQuery()
-  const createPost = createPostMutation()
-  const deletePost = deletePostMutation(open)
+  const { data, isLoading, isError } = getAllUsersQuery()
+  const createUser = createUserMutation()
+  const deleteUser = deleteUserMutation(open)
 
-  const form = useForm<PostType>({
-    resolver: zodResolver(postSchema),
+  const form = useForm<UserType>({
+    resolver: zodResolver(userSchema),
     defaultValues: {
-      published: true
-    },
+      permissions: []
+    }
   })
 
-  const onSubmit = (values: z.infer<typeof postSchema>) => {
-    createPost.mutateAsync(values).then(() => {
+  const onSubmit = (values: UserType) => {
+    if (values.password !== values.password_again) {
+      return toast({
+        variant: "destructive",
+        description: "Parollar mos emas!",
+      })
+    }
+
+    const { password_again, ...others } = values
+
+    createUser.mutateAsync(others).then(() => {
       setOpenSheet(false)
       form.reset()
     })
   }
 
   const handleDelete = async () => {
-    await deletePost.mutateAsync().then(() => {
+    await deleteUser.mutateAsync().then(() => {
       setOpen(undefined)
     })
   }
@@ -112,9 +119,9 @@ const Users = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Postlar</CardTitle>
+              <CardTitle>Foydalanuvchilar</CardTitle>
               <CardDescription>
-                Postlaringizni bu yerdan boshqaring.
+                Foydalanuchilarni bu yerdan boshqaring.
               </CardDescription>
             </div>
             <div>
@@ -128,9 +135,8 @@ const Users = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nomi</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="hidden md:table-cell">Ma'lumot</TableHead>
+                  <TableHead>Username</TableHead>
+                  <TableHead>Ruxsatlar</TableHead>
                   <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
@@ -138,17 +144,18 @@ const Users = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.data.map((post, index) => (
+                {data.data.map((user, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
-                      {post.name.uz}
+                      {user.user_name}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{post.published ? "Published" : "Not Published"}</Badge>
+                      {user.permissions.map(permission => (
+                        <Badge key={permission} variant="outline">{permission}</Badge>
+                      ))}
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">{post.description?.uz}</TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(post.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(user.created_at, "dd-MM-yyyy hh:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -160,8 +167,8 @@ const Users = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/posts/${post.id}`)}>O'zgartirish</DropdownMenuItem>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(post.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/posts/${user.id}`)}>O'zgartirish</DropdownMenuItem>
+                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(user.id)}>O'chirish</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -179,7 +186,7 @@ const Users = () => {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button disabled={deletePost.isPending} variant={"destructive"} onClick={handleDelete}>Postni o'chirish</Button>
+                <Button disabled={deleteUser.isPending} variant={"destructive"} onClick={handleDelete}>Postni o'chirish</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -192,63 +199,67 @@ const Users = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <SheetHeader>
-                <SheetTitle>Yangi mahsulot yaratish</SheetTitle>
+                <SheetTitle>Yangi foydalanuvchini yaratish</SheetTitle>
                 <SheetDescription>
-                  Bu yerda siz yangi mahsulotni qo'sha olasiz
+                  Bu yerda siz yangi foydalanuvchini qo'sha olasiz
                 </SheetDescription>
               </SheetHeader>
               <div className="grid gap-2 py-4">
                 <ScrollArea className="h-[calc(100vh-200px)]">
-                  <Tabs defaultValue="uz">
-                    <TabsList className="grid w-[300px] grid-cols-3">
-                      {TAB_LANGUAGES.map(language => (
-                        <TabsTrigger key={language.suffix} value={language.suffix}>{language.name}</TabsTrigger>
-                      ))}
-                    </TabsList>
-                    {TAB_LANGUAGES.map(language => (
-                      <TabsContent key={language.suffix} value={language.suffix} className="grid">
-                        <FormField
-                          control={form.control}
-                          name={`name.${language.suffix}`}
-                          render={({ field }) => (
-                            <FormItem className="mx-1">
-                              <FormLabel>Nomi</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name={`description.${language.suffix}`}
-                          render={({ field }) => (
-                            <FormItem className="mx-1">
-                              <FormLabel>Ma'lumot</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </TabsContent>
-                    ))}
-                  </Tabs>
-                  <div className="grid grid-cols-4 grid-rows-2 mt-3 ml-2 mr-3 items-center">
+                  <div className="grid grid-rows-1 gap-3 mt-3 ml-2 mr-3 items-center">
                     <FormField
                       control={form.control}
-                      name="published"
+                      name={`user_name`}
                       render={({ field }) => (
-                        <FormItem className="col-span-3 flex items-center gap-4">
-                          <FormLabel>E'lon qilish</FormLabel>
+                        <FormItem className="mx-1">
+                          <FormLabel>Username</FormLabel>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`password`}
+                      render={({ field }) => (
+                        <FormItem className="mx-1">
+                          <FormLabel>Parol</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`password_again`}
+                      render={({ field }) => (
+                        <FormItem className="mx-1">
+                          <FormLabel>Parolni takrorlang</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`permissions`}
+                      render={() => (
+                        <FormItem className="mx-1">
+                          <FormLabel>Ruxsatlar</FormLabel>
+                          <FormControl>
+                            <MultiSelect
+                              options={permissionOptions}
+                              onChange={(value: string[]) => form.setValue('permissions', value)}
+                              defaultValue={form.getValues().permissions}
                             />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -260,7 +271,7 @@ const Users = () => {
                   disabled={!form.formState.isValid || !form.formState.isDirty || form.formState.isLoading}
                   type="submit"
                 >
-                  Save changes
+                  Saqlash
                 </Button>
               </SheetFooter>
             </form>
