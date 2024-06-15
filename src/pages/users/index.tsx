@@ -167,7 +167,7 @@ const Users = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/posts/${user.id}`)}>O'zgartirish</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>O'zgartirish</DropdownMenuItem>
                           <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(user.id)}>O'chirish</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

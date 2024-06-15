@@ -7,6 +7,7 @@ import { Toaster } from './components/ui/toaster';
 import Login from './pages/login';
 import useAuthStore from './store/auth';
 import Users from './pages/users';
+import EditUser from './pages/users/EditUser';
 
 function App() {
   const { token } = useAuthStore()
@@ -25,6 +26,7 @@ function App() {
               <Route path='posts' element={<Posts />} />
               <Route path='posts/:id' element={<EditPost />} />
               <Route path='users' element={<Users />} />
+              <Route path='users/:id' element={<EditUser />} />
             </Route>
           </Routes>
         </MainLayout>

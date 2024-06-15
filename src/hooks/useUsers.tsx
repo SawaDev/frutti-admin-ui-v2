@@ -2,8 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
-import { GetAllUsersResponse, UserType } from "@/types/users";
-import { GetSinglePostResponse } from "@/types/posts";
+import { GetAllUsersResponse, GetSingleUserResponse, UserWithoutPassword } from "@/types/users";
 
 const useUsers = () => {
   const queryClient = useQueryClient();
@@ -25,7 +24,7 @@ const useUsers = () => {
     },
   })
 
-  const getSingleUserQuery = (id: string | undefined) => useQuery<GetSinglePostResponse, Error>({
+  const getSingleUserQuery = (id: string | undefined) => useQuery<GetSingleUserResponse, Error>({
     queryKey: ["users", id],
     queryFn: async () => {
       try {
@@ -43,7 +42,7 @@ const useUsers = () => {
   })
 
   const createUserMutation = () => useMutation({
-    mutationFn: async (data: Omit<UserType, 'password_again'>) => {
+    mutationFn: async (data: UserWithoutPassword) => {
       try {
         const response = await api.post(
           '/users',
@@ -64,7 +63,7 @@ const useUsers = () => {
   })
 
   const updateUserMutation = (id: string | undefined) =>
-    useMutation<GetSinglePostResponse, AxiosError, UserType, () => void>({
+    useMutation<GetSingleUserResponse, AxiosError, UserWithoutPassword, () => void>({
       mutationFn: async (data) => {
         try {
           const response = await api.patch(

@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useCallback, useRef, useState } from "react";
+import React, { KeyboardEvent, useCallback, useMemo, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -18,16 +18,21 @@ interface MultiSelectProps {
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({ options, onChange, defaultValue }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const selectedValues = useMemo(() => {
+    return options.filter(option => defaultValue.includes(option.value))
+  }, [options])
+
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<Option[]>([]);
+  const [selected, setSelected] = useState<Option[]>(selectedValues);
   const [inputValue, setInputValue] = useState("");
 
-  const handleUnselect = useCallback((data: Option) => {
-    const newValues = selected.filter(s => s.value !== data.value)
-    setSelected((prev) => prev.filter((s) => s.value !== data.value));
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleUnselect = (data: Option) => {
+    const newValues = selected.filter(s => s.value !== data.value);
+    setSelected(newValues);
     onChange(newValues.map(s => s.value));
-  }, []);
+  };
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
@@ -111,7 +116,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({ options, onChange, defaultVal
                       onSelect={() => {
                         setInputValue("");
                         setSelected((prev) => {
-                          onChange([...defaultValue, data.value])
+                          const newValues = prev.map(v => v.value);
+                          onChange([...newValues, data.value])
                           return [...prev, data]
                         });
                       }}

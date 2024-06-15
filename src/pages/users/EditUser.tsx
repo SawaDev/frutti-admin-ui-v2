@@ -1,17 +1,14 @@
-import { ChevronLeft } from "lucide-react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 
-import usePosts from "@/hooks/usePosts"
-import { Button } from "@/components/ui/button"
-import { PostDetails } from "@/features/Posts/post-details"
+import useUsers from "@/hooks/useUsers"
+import { UserDetails } from "@/features/Users/user-details"
 
-export default function EditPost() {
-  const navigate = useNavigate()
+export default function EditUser() {
   const params = useParams()
 
-  const { getSinglePostQuery } = usePosts()
+  const { getSingleUserQuery } = useUsers()
 
-  const { data, isLoading, error } = getSinglePostQuery(params.id)
+  const { data, isLoading, error } = getSingleUserQuery(params.id)
 
   if (isLoading) {
     return <>Loading...</>
@@ -23,16 +20,8 @@ export default function EditPost() {
 
   return (
     <div className="max-w-7xl mx-auto my-12 grid flex-1 auto-rows-max gap-4">
-      <div className="flex items-center gap-4">
-        <Button onClick={() => navigate(-1)} variant="outline" size="icon" className="h-7 w-7">
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-          Post Boshqaruvchisi
-        </h1>
-      </div>
       {data?.success && (
-        <PostDetails data={data.data} />
+        <UserDetails data={data.data} />
       )}
     </div >
   )

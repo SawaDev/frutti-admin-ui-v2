@@ -22,3 +22,5 @@ export interface GetSingleUserResponse {
 }
 
 export type UserType = z.infer<typeof userSchema>
+
+export type UserWithoutPassword = Omit<UserType, 'password_again'>
