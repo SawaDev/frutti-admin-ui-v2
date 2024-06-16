@@ -1,8 +1,6 @@
 import { MoreHorizontal, PlusCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -36,33 +34,10 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle
-} from "@/components/ui/sheet"
-
 import NoItems from '@/features/NoItems'
 import useUsers from "@/hooks/useUsers"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Input } from "@/components/ui/input"
 import { format } from "date-fns"
-import { UserType } from "@/types/users"
-import { userSchema } from "@/schema/users"
-import MultiSelect from "@/components/ui/multi-select"
-import { permissionOptions } from "@/constants/options"
-import { toast } from "@/components/ui/use-toast"
+import AddUser from "@/features/Users/add-user"
 
 const Users = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
@@ -70,34 +45,10 @@ const Users = () => {
 
   const navigate = useNavigate()
 
-  const { getAllUsersQuery, createUserMutation, deleteUserMutation } = useUsers()
+  const { getAllUsersQuery, deleteUserMutation } = useUsers()
 
   const { data, isLoading, isError } = getAllUsersQuery()
-  const createUser = createUserMutation()
-  const deleteUser = deleteUserMutation(open)
-
-  const form = useForm<UserType>({
-    resolver: zodResolver(userSchema),
-    defaultValues: {
-      permissions: []
-    }
-  })
-
-  const onSubmit = (values: UserType) => {
-    if (values.password !== values.password_again) {
-      return toast({
-        variant: "destructive",
-        description: "Parollar mos emas!",
-      })
-    }
-
-    const { password_again, ...others } = values
-
-    createUser.mutateAsync(others).then(() => {
-      setOpenSheet(false)
-      form.reset()
-    })
-  }
+  const deleteUser = deleteUserMutation(open) 
 
   const handleDelete = async () => {
     await deleteUser.mutateAsync().then(() => {
@@ -180,13 +131,13 @@ const Users = () => {
           <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu postni o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>Siz ushbu foydalanuvchini o'chirmoqchimisiz?</DialogTitle>
                 <DialogDescription>
-                  Post o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
+                  Foydalanuvchi o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button disabled={deleteUser.isPending} variant={"destructive"} onClick={handleDelete}>Postni o'chirish</Button>
+                <Button disabled={deleteUser.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -194,90 +145,7 @@ const Users = () => {
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
-      <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-        <SheetContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <SheetHeader>
-                <SheetTitle>Yangi foydalanuvchini yaratish</SheetTitle>
-                <SheetDescription>
-                  Bu yerda siz yangi foydalanuvchini qo'sha olasiz
-                </SheetDescription>
-              </SheetHeader>
-              <div className="grid gap-2 py-4">
-                <ScrollArea className="h-[calc(100vh-200px)]">
-                  <div className="grid grid-rows-1 gap-3 mt-3 ml-2 mr-3 items-center">
-                    <FormField
-                      control={form.control}
-                      name={`user_name`}
-                      render={({ field }) => (
-                        <FormItem className="mx-1">
-                          <FormLabel>Username</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`password`}
-                      render={({ field }) => (
-                        <FormItem className="mx-1">
-                          <FormLabel>Parol</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`password_again`}
-                      render={({ field }) => (
-                        <FormItem className="mx-1">
-                          <FormLabel>Parolni takrorlang</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`permissions`}
-                      render={() => (
-                        <FormItem className="mx-1">
-                          <FormLabel>Ruxsatlar</FormLabel>
-                          <FormControl>
-                            <MultiSelect
-                              options={permissionOptions}
-                              onChange={(value: string[]) => form.setValue('permissions', value)}
-                              defaultValue={form.getValues().permissions}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </ScrollArea>
-              </div>
-              <SheetFooter>
-                <Button
-                  disabled={!form.formState.isValid || !form.formState.isDirty || form.formState.isLoading}
-                  type="submit"
-                >
-                  Saqlash
-                </Button>
-              </SheetFooter>
-            </form>
-          </Form>
-        </SheetContent>
-      </Sheet>
+      <AddUser open={openSheet} setOpen={setOpenSheet} />
     </>
   )
 }

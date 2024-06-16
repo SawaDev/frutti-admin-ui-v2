@@ -19,6 +19,7 @@ import useUsers from "@/hooks/useUsers"
 import { permissionOptions } from "@/constants/options"
 import MultiSelect from "@/components/ui/multi-select"
 import { toast } from "@/components/ui/use-toast"
+import { FormInput } from "@/components/form/FormInput"
 
 interface UserDetailsProps {
   data: GetSingleUserResponse["data"]
@@ -64,7 +65,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ data }) => {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                Foydalanuvchi Boshqaruvchisi
+                Foydalanuvchi Ma'lumotlari
               </h1>
             </div>
             <Button
@@ -113,18 +114,12 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ data }) => {
                           </FormItem>
                         )}
                       />
-                      <FormField
+                      <FormInput
+                        type="password"
                         control={form.control}
-                        name={`password_again`}
-                        render={({ field }) => (
-                          <FormItem className="mx-1">
-                            <FormLabel>Parolni takrorlang</FormLabel>
-                            <FormControl>
-                              <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        name="password_again"
+                        label="Parolni takrorlang"
+                        className="mx-1"
                       />
                     </div>
                   </div>
