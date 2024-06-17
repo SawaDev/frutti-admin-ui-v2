@@ -8,6 +8,9 @@ import Login from './pages/login';
 import useAuthStore from './store/auth';
 import Users from './pages/users';
 import EditUser from './pages/users/EditUser';
+import Clients from './pages/clients';
+import EditClient from './pages/clients/EditClient';
+import Wallets from './pages/wallets';
 
 function App() {
   const { token } = useAuthStore()
@@ -27,6 +30,10 @@ function App() {
               <Route path='posts/:id' element={<EditPost />} />
               <Route path='users' element={<Users />} />
               <Route path='users/:id' element={<EditUser />} />
+              <Route path='clients' element={<Clients />} />
+              <Route path='clients/:id' element={<EditClient />} />
+              <Route path='wallets' element={<Wallets />} />
+              <Route path='wallets/:id' element={<EditClient />} />
             </Route>
           </Routes>
         </MainLayout>

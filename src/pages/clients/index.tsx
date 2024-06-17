@@ -35,24 +35,23 @@ import {
   DialogTitle
 } from "@/components/ui/dialog"
 import NoItems from '@/features/NoItems'
-import useUsers from "@/hooks/useUsers"
 import { format } from "date-fns"
-import AddUser from "@/features/Users/add-user"
-import { permissionOptions } from "@/constants/options"
+import AddClient from "@/features/Clients/add-client"
+import useClients from "@/hooks/useClients"
 
-const Users = () => {
+const Clients = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
   const [openSheet, setOpenSheet] = useState<boolean>(false)
 
   const navigate = useNavigate()
 
-  const { getAllUsersQuery, deleteUserMutation } = useUsers()
+  const { getAllClientsQuery, deleteClientMutation } = useClients()
 
-  const { data, isLoading, isError } = getAllUsersQuery()
-  const deleteUser = deleteUserMutation(open)
+  const { data, isLoading, isError } = getAllClientsQuery()
+  const deleteClient = deleteClientMutation(open)
 
   const handleDelete = async () => {
-    await deleteUser.mutateAsync().then(() => {
+    await deleteClient.mutateAsync().then(() => {
       setOpen(undefined)
     })
   }
@@ -71,9 +70,9 @@ const Users = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Foydalanuvchilar</CardTitle>
+              <CardTitle>Klientlar</CardTitle>
               <CardDescription>
-                Foydalanuchilarni bu yerdan boshqaring.
+                Klientlarni bu yerdan boshqaring.
               </CardDescription>
             </div>
             <div>
@@ -87,8 +86,8 @@ const Users = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Ruxsatlar</TableHead>
+                  <TableHead>Ismi</TableHead>
+                  <TableHead>Balans</TableHead>
                   <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
@@ -96,20 +95,23 @@ const Users = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.data.map((user, index) => (
+                {data.data.map((client, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
-                      {user.user_name}
+                      {client.name}
                     </TableCell>
                     <TableCell>
-                      {user.permissions.map(permission => (
-                        <Badge key={permission} variant="outline">
-                          {permissionOptions.find(p => p.value === permission)?.label}
-                        </Badge>
-                      ))}
+                      <Badge
+                        variant={
+                          client.balance > 0 ? "success"
+                            : client.balance == 0 ? "outline"
+                              : "destructive"}
+                      >
+                        {client.balance}
+                      </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(user.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(client.created_at, "dd-MM-yyyy hh:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -121,8 +123,8 @@ const Users = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/users/${user.id}`)}>O'zgartirish</DropdownMenuItem>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(user.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/clients/${client.id}`)}>O'zgartirish</DropdownMenuItem>
+                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(client.id)}>O'chirish</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -134,13 +136,13 @@ const Users = () => {
           <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu foydalanuvchini o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>Siz ushbu klientni o'chirmoqchimisiz?</DialogTitle>
                 <DialogDescription>
-                  Foydalanuvchi o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
+                  Klient o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button disabled={deleteUser.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
+                <Button disabled={deleteClient.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -148,9 +150,9 @@ const Users = () => {
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
-      <AddUser open={openSheet} setOpen={setOpenSheet} />
+      <AddClient open={openSheet} setOpen={setOpenSheet} />
     </>
   )
 }
 
-export default Users
+export default Clients
