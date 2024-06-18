@@ -11,6 +11,7 @@ import EditUser from './pages/users/EditUser';
 import Clients from './pages/clients';
 import EditClient from './pages/clients/EditClient';
 import Wallets from './pages/wallets';
+import EditWallet from './pages/wallets/EditWallet';
 
 function App() {
   const { token } = useAuthStore()
@@ -33,7 +34,7 @@ function App() {
               <Route path='clients' element={<Clients />} />
               <Route path='clients/:id' element={<EditClient />} />
               <Route path='wallets' element={<Wallets />} />
-              <Route path='wallets/:id' element={<EditClient />} />
+              <Route path='wallets/:id' element={<EditWallet />} />
             </Route>
           </Routes>
         </MainLayout>

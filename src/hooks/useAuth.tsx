@@ -13,11 +13,6 @@ const useAuth = () => {
             `${import.meta.env.VITE_API_URL}/login`,
             data
           );
-          if (response?.data) {
-            toast({
-              description: "Muvaffaqiyatli yakunlandi!"
-            })
-          }
 
           return response.data;
         } catch (error: any) {
@@ -26,6 +21,7 @@ const useAuth = () => {
             title: "Error!",
             description: error?.response?.data?.message,
           })
+          return null;
         }
       }
     })

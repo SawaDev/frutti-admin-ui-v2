@@ -21,10 +21,25 @@ import CustomLink from "@/components/customLink"
 import useAuthStore from "@/store/auth"
 import { ListItem, NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "../ui/navigation-menu"
 import { useEffect, useRef, useState } from "react"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
+import useCurrencies from "@/hooks/useCurrencies"
+import { useCurrencyStore } from "@/store/currency"
 
 const Header = () => {
   const [disable, setDisable] = useState(false);
+
   const targetRef = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const { setCurrencies } = useCurrencyStore()
+  const { logout } = useAuthStore()
+
+  const { getAllCurrenciesQuery } = useCurrencies()
+  const { data, isLoading, isError } = getAllCurrenciesQuery()
+
+  useEffect(() => {
+    setCurrencies(data?.data)
+  }, [data])
 
   useEffect(() => {
     const observerCallback = (mutationsList: any) => {
@@ -58,7 +73,13 @@ const Header = () => {
     };
   }, []);
 
-  const { logout } = useAuthStore()
+  if (isLoading) (
+    <div className="flex w-full flex-col">
+      <Skeleton className="h-20 w-full rounded-lg" />
+    </div>
+  )
+
+  if (isError) return <>Can't load currencies!</>
 
   return (
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 z-50 md:px-6">
@@ -227,14 +248,21 @@ const Header = () => {
       </Sheet>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <form className="ml-auto flex-1 sm:flex-initial">
-          {/* <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-            />
-          </div> */}
+          <div className="relative">
+            {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /> */}
+            <Select defaultValue="euro" onValueChange={(value) => console.log(value)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Valyutani tanlang" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Valyutalar</SelectLabel>
+                  <SelectItem value="dollar">Dollar</SelectItem>
+                  <SelectItem value="euro">Yevro</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </form>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

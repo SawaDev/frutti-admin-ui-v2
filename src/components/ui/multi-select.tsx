@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useCallback, useMemo, useRef, useState } from "react";
+import React, { ForwardedRef, KeyboardEvent, useCallback, useMemo, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -15,9 +15,10 @@ interface MultiSelectProps {
   options: Option[]
   onChange: (value: string[]) => void
   defaultValue: string[]
+  ref?: ForwardedRef<HTMLInputElement>
 }
 
-const MultiSelect: React.FC<MultiSelectProps> = ({ options, onChange, defaultValue }) => {
+const MultiSelect: React.FC<MultiSelectProps> = ({ options, onChange, defaultValue, ref }) => {
   const selectedValues = useMemo(() => {
     return options.filter(option => defaultValue.includes(option.value))
   }, [options])
@@ -90,7 +91,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({ options, onChange, defaultVal
             );
           })}
           <CommandPrimitive.Input
-            ref={inputRef}
+            ref={inputRef ?? ref}
             value={inputValue}
             onValueChange={setInputValue}
             onBlur={() => setOpen(false)}

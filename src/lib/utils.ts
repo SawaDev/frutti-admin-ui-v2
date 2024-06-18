@@ -18,3 +18,10 @@ export function getImageData(event: ChangeEvent<HTMLInputElement>) {
 
   return { files, displayUrl };
 }
+
+export function formatNumberComma(number: number, minFraction?: number, maxFraction?: number): string {
+  return number.toLocaleString("en-US", {
+    minimumFractionDigits: minFraction ?? 0,
+    maximumFractionDigits: maxFraction ?? 4
+  })
+}

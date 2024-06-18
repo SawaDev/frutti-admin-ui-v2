@@ -1,7 +1,7 @@
 import { walletSchema } from "@/schema/wallets"
 import { z } from "zod"
 
-interface Wallet {
+export interface Wallet {
   id: number
   name: string
   balance: number
@@ -20,4 +20,4 @@ export interface GetSingleWalletResponse {
 
 export type WalletType = z.infer<typeof walletSchema>
 
-export type WalletWithoutPassword = Omit<WalletType, 'password_again'>
+export type UpdateWalletType = Omit<WalletType, 'balance'>

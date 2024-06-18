@@ -11,7 +11,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <Header />
       {children}
     </div>
-
   )
 }
 

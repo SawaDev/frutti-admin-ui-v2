@@ -15,7 +15,7 @@ export interface FormMultiSelectProps<T extends FieldValues> extends React.Input
 }
 
 const FormMultiSelect = React.forwardRef<HTMLInputElement, FormMultiSelectProps<any>>(
-  ({ className, control, name, label, options, handleChange, defaultValues }, ) => {
+  ({ className, control, name, label, options, handleChange, defaultValues }, ref) => {
     return (
       <FormField
         control={control}
@@ -30,6 +30,7 @@ const FormMultiSelect = React.forwardRef<HTMLInputElement, FormMultiSelectProps<
                 options={options}
                 onChange={handleChange}
                 defaultValue={defaultValues}
+                ref={ref}
               />
             </FormControl>
             <FormMessage />

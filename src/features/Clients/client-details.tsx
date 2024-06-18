@@ -47,7 +47,7 @@ export const ClientDetails: React.FC<ClientDetailsProps> = ({ data }) => {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
-            <Button onClick={() => navigate(-1)} variant="outline" size="icon" className="h-7 w-7">
+            <Button onClick={() => navigate("/clients")} variant="outline" size="icon" className="h-7 w-7">
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">

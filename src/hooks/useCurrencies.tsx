@@ -2,16 +2,38 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
-import { GetAllWalletsResponse, GetSingleWalletResponse, WalletType } from "@/types/wallets";
+import { CurrencyType, GetAllCurrenciesResponse, GetSingleCurrencyResponse } from "@/types/currencies";
+import { useCurrencyStore } from "@/store/currency";
 
-const useWallets = () => {
+const useCurrencies = () => {
   const queryClient = useQueryClient();
+  const { currencies } = useCurrencyStore()
 
-  const getAllWalletsQuery = () => useQuery<GetAllWalletsResponse, Error>({
-    queryKey: ["wallets"],
+  const getAllCurrenciesQuery = () => useQuery<GetAllCurrenciesResponse, Error>({
+    queryKey: ["currencies"],
     queryFn: async () => {
       try {
-        const response = await api.get(`/wallets`);
+        const response = await api.get(`/currencies`);
+
+        return structuredClone(response.data);
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+        return null;
+      }
+    },
+    retry: 1,
+    enabled: currencies?.length ? false : true,
+  })
+
+  const getSingleCurrencyQuery = (id: string | undefined) => useQuery<GetSingleCurrencyResponse, Error>({
+    queryKey: ["currencies", id],
+    queryFn: async () => {
+      try {
+        const response = await api.get(`/currencies/${id}`);
 
         return structuredClone(response.data);
       } catch (error: any) {
@@ -24,28 +46,11 @@ const useWallets = () => {
     },
   })
 
-  const getSingleWalletQuery = (id: string | undefined) => useQuery<GetSingleWalletResponse, Error>({
-    queryKey: ["wallets", id],
-    queryFn: async () => {
-      try {
-        const response = await api.get(`/wallets/${id}`);
-
-        return structuredClone(response.data);
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-  })
-
-  const createWalletMutation = () => useMutation({
-    mutationFn: async (data: WalletType) => {
+  const createCurrencyMutation = () => useMutation({
+    mutationFn: async (data: CurrencyType) => {
       try {
         const response = await api.post(
-          '/wallets',
+          '/currencies',
           data
         );
         return response.data;
@@ -58,16 +63,16 @@ const useWallets = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wallets"] })
+      queryClient.invalidateQueries({ queryKey: ["currencies"] })
     }
   })
 
-  const updateWalletMutation = (id: string | undefined) =>
-    useMutation<GetSingleWalletResponse, AxiosError, Omit<WalletType, "balance">, () => void>({
+  const updateCurrencyMutation = (id: string | undefined) =>
+    useMutation<GetSingleCurrencyResponse, AxiosError, Omit<CurrencyType, "balance">, () => void>({
       mutationFn: async (data) => {
         try {
           const response = await api.patch(
-            `/wallets/${id}`,
+            `/currencies/${id}`,
             data
           );
           if (response?.data) {
@@ -85,15 +90,15 @@ const useWallets = () => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["wallets", id] })
+        queryClient.invalidateQueries({ queryKey: ["currencies", id] })
       }
     })
 
-  const deleteWalletMutation = (id: number | undefined) =>
+  const deleteCurrencyMutation = (id: string | undefined) =>
     useMutation({
       mutationFn: async () => {
         try {
-          const response = await api.delete(`/wallets/${id}`);
+          const response = await api.delete(`/currencies/${id}`);
           if (response?.data) {
             toast({
               description: "Muvaffaqiyatli o'chirildi!"
@@ -109,17 +114,17 @@ const useWallets = () => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["wallets"] })
+        queryClient.invalidateQueries({ queryKey: ["currencies"] })
       }
     })
 
   return {
-    getAllWalletsQuery,
-    getSingleWalletQuery,
-    createWalletMutation,
-    updateWalletMutation,
-    deleteWalletMutation
+    getAllCurrenciesQuery,
+    getSingleCurrencyQuery,
+    createCurrencyMutation,
+    updateCurrencyMutation,
+    deleteCurrencyMutation
   }
 };
 
-export default useWallets
+export default useCurrencies

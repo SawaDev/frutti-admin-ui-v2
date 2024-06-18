@@ -3,7 +3,7 @@ import { create } from 'zustand';
 
 const loadState = () => {
   const storedState = localStorage.getItem('authState');
-  return storedState ? JSON.parse(storedState) : {
+  return (storedState !== undefined && storedState !== null) ? JSON.parse(storedState) : {
     user_name: null,
     permissions: [],
     token: null,
