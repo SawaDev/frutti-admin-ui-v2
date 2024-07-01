@@ -1,4 +1,4 @@
-import { MoreHorizontal, PlusCircle } from "lucide-react"
+import { PlusCircle } from "lucide-react"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -9,13 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -32,15 +25,24 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
+import {
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
 import NoItems from '@/features/NoItems'
-import { format } from "date-fns"
-import { formatNumberComma } from "@/lib/utils"
 import useExpenses from "@/hooks/useExpenses"
 import AddExpense from "@/features/Expenses/add-expense"
+import { getColumns } from "./columns"
+// import { Popover, PopoverTrigger } from "@/components/ui/popover"
 
 const Expenses = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
   const [openSheet, setOpenSheet] = useState<boolean>(false)
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+    []
+  )
 
   const { getAllExpensesQuery, deleteExpenseMutation } = useExpenses()
 
@@ -52,6 +54,16 @@ const Expenses = () => {
       setOpen(undefined)
     })
   }
+
+  const table = useReactTable({
+    data: data?.data ?? [],
+    columns: getColumns(setOpen),
+    state: {
+      columnFilters,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+  })
 
   if (isLoading) {
     return <>Loading...</>
@@ -80,9 +92,36 @@ const Expenses = () => {
             </div>
           </CardHeader >
           <CardContent>
+            {/* <div>
+              <Popover>
+                <PopoverTrigger>
+                  <Button>
+                    Kategoriya
+                  </Button>
+                </PopoverTrigger>
+
+              </Popover>
+
+            </div> */}
             <Table>
               <TableHeader>
-                <TableRow>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} colSpan={header.colSpan}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+                {/* <TableRow>
                   <TableHead>Miqdori</TableHead>
                   <TableHead>Kategoriya</TableHead>
                   <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
@@ -91,10 +130,10 @@ const Expenses = () => {
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
                   </TableHead>
-                </TableRow>
+                </TableRow> */}
               </TableHeader>
               <TableBody>
-                {data.data.map((expense, index) => (
+                {/* {data.data.map((expense, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
                       {formatNumberComma(expense.amount)}
@@ -126,16 +165,41 @@ const Expenses = () => {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))} */}
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={getColumns(setOpen).length}
+                      className="h-24 text-center"
+                    >
+                      Hech narsa yo'q.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
-          <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
+          <Dialog open={open !== undefined ? true : false} onOpenChange={() => setOpen(undefined)}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu foydalanuvchini o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>Siz ushbu harajatni o'chirmoqchimisiz?</DialogTitle>
                 <DialogDescription>
-                  Foydalanuvchi o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
+                  Harajatni o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>

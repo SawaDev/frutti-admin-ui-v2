@@ -10,10 +10,13 @@ import { expenseSchema } from '@/schema/expenses'
 import { ExpenseDataType } from '@/types/expenses'
 import { SheetType } from '@/types/other'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import AddCategory from './add-category'
 
 const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
+  const [newCategory, setNewCategory] = useState(false)
+
   const { createExpenseMutation, getAllExpenseCategoriesQuery } = useExpenses()
   const { getAllWalletsQuery } = useWallets()
 
@@ -28,10 +31,11 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
   })
 
   const onSubmit = (values: ExpenseDataType) => {
+    console.log(values)
     const data = {
       ...values,
       wallet_id: Number(values.wallet_id),
-      ...(values.category_id ? { category_id: +values.category_id } : { category_id: null })
+      ...(values.category_id ? { category_id: Number(values.category_id) } : { category_id: null })
     }
 
     createExpense.mutateAsync(data).then(() => {
@@ -62,13 +66,23 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
                       label='Hamyon'
                     />
                   )}
-                  {!loadingCategories && (
+                  {!loadingCategories && categories?.data && (
                     <FormSelect
                       control={form.control}
                       name='category_id'
                       options={categories?.data.map(categories => ({ value: categories.id.toString(), label: categories.name }))}
                       label='Kategoriya'
+                      handleNew={() => setNewCategory(true)}
                     />
+
+                    // <FormSearchInput
+                    //   control={form.control}
+                    //   name='category_id'
+                    //   options={categories?.data.map(categories => ({ value: categories.id.toString(), label: categories.name }))}
+                    //   label='Kategoriya'
+                    //   handleNew={() => setNewCategory(true)}
+                    //   handleChange={(value) => form.setValue('category_id', Number(value))}
+                    // />
                   )}
                   <FormInput
                     control={form.control}
@@ -86,7 +100,7 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
             </div>
             <SheetFooter>
               <Button
-                disabled={!form.formState.isDirty || form.formState.isLoading}
+                disabled={!form.formState.isDirty || form.formState.isLoading || createExpense.isPending}
                 type="submit"
               >
                 Saqlash
@@ -95,6 +109,7 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
           </form>
         </Form>
       </SheetContent>
+      <AddCategory open={newCategory} setOpen={setNewCategory} />
     </Sheet>
   )
 }

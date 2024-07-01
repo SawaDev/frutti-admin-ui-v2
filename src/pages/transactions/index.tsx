@@ -124,7 +124,6 @@ const Transactions = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          {/* <DropdownMenuItem onClick={() => navigate(`/transactions/${transaction.id}`)}>O'zgartirish</DropdownMenuItem> */}
                           <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(transaction.id)}>O'chirish</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -137,9 +136,9 @@ const Transactions = () => {
           <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu foydalanuvchini o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>Siz ushbu pul o'tkazmani o'chirmoqchimisiz?</DialogTitle>
                 <DialogDescription>
-                  Foydalanuvchi o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
+                  Pul o'tkazma o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>

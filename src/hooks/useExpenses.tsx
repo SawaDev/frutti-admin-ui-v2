@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
-import { ExpenseDataType, GetAllExpenseCategoriesResponse, GetAllExpensesResponse, GetSingleExpenseResponse } from "@/types/expenses";
+import { ExpenseCategoryType, ExpenseDataType, GetAllExpenseCategoriesResponse, GetAllExpensesResponse, GetSingleExpenseResponse } from "@/types/expenses";
 
 const useExpenses = () => {
   const queryClient = useQueryClient();
@@ -78,6 +78,27 @@ const useExpenses = () => {
     }
   })
 
+  const createExpenseCategoryMutation = () => useMutation({
+    mutationFn: async (data: ExpenseCategoryType) => {
+      try {
+        const response = await api.post(
+          '/expenses/categories',
+          data
+        );
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses", "categories"] })
+    }
+  })
+
   const deleteExpenseMutation = (id: number | undefined) =>
     useMutation({
       mutationFn: async () => {
@@ -107,6 +128,7 @@ const useExpenses = () => {
     getAllExpenseCategoriesQuery,
     getSingleExpenseQuery,
     createExpenseMutation,
+    createExpenseCategoryMutation,
     deleteExpenseMutation
   }
 };
