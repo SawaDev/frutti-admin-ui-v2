@@ -35,10 +35,12 @@ const Login = () => {
   const onSubmit = (values: AuthType) => {
     auth.mutateAsync(values)
       .then((res) => login(res.data.user_name, res.data.permissions, res.data.token))
-      .then(() => {
+      .catch((err) => console.log(err))
+      .finally(() => {
         window.location.reload()
         navigate("/")
       })
+
   }
 
   return (

@@ -4,7 +4,7 @@ import { Control, FieldValues, Path } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 
-export interface FormInputProps<T extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
+interface FormInputProps<T extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
   control: Control<T, any>;
   name: Path<T>;
   label?: string;

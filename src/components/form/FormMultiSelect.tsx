@@ -5,7 +5,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/
 import MultiSelect from "../ui/multi-select";
 import { Option } from "@/types/other";
 
-export interface FormMultiSelectProps<T extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
+interface FormMultiSelectProps<T extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
   control: Control<T, any>;
   name: Path<T>;
   label?: string;

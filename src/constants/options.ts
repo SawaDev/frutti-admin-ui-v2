@@ -11,3 +11,14 @@ export const permissionOptions: Option[] = [
     label: "O'zgartirish"
   }
 ]
+
+export const transactionOptions: Option[] = [
+  {
+    value: "cash",
+    label: "Nadq"
+  },
+  {
+    value: "card",
+    label: "Karta"
+  }
+]

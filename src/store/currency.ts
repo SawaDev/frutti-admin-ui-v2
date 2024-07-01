@@ -11,17 +11,26 @@ interface Currency {
 
 interface CurrencyStore {
   currencies: Currency[];
+  activeCurrency: Currency | null;
   setCurrencies: (currencies: Currency[] | undefined) => void;
+  setActiveCurrency: (currency: Currency | null) => void;
 }
 
 export const useCurrencyStore = create<CurrencyStore>()(
   persist(
     (set) => ({
-      currencies: JSON.parse(localStorage.getItem("currency-store") ?? "[]") || [],
-      setCurrencies: (currencies) =>
+      currencies: [],
+      activeCurrency: null,
+      setCurrencies: (currencies) => {
         set(() => ({
-          currencies,
-        })),
+          currencies: currencies || [],
+        }));
+      },
+      setActiveCurrency: (currency) => {
+        set(() => ({
+          activeCurrency: currency,
+        }));
+      },
     }),
     {
       name: 'currency-store',

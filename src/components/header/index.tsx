@@ -31,7 +31,7 @@ const Header = () => {
 
   const targetRef = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const { setCurrencies } = useCurrencyStore()
+  const { currencies, activeCurrency, setCurrencies, setActiveCurrency } = useCurrencyStore()
   const { logout } = useAuthStore()
 
   const { getAllCurrenciesQuery } = useCurrencies()
@@ -191,9 +191,54 @@ const Header = () => {
           <CustomLink to="/products">
             Products
           </CustomLink>
-          <CustomLink to="/analytics">
-            Analytics
-          </CustomLink>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger
+              onPointerMove={(event) => event.preventDefault()}
+              onPointerLeave={(event) => event.preventDefault()}
+              ref={(ref) => (targetRef.current[1] = ref)}
+              onClick={(e) => {
+                if (disable) {
+                  e.preventDefault();
+                }
+              }}
+            >
+              Harajatlar
+            </NavigationMenuTrigger>
+            <NavigationMenuContent
+              onPointerMove={(event) => event.preventDefault()}
+              onPointerLeave={(event) => event.preventDefault()}
+            >
+              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr]">
+                <li className="row-span-2">
+                  <NavigationMenuLink asChild>
+                    <Link
+                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
+                      to="/expenses"
+                    >
+                      <div className="mb-2 mt-4 text-lg font-medium">
+                        Harajatlar
+                      </div>
+                      <p className="text-sm leading-tight text-muted-foreground">
+                        Harajatlarga ga doir bo'lim.
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+                {/* <ListItem href="/transactions" title="Pul o'tkazmalar">
+                  Pul o'tkazmalariga doir ma'lumotlar.
+                </ListItem>
+                <ListItem href="/sales" title="Sotuvlar">
+                  Sotuvlar haqida to'liq ma'lumot.
+                </ListItem>
+                <ListItem href="/wallets" title="Hamyonlar">
+                  Ingredientlarga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
+                </ListItem>
+                <ListItem href="/clients" title="Klientlar">
+                  Klientlar haqida ma'lumotlar.
+                </ListItem> */}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
           <CustomLink to="/users">
             Foydalanuvchilar
           </CustomLink>
@@ -250,25 +295,41 @@ const Header = () => {
         <form className="ml-auto flex-1 sm:flex-initial">
           <div className="relative">
             {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /> */}
-            <Select defaultValue="euro" onValueChange={(value) => console.log(value)}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Valyutani tanlang" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Valyutalar</SelectLabel>
-                  <SelectItem value="dollar">Dollar</SelectItem>
-                  <SelectItem value="euro">Yevro</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            {currencies && (
+              <Select
+                defaultValue={activeCurrency ? activeCurrency.id.toString() : undefined}
+                onValueChange={(value) => {
+                  const currency = currencies.find(c => c.id === Number(value))
+                  if (currency) {
+                    setActiveCurrency(currency)
+                  }
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Valyutani tanlang" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Valyutalar</SelectLabel>
+                    {currencies.length !== 0 && currencies?.map(currency => (
+                      <SelectItem
+                        value={currency.id.toString()}
+                      >
+                        {currency.symbol ?? ''} {currency.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <Button className="mt-2 w-full" size={"lg"}>Yangi valyuta</Button>
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </form>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
               <CircleUser className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
+              <span className="sr-only">Menu</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
