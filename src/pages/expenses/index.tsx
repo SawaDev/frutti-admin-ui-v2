@@ -87,6 +87,10 @@ const Expenses = () => {
             <div>
               <Button onClick={() => setOpenSheet(true)} size="sm" variant="ghost" className="gap-1">
                 <PlusCircle className="h-3.5 w-3.5" />
+                Kategoriya qo'shish
+              </Button>
+              <Button onClick={() => setOpenSheet(true)} size="sm" variant="ghost" className="gap-1">
+                <PlusCircle className="h-3.5 w-3.5" />
                 Qo'shish
               </Button>
             </div>

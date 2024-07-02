@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import Home from './pages/home';
 import MainLayout from './layouts/MainLayout';
 import Posts from './pages/posts';
@@ -19,7 +19,7 @@ function App() {
   const { token } = useAuthStore()
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       {!token ? (
         <Routes>
           <Route path='/*' element={<Login />} />
@@ -45,7 +45,7 @@ function App() {
         </MainLayout>
       )}
       <Toaster />
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
