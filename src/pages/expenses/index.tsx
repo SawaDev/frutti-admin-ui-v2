@@ -35,7 +35,6 @@ import NoItems from '@/features/NoItems'
 import useExpenses from "@/hooks/useExpenses"
 import AddExpense from "@/features/Expenses/add-expense"
 import { getColumns } from "./columns"
-// import { Popover, PopoverTrigger } from "@/components/ui/popover"
 
 const Expenses = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
@@ -96,17 +95,6 @@ const Expenses = () => {
             </div>
           </CardHeader >
           <CardContent>
-            {/* <div>
-              <Popover>
-                <PopoverTrigger>
-                  <Button>
-                    Kategoriya
-                  </Button>
-                </PopoverTrigger>
-
-              </Popover>
-
-            </div> */}
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -125,51 +113,8 @@ const Expenses = () => {
                     })}
                   </TableRow>
                 ))}
-                {/* <TableRow>
-                  <TableHead>Miqdori</TableHead>
-                  <TableHead>Kategoriya</TableHead>
-                  <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
-                  <TableHead>Hamyon</TableHead>
-                  <TableHead className="w-[300px]">Kommentariya</TableHead>
-                  <TableHead>
-                    <span className="sr-only">Harakatlar</span>
-                  </TableHead>
-                </TableRow> */}
               </TableHeader>
               <TableBody>
-                {/* {data.data.map((expense, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">
-                      {formatNumberComma(expense.amount)}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {expense.expense_category?.name}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {format(expense.created_at, "dd-MM-yyyy hh:mm")}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {expense.wallet.name}
-                    </TableCell>
-                    <TableCell>
-                      {expense.comment}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(expense.id)}>O'chirish</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))} */}
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow

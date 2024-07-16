@@ -15,23 +15,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-// import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import CustomLink from "@/components/customLink"
 import useAuthStore from "@/store/auth"
 import { ListItem, NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "../ui/navigation-menu"
 import { useEffect, useRef, useState } from "react"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import useCurrencies from "@/hooks/useCurrencies"
 import { useCurrencyStore } from "@/store/currency"
+import UpdateCurrency from "@/features/Currencies/update-currency"
 
 const Header = () => {
+  const [open, setOpen] = useState(false);
   const [disable, setDisable] = useState(false);
 
   const targetRef = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const { currencies, activeCurrency, setCurrencies, setActiveCurrency } = useCurrencyStore()
+  const { activeCurrency, setCurrencies, setActiveCurrency } = useCurrencyStore()
   const { logout } = useAuthStore()
 
   const { getAllCurrenciesQuery } = useCurrencies()
@@ -39,6 +39,7 @@ const Header = () => {
 
   useEffect(() => {
     setCurrencies(data?.data)
+    setActiveCurrency(data?.data[0] !== undefined ? data?.data[0] : null)
   }, [data])
 
   useEffect(() => {
@@ -185,6 +186,51 @@ const Header = () => {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger
+              onPointerMove={(event) => event.preventDefault()}
+              onPointerLeave={(event) => event.preventDefault()}
+              ref={(ref) => (targetRef.current[1] = ref)}
+              onClick={(e) => {
+                if (disable) {
+                  e.preventDefault();
+                }
+              }}
+            >
+              Sklad
+            </NavigationMenuTrigger>
+            <NavigationMenuContent
+              onPointerMove={(event) => event.preventDefault()}
+              onPointerLeave={(event) => event.preventDefault()}
+            >
+              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr]">
+                <li className="row-span-2">
+                  <NavigationMenuLink asChild>
+                    <a
+                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
+                      href="/warehouses"
+                    >
+                      <div className="mb-2 mt-4 text-lg font-medium">
+                        Sklad
+                      </div>
+                      <p className="text-sm leading-tight text-muted-foreground">
+                        Sklad va unga doir bo'lim.
+                      </p>
+                    </a>
+                  </NavigationMenuLink>
+                </li>
+                <ListItem href="/ingredients" title="Siryolar">
+                  Siryolar haqida to'liq ma'lumot.
+                </ListItem>
+                <ListItem href="/ingredients-purchases" title="Siryo xaridlari">
+                  Siryo xaridlariga doir ma'lumotlar.
+                </ListItem>
+                <ListItem href="/ingredients-transactions" title="Ishlatilingan Siryolar">
+                  Ishlatilingan siryolar haqida to'liq ma'lumot.
+                </ListItem>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
           <CustomLink to="/">
             Dashboard
           </CustomLink>
@@ -239,6 +285,9 @@ const Header = () => {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
+          <div className="transition-colors hover:text-foreground text-muted-foreground cursor-pointer" onClick={() => setOpen(true)}>
+            Kurs
+          </div>
           <CustomLink to="/users">
             Foydalanuvchilar
           </CustomLink>
@@ -255,7 +304,7 @@ const Header = () => {
             className="shrink-0 md:hidden"
           >
             <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle navigation menu</span>
+            <span className="sr-only">Menu</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left">
@@ -265,7 +314,7 @@ const Header = () => {
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
+              <span className="sr-only">User</span>
             </CustomLink>
             <CustomLink to="/">
               Dashboard
@@ -292,39 +341,7 @@ const Header = () => {
         </SheetContent>
       </Sheet>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <form className="ml-auto flex-1 sm:flex-initial">
-          <div className="relative">
-            {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /> */}
-            {currencies && (
-              <Select
-                defaultValue={activeCurrency ? activeCurrency.id.toString() : undefined}
-                onValueChange={(value) => {
-                  const currency = currencies.find(c => c.id === Number(value))
-                  if (currency) {
-                    setActiveCurrency(currency)
-                  }
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Valyutani tanlang" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Valyutalar</SelectLabel>
-                    {currencies.length !== 0 && currencies?.map(currency => (
-                      <SelectItem
-                        value={currency.id.toString()}
-                      >
-                        {currency.symbol ?? ''} {currency.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <Button className="mt-2 w-full" size={"lg"}>Yangi valyuta</Button>
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        </form>
+        <div className="ml-auto flex-1 sm:flex-initial"></div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
@@ -342,6 +359,11 @@ const Header = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <UpdateCurrency
+        open={open}
+        setOpen={setOpen}
+        defaultCurrency={activeCurrency}
+      />
     </header>
   )
 }

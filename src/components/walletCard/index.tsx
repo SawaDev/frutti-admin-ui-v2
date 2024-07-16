@@ -16,7 +16,7 @@ export default function WalletCard({ wallet, order }: WalletCardProps) {
         <span className="absolute -top-7 -left-5 leading-[80px] text-[80px] font-bold text-gray-600 bg-white">{order}</span>
         <CardHeader className="pb-2">
           <CardDescription className="capitalize">{wallet.name}</CardDescription>
-          <CardTitle className="text-4xl">{formatNumberComma(wallet.balance)}</CardTitle>
+          <CardTitle className="text-4xl">{wallet.type === "dollar" && "$"} {formatNumberComma(wallet.balance)}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">+25% from last week</div>

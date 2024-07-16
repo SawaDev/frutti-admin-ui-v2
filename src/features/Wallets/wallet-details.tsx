@@ -11,6 +11,7 @@ import { ChevronLeft } from "lucide-react"
 import React from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
+import WalletTable from "./wallet-table"
 
 interface WalletDetailsProps {
   data: GetSingleWalletResponse["data"]
@@ -122,6 +123,9 @@ const WalletDetails: React.FC<WalletDetailsProps> = ({ data }) => {
               </CardContent>
             </Card>
           </div>
+          <Card className="grid auto-rows-max items-start gap-4 lg:col-span-3 lg:gap-8 scrollbar-hidden pt-1">
+            <WalletTable id={params.id ?? ""} />
+          </Card>
         </div>
       </form>
     </Form>

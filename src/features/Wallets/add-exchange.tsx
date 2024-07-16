@@ -4,40 +4,45 @@ import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import useExpenses from '@/hooks/useExpenses'
+import useExchanges from '@/hooks/useExchanges'
 import useWallets from '@/hooks/useWallets'
-import { expenseSchema } from '@/schema/expenses'
-import { ExpenseDataType } from '@/types/expenses'
+import { createExchangeSchema } from '@/schema/wallets'
+import { useCurrencyStore } from '@/store/currency'
 import { SheetType } from '@/types/other'
+import { ExchangeType } from '@/types/wallets'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import AddCategory from './add-category'
 
 const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
-  const [newCategory, setNewCategory] = useState(false)
+  const { activeCurrency } = useCurrencyStore()
 
-  const { createExpenseMutation, getAllExpenseCategoriesQuery } = useExpenses()
+  const { createExchangeMutation } = useExchanges()
   const { getAllWalletsQuery } = useWallets()
 
-  const createExpense = createExpenseMutation()
+  const createExchange = createExchangeMutation()
 
   const { data: wallets, isLoading: loadingWallets } = getAllWalletsQuery()
-  const { data: categories, isLoading: loadingCategories } = getAllExpenseCategoriesQuery()
 
-  const form = useForm<ExpenseDataType>({
-    resolver: zodResolver(expenseSchema),
-    defaultValues: {}
+  useEffect(() => {
+    form.setValue('distribution', activeCurrency?.distribution)
+  }, [activeCurrency])
+
+  const form = useForm<ExchangeType>({
+    resolver: zodResolver(createExchangeSchema),
+    defaultValues: {
+      distribution: activeCurrency?.distribution
+    }
   })
 
-  const onSubmit = (values: ExpenseDataType) => {
+  const onSubmit = (values: ExchangeType) => {
     const data = {
       ...values,
-      wallet_id: Number(values.wallet_id),
-      ...(values.category_id ? { category_id: Number(values.category_id) } : { category_id: null })
+      from_wallet_id: Number(values.from_wallet_id),
+      to_wallet_id: Number(values.to_wallet_id)
     }
 
-    createExpense.mutateAsync(data).then(() => {
+    createExchange.mutateAsync(data).then(() => {
       setOpen(false)
       form.reset()
     })
@@ -49,9 +54,9 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
-              <SheetTitle>Yangi harajatni yaratish</SheetTitle>
+              <SheetTitle>Yangi pul transferini yaratish</SheetTitle>
               <SheetDescription>
-                Bu yerda siz yangi harajatni qo'sha olasiz
+                Bu yerda siz yangi pul transferini qo'sha olasiz
               </SheetDescription>
             </SheetHeader>
             <div className="grid gap-2 py-4">
@@ -60,34 +65,38 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
                   {!loadingWallets && (
                     <FormSelect
                       control={form.control}
-                      name='wallet_id'
-                      options={wallets?.data.map(wallet => ({ value: wallet.id.toString(), label: wallet.name }))}
-                      label='Hamyon'
+                      name='from_wallet_id'
+                      options={
+                        wallets?.data
+                          .filter(wallet => wallet.id.toString() !== form.getValues("to_wallet_id"))
+                          .map(wallet => ({ value: wallet.id.toString(), label: wallet.name }))
+                      }
+                      label='Qaysi Hamyondan'
                     />
                   )}
-                  {!loadingCategories && categories?.data && (
+                  {!loadingWallets && (
                     <FormSelect
                       control={form.control}
-                      name='category_id'
-                      options={categories?.data.map(categories => ({ value: categories.id.toString(), label: categories.name }))}
-                      label='Kategoriya'
-                      handleNew={() => setNewCategory(true)}
+                      name='to_wallet_id'
+                      options={
+                        wallets?.data
+                          .filter(wallet => wallet.id.toString() !== form.getValues("from_wallet_id"))
+                          .map(wallet => ({ value: wallet.id.toString(), label: wallet.name }))
+                      }
+                      label='Qaysi Hamyonga'
                     />
-
-                    // <FormSearchInput
-                    //   control={form.control}
-                    //   name='category_id'
-                    //   options={categories?.data.map(categories => ({ value: categories.id.toString(), label: categories.name }))}
-                    //   label='Kategoriya'
-                    //   handleNew={() => setNewCategory(true)}
-                    //   handleChange={(value) => form.setValue('category_id', Number(value))}
-                    // />
                   )}
                   <FormInput
                     control={form.control}
                     name="amount"
                     type='number'
                     label="Miqdor"
+                  />
+                  <FormInput
+                    control={form.control}
+                    name='distribution'
+                    type='number'
+                    label='Kurs'
                   />
                   <FormInput
                     control={form.control}
@@ -99,7 +108,7 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
             </div>
             <SheetFooter>
               <Button
-                disabled={!form.formState.isDirty || form.formState.isLoading || createExpense.isPending}
+                disabled={!form.formState.isDirty || form.formState.isLoading || createExchange.isPending}
                 type="submit"
               >
                 Saqlash
@@ -108,7 +117,6 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
           </form>
         </Form>
       </SheetContent>
-      <AddCategory open={newCategory} setOpen={setNewCategory} />
     </Sheet>
   )
 }

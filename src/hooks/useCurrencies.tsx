@@ -67,8 +67,8 @@ const useCurrencies = () => {
     }
   })
 
-  const updateCurrencyMutation = (id: string | undefined) =>
-    useMutation<GetSingleCurrencyResponse, AxiosError, Omit<CurrencyType, "balance">, () => void>({
+  const updateCurrencyMutation = (id: number | undefined) =>
+    useMutation<GetSingleCurrencyResponse, AxiosError, { distribution: number }, () => void>({
       mutationFn: async (data) => {
         try {
           const response = await api.patch(

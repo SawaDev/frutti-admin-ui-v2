@@ -20,6 +20,7 @@ const AddWallet: React.FC<SheetType> = ({ open, setOpen }) => {
     resolver: zodResolver(walletSchema),
     defaultValues: {}
   })
+  
   const onSubmit = (values: WalletType) => {
     createWallet.mutateAsync(values).then(() => {
       setOpen(false)

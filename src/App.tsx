@@ -1,9 +1,10 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
+
+import { Toaster } from './components/ui/toaster';
 import Home from './pages/home';
 import MainLayout from './layouts/MainLayout';
 import Posts from './pages/posts';
 import EditPost from './pages/posts/EditPost';
-import { Toaster } from './components/ui/toaster';
 import Login from './pages/login';
 import useAuthStore from './store/auth';
 import Users from './pages/users';
@@ -14,6 +15,8 @@ import Wallets from './pages/wallets';
 import EditWallet from './pages/wallets/EditWallet';
 import Transactions from './pages/transactions';
 import Expenses from './pages/expenses';
+import Ingredients from './pages/ingredients';
+import IngredientsPurchase from './pages/ingredients-purchases';
 
 function App() {
   const { token } = useAuthStore()
@@ -39,7 +42,9 @@ function App() {
               <Route path='wallets/:id' element={<EditWallet />} />
               <Route path='transactions' element={<Transactions />} />
               <Route path='expenses' element={<Expenses />} />
-              {/* <Route path='transactions/:id' element={<Users />} /> */}
+              <Route path='ingredients' element={<Ingredients />} />
+              <Route path='ingredients-purchases' element={<IngredientsPurchase />} />
+              <Route path='ingredients-transactions' element={<IngredientsPurchase />} />
             </Route>
           </Routes>
         </MainLayout>
