@@ -17,6 +17,7 @@ import Transactions from './pages/transactions';
 import Expenses from './pages/expenses';
 import Ingredients from './pages/ingredients';
 import IngredientsPurchase from './pages/ingredients-purchases';
+import IngredientTransaction from './pages/ingredients-transactions';
 
 function App() {
   const { token } = useAuthStore()
@@ -44,7 +45,7 @@ function App() {
               <Route path='expenses' element={<Expenses />} />
               <Route path='ingredients' element={<Ingredients />} />
               <Route path='ingredients-purchases' element={<IngredientsPurchase />} />
-              <Route path='ingredients-transactions' element={<IngredientsPurchase />} />
+              <Route path='ingredients-transactions' element={<IngredientTransaction />} />
             </Route>
           </Routes>
         </MainLayout>

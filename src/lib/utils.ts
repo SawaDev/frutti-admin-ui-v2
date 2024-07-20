@@ -20,9 +20,23 @@ export function getImageData(event: ChangeEvent<HTMLInputElement>) {
 }
 
 export function formatNumberComma(number: number | null, minFraction?: number, maxFraction?: number): string {
-  if(!number) return "0";
+  if (!number) return "0";
   return number.toLocaleString("en-US", {
     minimumFractionDigits: minFraction ?? 0,
     maximumFractionDigits: maxFraction ?? 4
   })
+}
+
+export const convertToQueryString = (params: Record<string, string | number | boolean | null | undefined>): string => {
+  const queryString = Object.entries(params)
+    .flatMap(([key, value]) => {
+      if (value === null || value === undefined) {
+        return [];
+      }
+
+      return [`${encodeURIComponent(key)}=${encodeURIComponent(value.toString())}`];
+    })
+    .join('&');
+
+  return queryString ? `?${queryString}` : '';
 }

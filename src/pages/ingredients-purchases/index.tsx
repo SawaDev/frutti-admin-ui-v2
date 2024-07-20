@@ -41,7 +41,6 @@ const IngredientsPurchase = () => {
   const form = useForm<IngredientPurchaseType>({
     resolver: zodResolver(ingredientPurchaseSchema),
     defaultValues: {
-      total_cost: 0,
       ingredients: []
     }
   })

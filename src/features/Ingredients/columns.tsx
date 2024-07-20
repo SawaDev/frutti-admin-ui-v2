@@ -7,7 +7,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal } from "lucide-react"
-import { GetAllIngredientPurchasesTypeResponse, Ingredient } from "@/types/ingredients"
+import { GetAllIngredientPurchasesTypeResponse, GetAllIngredienTransactionsResponse, Ingredient } from "@/types/ingredients"
 import { Badge } from "@/components/ui/badge"
 import { FormInput } from "@/components/form/FormInput"
 import { UseFormReturn } from "react-hook-form"
@@ -115,7 +115,7 @@ export const createPurchaseColumns = (form: UseFormReturn<any>) => {
       {
         accessorFn: row => row.name,
         id: 'name',
-        header: "Kassa",
+        header: "Siryo",
         meta: {
           filterVariant: 'text',
         },
@@ -190,6 +190,87 @@ export const purchaseColumns = () => {
         header: "Narxi",
         cell: info => formatNumberComma(info.row.getValue("total_cost")),
       },
+    ],
+    []
+  )
+}
+
+export const createIngredientTransactionColumns = (form: UseFormReturn<any>) => {
+  return useMemo<ColumnDef<Ingredient, any>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        id: 'name',
+        header: "Siryo",
+      },
+      {
+        accessorKey: 'quantity',
+        id: 'quantity',
+        header: "Qolgan Miqdori",
+      },
+      {
+        accessorFn: row => {
+          if (row.unit === 'count') {
+            return 'dona'
+          } else {
+            return row.unit
+          }
+        },
+        cell: info => <span className="capitalize">{info.getValue()}</span>,
+        id: 'unit',
+        header: "Turi",
+      },
+      {
+        id: 'new_quantity',
+        header: () => 'Miqdori',
+        cell: info => {
+          return (
+            <FormInput
+              name={`ingredients.${info.row.index}.quantity`}
+              type="number"
+              control={form.control}
+            />
+          )
+        },
+      },
+    ],
+    []
+  )
+}
+
+export const ingredientTransactionColumns = () => {
+  return useMemo<ColumnDef<GetAllIngredienTransactionsResponse["data"]["0"], any>[]>(
+    () => [
+      {
+        accessorFn: row => format(row.created_at, "dd-MM-yyyy HH:mm:ss"),
+        id: 'created_at',
+        header: () => 'Yaratilingan sana',
+        cell: info => info.getValue(),
+      },
+      {
+        accessorKey: 'totals.cost',
+        id: 'totals.cost',
+        header: "Umumiy summasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.cost")),
+      },
+      {
+        accessorKey: 'totals.count',
+        id: 'totals.count',
+        header: "Dona hammasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.count")),
+      },
+      {
+        accessorKey: 'totals.kg',
+        id: 'totals.kg',
+        header: "Kg hammasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.kg")),
+      },
+      {
+        accessorKey: 'totals.gr',
+        id: 'totals.gr',
+        header: "Gr hammasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.gr")),
+      }
     ],
     []
   )

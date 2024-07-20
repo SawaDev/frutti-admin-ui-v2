@@ -22,3 +22,13 @@ export const ingredientPurchaseSchema = z.object({
     })
   )
 })
+
+export const ingredientTransactionSchema = z.object({
+  comment: z.string().optional(),
+  ingredients: z.array(
+    z.object({
+      id: z.number(),
+      quantity: z.number(),
+    })
+  )
+})

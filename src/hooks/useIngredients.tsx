@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
-import { CreateIngredient, GetAllIngredientPurchasesTypeResponse, GetAllIngredientsResponse, GetSingleIngredientResponse, IngredientPurchaseType } from "@/types/ingredients";
+import { CreateIngredient, CreateIngredientTransaction, GetAllIngredientPurchasesTypeResponse, GetAllIngredienTransactionsResponse, GetAllIngredientsResponse, GetSingleIngredientResponse, IngredientPurchaseType } from "@/types/ingredients";
 
 const useIngredients = () => {
   const queryClient = useQueryClient();
@@ -128,13 +128,59 @@ const useIngredients = () => {
     }
   })
 
+  const getAllIngredientTransactionsQuery = () => useQuery<GetAllIngredienTransactionsResponse, Error>({
+    queryKey: ["ingredient-transactions"],
+    queryFn: async () => {
+      try {
+        const response = await api.get(`/ingredient-transactions`);
+
+        return structuredClone(response.data);
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+  })
+
+  const createIngredientTransactionMutation = () => useMutation({
+    mutationFn: async (data: CreateIngredientTransaction) => {
+      try {
+        const response = await api.post(
+          '/ingredient-transactions',
+          data
+        );
+
+        toast({
+          title: "Muvaffaqiyatli saqlandi!"
+        })
+
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
+      queryClient.invalidateQueries({ queryKey: ["ingredient-transactions"] })
+    }
+  })
+
   return {
     getAllIngredientsQuery,
     getSingleIngredientQuery,
     createIngredientMutation,
     deleteIngredientMutation,
     getAllIngredientPurchasesQuery,
-    createIngredientPurchaseMutation
+    createIngredientPurchaseMutation,
+    getAllIngredientTransactionsQuery,
+    createIngredientTransactionMutation
   }
 };
 

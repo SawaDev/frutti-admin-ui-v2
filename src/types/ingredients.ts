@@ -1,4 +1,4 @@
-import { createIngredientSchema, ingredientPurchaseSchema } from "@/schema/ingredients";
+import { createIngredientSchema, ingredientPurchaseSchema, ingredientTransactionSchema } from "@/schema/ingredients";
 import { z } from "zod";
 
 export interface Ingredient {
@@ -53,5 +53,33 @@ export interface GetAllIngredientPurchasesTypeResponse {
       kg?: number
       gr?: number
     }
+  }[]
+}
+
+export type CreateIngredientTransaction = z.infer<typeof ingredientTransactionSchema>
+
+export type ExtendedTransactionIngredient = Ingredient & {
+  transaction_quantity: number
+  transaction_cost: number
+}
+
+export interface GetAllIngredienTransactionsResponse {
+  success: boolean
+  data: {
+    id: number
+    category?: string
+    comment?: string
+
+    created_at: string
+    updated_at: string
+
+    totals: {
+      cost: number
+      count?: number
+      kg?: number
+      gr?: number
+    }
+
+    ingredients: ExtendedTransactionIngredient[]
   }[]
 }
