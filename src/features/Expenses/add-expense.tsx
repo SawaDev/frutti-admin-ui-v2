@@ -73,15 +73,6 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
                       label='Kategoriya'
                       handleNew={() => setNewCategory(true)}
                     />
-
-                    // <FormSearchInput
-                    //   control={form.control}
-                    //   name='category_id'
-                    //   options={categories?.data.map(categories => ({ value: categories.id.toString(), label: categories.name }))}
-                    //   label='Kategoriya'
-                    //   handleNew={() => setNewCategory(true)}
-                    //   handleChange={(value) => form.setValue('category_id', Number(value))}
-                    // />
                   )}
                   <FormInput
                     control={form.control}

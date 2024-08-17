@@ -1,7 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
-import { CreateIngredient, CreateIngredientTransaction, GetAllIngredientPurchasesTypeResponse, GetAllIngredienTransactionsResponse, GetAllIngredientsResponse, GetSingleIngredientResponse, IngredientPurchaseType } from "@/types/ingredients";
+import {
+  CreateIngredient,
+  CreateIngredientPurchaseType,
+  CreateIngredientTransaction,
+  GetAllIngredientCategories,
+  GetAllIngredientPurchasesTypeResponse,
+  GetAllIngredienTransactionsResponse,
+  GetAllIngredientsResponse,
+  GetSingleIngredientResponse,
+  IngredientPurchasesQueryParams,
+  UpdateIngredientPurchaseType
+} from "@/types/ingredients";
+import { ExpenseCategoryType, GetAllExpenseCategoriesResponse } from "@/types/expenses";
 
 const useIngredients = () => {
   const queryClient = useQueryClient();
@@ -85,11 +97,11 @@ const useIngredients = () => {
       }
     })
 
-  const getAllIngredientPurchasesQuery = () => useQuery<GetAllIngredientPurchasesTypeResponse, Error>({
-    queryKey: ["purchases"],
+  const getAllIngredientPurchasesQuery = (data: IngredientPurchasesQueryParams | undefined) => useQuery<GetAllIngredientPurchasesTypeResponse, Error>({
+    queryKey: data ? ["purchases", ...Object.values(data)] : ["purchases"],
     queryFn: async () => {
       try {
-        const response = await api.get(`/purchases`);
+        const response = await api.post(`/purchases`, data);
 
         return structuredClone(response.data);
       } catch (error: any) {
@@ -103,10 +115,36 @@ const useIngredients = () => {
   })
 
   const createIngredientPurchaseMutation = () => useMutation({
-    mutationFn: async (data: IngredientPurchaseType) => {
+    mutationFn: async (data: CreateIngredientPurchaseType) => {
       try {
         const response = await api.post(
-          '/purchases',
+          '/purchases/new',
+          data
+        );
+
+        toast({
+          title: "Muvaffaqiyatli saqlandi!"
+        })
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
+      queryClient.invalidateQueries({ queryKey: ["purchases"] })
+    }
+  })
+
+  const updateIngredientPurchaseMutation = (id: number) => useMutation({
+    mutationFn: async (data: UpdateIngredientPurchaseType) => {
+      try {
+        const response = await api.patch(
+          `/purchases/${id}`,
           data
         );
 
@@ -172,6 +210,61 @@ const useIngredients = () => {
     }
   })
 
+  const getAllIngredientCategoriesQuery = () => useQuery<GetAllExpenseCategoriesResponse, Error>({
+    queryKey: ["ingredients", "category-options"],
+    queryFn: async () => {
+      try {
+        const response = await api.get(`/ingredients/category-options`);
+
+        return structuredClone(response.data);
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+  })
+
+  const createIngredientCategoryMutation = () => useMutation({
+    mutationFn: async (data: ExpenseCategoryType) => {
+      try {
+        const response = await api.post(
+          '/ingredients/categories',
+          data
+        );
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ingredients", "category-options"] })
+    }
+  })
+
+  const getAllIngredientCategoriesExpandedQuery = () => useQuery<GetAllIngredientCategories, Error>({
+    queryKey: ["ingredients", "categories"],
+    queryFn: async () => {
+      try {
+        const response = await api.get(`/ingredients/categories`);
+
+        return structuredClone(response.data);
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+  })
+
   return {
     getAllIngredientsQuery,
     getSingleIngredientQuery,
@@ -179,8 +272,12 @@ const useIngredients = () => {
     deleteIngredientMutation,
     getAllIngredientPurchasesQuery,
     createIngredientPurchaseMutation,
+    updateIngredientPurchaseMutation,
     getAllIngredientTransactionsQuery,
-    createIngredientTransactionMutation
+    createIngredientTransactionMutation,
+    getAllIngredientCategoriesQuery,
+    createIngredientCategoryMutation,
+    getAllIngredientCategoriesExpandedQuery
   }
 };
 

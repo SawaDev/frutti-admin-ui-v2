@@ -1,13 +1,12 @@
 import { useMemo } from "react"
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ingredientCategoryOptions, unitOptions } from "@/constants/options"
 import { formatNumberComma } from "@/lib/utils"
 import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
-import { MoreHorizontal } from "lucide-react"
-import { GetAllIngredientPurchasesTypeResponse, GetAllIngredienTransactionsResponse, Ingredient } from "@/types/ingredients"
+import { MoreHorizontal, PlusCircle } from "lucide-react"
+import { GetAllIngredientCategories, GetAllIngredienTransactionsResponse, Ingredient } from "@/types/ingredients"
 import { Badge } from "@/components/ui/badge"
 import { FormInput } from "@/components/form/FormInput"
 import { UseFormReturn } from "react-hook-form"
@@ -28,18 +27,12 @@ export const getColumns = (setOpen: (value: number) => void) => {
         id: 'quantity',
         header: "Soni",
         cell: info => formatNumberComma(info.row.getValue("quantity")),
-        meta: {
-          filterVariant: 'range',
-        },
       },
       {
         accessorKey: 'cost',
         id: 'cost',
         header: "Narxi",
         cell: info => formatNumberComma(info.row.getValue("cost")),
-        meta: {
-          filterVariant: 'range',
-        },
       },
       {
         accessorKey: 'unit',
@@ -57,28 +50,17 @@ export const getColumns = (setOpen: (value: number) => void) => {
               return <></>
           }
         },
-        meta: {
-          filterVariant: 'select',
-          options: unitOptions
-        },
       },
       {
-        accessorKey: 'category',
-        id: 'category',
-        header: "Kategoriya",
-        meta: {
-          filterVariant: 'select',
-          options: ingredientCategoryOptions
-        },
+        accessorKey: 'category.name',
+        id: 'category.name',
+        header: "Kategoriya"
       },
       {
         accessorFn: row => format(row.created_at, "dd-MM-yyyy HH:mm:ss"),
         id: 'created_at',
         header: () => 'Yaratilingan sana',
         cell: info => info.getValue(),
-        meta: {
-          filterVariant: 'date_range',
-        },
       },
       {
         accessorFn: row => row.id,
@@ -109,86 +91,28 @@ export const getColumns = (setOpen: (value: number) => void) => {
   )
 }
 
-export const createPurchaseColumns = (form: UseFormReturn<any>) => {
+export const createPurchaseColumns = () => {
   return useMemo<ColumnDef<Ingredient, any>[]>(
     () => [
       {
-        accessorFn: row => row.name,
         id: 'name',
-        header: "Siryo",
-        meta: {
-          filterVariant: 'text',
-        },
+        header: "Nomi"
       },
       {
         id: 'quantity',
-        header: () => 'Miqdori',
-        cell: info => {
-          return (
-            <FormInput
-              name={`ingredients.${info.row.index}.quantity`}
-              type="number"
-              control={form.control}
-            />
-          )
-        },
+        header: "Qancha bor"
+      },
+      {
+        id: 'bags_count',
+        header: "Pochka soni"
+      },
+      {
+        id: 'quantity_input',
+        header: 'Miqdori'
       },
       {
         id: 'cost_per_unit',
-        header: () => 'Narxi',
-        cell: info => {
-          return (
-            <FormInput
-              name={`ingredients.${info.row.index}.cost_per_unit`}
-              type="number"
-              control={form.control}
-            />
-          )
-        },
-      },
-    ],
-    []
-  )
-}
-
-export const purchaseColumns = () => {
-  return useMemo<ColumnDef<GetAllIngredientPurchasesTypeResponse["data"][0], any>[]>(
-    () => [
-      {
-        accessorFn: row => format(row.created_at, "dd-MM-yyyy HH:mm:ss"),
-        id: 'created_at',
-        header: () => 'Yaratilingan sana',
-        cell: info => info.getValue(),
-      },
-      {
-        accessorKey: 'totals.cost',
-        id: 'totals.cost',
-        header: "Umumiy summasi",
-        cell: info => formatNumberComma(info.row.getValue("totals.cost")),
-      },
-      {
-        accessorKey: 'totals.count',
-        id: 'totals.count',
-        header: "Dona hammasi",
-        cell: info => formatNumberComma(info.row.getValue("totals.count")),
-      },
-      {
-        accessorKey: 'totals.kg',
-        id: 'totals.kg',
-        header: "Kg hammasi",
-        cell: info => formatNumberComma(info.row.getValue("totals.kg")),
-      },
-      {
-        accessorKey: 'totals.gr',
-        id: 'totals.gr',
-        header: "Gr hammasi",
-        cell: info => formatNumberComma(info.row.getValue("totals.gr")),
-      },
-      {
-        accessorKey: 'total_cost',
-        id: 'total_cost',
-        header: "Narxi",
-        cell: info => formatNumberComma(info.row.getValue("total_cost")),
+        header: 'Yangilangan Narx'
       },
     ],
     []
@@ -242,10 +166,57 @@ export const ingredientTransactionColumns = () => {
   return useMemo<ColumnDef<GetAllIngredienTransactionsResponse["data"]["0"], any>[]>(
     () => [
       {
+        id: "expand",
+        cell: () => <div>{<PlusCircle />}</div>
+      },
+      {
         accessorFn: row => format(row.created_at, "dd-MM-yyyy HH:mm:ss"),
         id: 'created_at',
         header: () => 'Yaratilingan sana',
         cell: info => info.getValue(),
+      },
+      {
+        accessorKey: 'totals.cost',
+        id: 'totals.cost',
+        header: "Umumiy summasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.cost")),
+      },
+      {
+        accessorKey: 'totals.count',
+        id: 'totals.count',
+        header: "Dona hammasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.count")),
+      },
+      {
+        accessorKey: 'totals.kg',
+        id: 'totals.kg',
+        header: "Kg hammasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.kg")),
+      },
+      {
+        accessorKey: 'totals.gr',
+        id: 'totals.gr',
+        header: "Gr hammasi",
+        cell: info => formatNumberComma(info.row.getValue("totals.gr")),
+      }
+    ],
+    []
+  )
+}
+
+export const categoriesColumns = () => {
+  return useMemo<ColumnDef<GetAllIngredientCategories["data"][0], any>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        id: 'name',
+        header: () => 'Nomi',
+      },
+      {
+        accessorFn: row => row.ingredients.length,
+        id: 'count_of_ingredients',
+        header: "Soni",
+        cell: info => formatNumberComma(info.getValue()),
       },
       {
         accessorKey: 'totals.cost',

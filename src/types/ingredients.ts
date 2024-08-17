@@ -1,17 +1,32 @@
 import { createIngredientSchema, ingredientPurchaseSchema, ingredientTransactionSchema } from "@/schema/ingredients";
 import { z } from "zod";
+import { Warehouse } from "./warehouses";
+
+export interface IngredientCategory {
+  id: number;
+  name: string;
+  children_ids: number[];
+  parent_ids: number[];
+
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Ingredient {
   id: number;
   warehouse_id: number;
+  category_id: number;
+
+  category?: IngredientCategory;
+  warehouse?: Warehouse;
 
   name: string;
   quantity: number;
   unit: 'kg' | 'count' | 'gr';
-  category: string;
   average_cost: number;
   cost: number;
   bag_distribution?: number | null;
+  bags_count: number;
 
   created_at: string;
 }
@@ -30,6 +45,23 @@ export type CreateIngredient = z.infer<typeof createIngredientSchema>
 
 export type IngredientPurchaseType = z.infer<typeof ingredientPurchaseSchema>
 
+export type CreateIngredientPurchaseType = {
+  total_cost: number;
+  ingredients: {
+    id: number;
+    quantity: number;
+    cost_per_unit: number;
+  }[]
+}
+
+export type UpdateIngredientPurchaseType = {
+  status: string
+  ingredients: {
+    id: number;
+    cost_per_unit: number;
+  }[]
+}
+
 export type ExtendedIngredient = Ingredient & {
   updated_at: string;
   purchase_quantity: number;
@@ -45,6 +77,7 @@ export interface GetAllIngredientPurchasesTypeResponse {
     fee: number | null
     created_at: string
     updated_at: string
+    status: "finished" | "waiting" | "on_way"
 
     ingredients: ExtendedIngredient[]
     totals: {
@@ -54,6 +87,12 @@ export interface GetAllIngredientPurchasesTypeResponse {
       gr?: number
     }
   }[]
+}
+
+export interface IngredientPurchasesQueryParams {
+  status: "finished" | "waiting" | "on_way"
+  from_date: string
+  to_date: string
 }
 
 export type CreateIngredientTransaction = z.infer<typeof ingredientTransactionSchema>
@@ -82,4 +121,19 @@ export interface GetAllIngredienTransactionsResponse {
 
     ingredients: ExtendedTransactionIngredient[]
   }[]
+}
+
+export interface IngredientCategory {
+  id: number
+  name: string
+
+  created_at: string
+  updated_at: string
+
+  ingredients: Ingredient[]
+}
+
+export interface GetAllIngredientCategories {
+  success: boolean
+  data: IngredientCategory[]
 }

@@ -1,77 +1,115 @@
-import { ExtendedIngredient } from "@/types/ingredients"
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import React from "react"
-import { purchaseIngredientColumns } from "./columns"
+import { ExtendedIngredient, UpdateIngredientPurchaseType } from "@/types/ingredients"
+import React, { useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { FormProvider, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { updateIngredientPurchaseSchema } from "@/schema/ingredients"
+import { purchaseOptions } from "@/constants/options"
+import { FormSelect } from "@/components/form/FormSelect"
+import { Button } from "@/components/ui/button"
+import useIngredients from "@/hooks/useIngredients"
+import { FormInput } from "@/components/form/FormInput"
 
 interface PurchaseIngredientTableType {
   data: ExtendedIngredient[] | undefined
+  purchaseId: number
+  handleClose: () => void
 }
 
-const PurchaseIngredientTable: React.FC<PurchaseIngredientTableType> = ({ data }) => {
+const PurchaseIngredientTable: React.FC<PurchaseIngredientTableType> = ({ data, purchaseId, handleClose }) => {
+  const { updateIngredientPurchaseMutation } = useIngredients()
 
-  const table = useReactTable({
-    data: data ?? [],
-    columns: purchaseIngredientColumns(),
-    filterFns: {},
-    getCoreRowModel: getCoreRowModel(),
+  const updateIngredientPurchase = updateIngredientPurchaseMutation(purchaseId)
+
+  const form = useForm<UpdateIngredientPurchaseType>({
+    resolver: zodResolver(updateIngredientPurchaseSchema),
+    defaultValues: {
+      status: "finished",
+      ingredients: []
+    }
   })
 
+  useEffect(() => {
+    data?.forEach((ingredient, index) => {
+      form.setValue(
+        `ingredients.${index}`,
+        {
+          id: ingredient.id,
+          cost_per_unit: ingredient.purchase_cost_per_unit
+        }
+      )
+    })
+  }, [data])
+
+  const onSubmit = async (values: UpdateIngredientPurchaseType) => {
+    await updateIngredientPurchase.mutateAsync(values).then(() => handleClose())
+  }
+
   return (
-    <Table>
-      <ScrollArea className="max-h-[800px]">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id} colSpan={header.colSpan} className="border-r-2 last:border-none">
-                    <div className="flex items-center justify-between pr-2">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )
-                      }
-                    </div>
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
-                  </TableCell>
-                ))}
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <div className="flex items-center justify-around gap-3">
+          <FormSelect
+            control={form.control}
+            name="status"
+            options={purchaseOptions}
+          />
+          <Button>
+            Saqlash
+          </Button>
+        </div>
+        <Table>
+          <ScrollArea className={`${data && data?.length > 10 ? 'h-[80vh]' : ''} relative`}>
+            <TableHeader className="sticky top-0 bg-white">
+              <TableRow>
+                <TableHead className="border-r-2 last:border-none">
+                  Nomi
+                </TableHead>
+                <TableHead className="border-r-2 last:border-none">
+                  Miqdori
+                </TableHead>
+                <TableHead className="border-r-2 last:border-none">
+                  Narxi
+                </TableHead>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={purchaseIngredientColumns().length}
-                className="h-24 text-center"
-              >
-                Hech narsa yo'q.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </ScrollArea>
-    </Table>
+            </TableHeader>
+            <TableBody>
+              {data?.map((ingredient, index) => (
+                <TableRow
+                  key={ingredient.id}
+                >
+                  <TableCell>
+                    {ingredient.name}
+                  </TableCell>
+                  <TableCell>
+                    {ingredient.purchase_quantity}
+                  </TableCell>
+                  <TableCell>
+                    <FormInput
+                      name={`ingredients.${index}.cost_per_unit`}
+                      type="number"
+                      control={form.control}
+                      step={0.01}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+              {data?.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={99}
+                    className="h-24 text-center"
+                  >
+                    Hech narsa yo'q.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </ScrollArea>
+        </Table>
+      </form>
+    </FormProvider>
   )
 }
 

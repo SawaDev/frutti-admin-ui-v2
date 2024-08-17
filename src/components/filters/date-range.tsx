@@ -14,7 +14,7 @@ import {
 
 
 interface DateRangeType {
-  onChange?: () => void;
+  onChange?: (range: DateRange | undefined) => void;
 }
 
 const DatePickerWithRange: React.FC<DateRangeType> = ({ onChange }) => {
@@ -59,7 +59,12 @@ const DatePickerWithRange: React.FC<DateRangeType> = ({ onChange }) => {
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(range) => {
+              setDate(range)
+              if (onChange) {
+                onChange(range)
+              }
+            }}
             numberOfMonths={2}
           />
         </PopoverContent>

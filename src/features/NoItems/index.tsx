@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button"
 
 interface NoItemsProps {
   setOpen: (value: boolean) => void
+  setOpenWarehouse?: (value: boolean) => void
 }
 
-export default function NoItems({ setOpen }: NoItemsProps) {
+export default function NoItems({ setOpen, setOpenWarehouse }: NoItemsProps) {
   return (
     <div
       className="flex flex-1 items-center justify-center h-full rounded-lg border border-dashed shadow-sm"
@@ -16,7 +17,12 @@ export default function NoItems({ setOpen }: NoItemsProps) {
         <p className="text-sm text-muted-foreground">
           Yangi ma'lumot qo'shganingizdan so'ng u ustida amallarni bajarishingiz mumkin.
         </p>
-        <Button onClick={() => setOpen(true)} className="mt-4">Qo'shish</Button>
+        <div className="flex items-center justify-center gap-3">
+          <Button onClick={() => setOpen(true)} className="mt-4">Qo'shish</Button>
+          {setOpenWarehouse &&
+            <Button onClick={() => setOpenWarehouse(true)} variant={"outline"} className="mt-4">Sklad Qo'shish</Button>
+          }
+        </div>
       </div>
     </div>
   )

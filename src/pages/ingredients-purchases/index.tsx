@@ -1,6 +1,18 @@
 import { PlusCircle } from "lucide-react"
 import { useEffect, useState } from "react"
-import { ColumnFiltersState, getCoreRowModel, useReactTable, getFilteredRowModel, flexRender } from "@tanstack/react-table"
+import { getCoreRowModel, useReactTable, flexRender } from "@tanstack/react-table"
+import { FormProvider, useForm } from "react-hook-form"
+import { endOfDay, endOfMonth, format, startOfDay, startOfMonth } from "date-fns"
+import { DateRange } from "react-day-picker"
+
+import NoItems from '@/features/NoItems'
+import useIngredients from "@/hooks/useIngredients"
+import AddIngredient from "@/features/Ingredients/add-ingredient"
+import AddWarehouse from "@/features/Warehouses/add-warehouse"
+import PurchaseIngredientTable from "@/features/PurchaseIngredient/purchase-ingredient-table"
+import DatePickerWithRange from "@/components/filters/date-range"
+import IngredientPurchaseTable from "@/features/Ingredients/ingredient-purchase-table"
+
 
 import { Button } from "@/components/ui/button"
 import {
@@ -10,88 +22,112 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import NoItems from '@/features/NoItems'
-import useIngredients from "@/hooks/useIngredients"
-import AddIngredient from "@/features/Ingredients/add-ingredient"
-import AddWarehouse from "@/features/Warehouses/add-warehouse"
-
-import { FormProvider, useForm } from "react-hook-form"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { IngredientPurchaseType } from "@/types/ingredients"
 import { FormInput } from "@/components/form/FormInput"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ingredientPurchaseSchema } from "@/schema/ingredients"
-import { createPurchaseColumns, purchaseColumns } from "@/features/Ingredients/columns"
+import { categoriesColumns, createPurchaseColumns } from "@/features/Ingredients/columns"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import PurchaseIngredientTable from "@/features/PurchaseIngredient/purchase-ingredient-table"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { purchaseCountryOptions, purchaseOptions } from "@/constants/options"
+import { FormSelect } from "@/components/form/FormSelect"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const IngredientsPurchase = () => {
+  const currentMonthStart = startOfMonth(new Date());
+  const currentMonthEnd = endOfMonth(new Date());
+
   const [openSheet, setOpenSheet] = useState<boolean>(false)
   const [addWarehouseSheet, setAddWarehouseSheet] = useState<boolean>(false)
   const [purchaseIndex, setPurchaseIndex] = useState<number | undefined>()
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [date, setDate] = useState<{ from_date: string, to_date: string }>({
+    from_date: format(currentMonthStart, "yyyy-MM-dd HH:mm:ss"),
+    to_date: format(currentMonthEnd, "yyyy-MM-dd HH:mm:ss")
+  })
 
-  const { getAllIngredientsQuery, createIngredientPurchaseMutation, getAllIngredientPurchasesQuery } = useIngredients()
+  const {
+    getAllIngredientsQuery,
+    createIngredientPurchaseMutation,
+    getAllIngredientPurchasesQuery,
+    getAllIngredientCategoriesExpandedQuery
+  } = useIngredients()
 
   const { data: ingredients, isLoading: loadingIngredients, isError: errorIngredients } = getAllIngredientsQuery()
-  const { data: purchases, isLoading: loadingPurchases, isError: errorPurchases } = getAllIngredientPurchasesQuery()
+  const { data: categories, isLoading: loadingCategories, isError: errorCategories } = getAllIngredientCategoriesExpandedQuery()
+  const { data: purchases, isLoading: loadingPurchases, isError: errorPurchases } = getAllIngredientPurchasesQuery({
+    status: "finished",
+    from_date: date.from_date,
+    to_date: date.to_date
+  })
 
   const createPurchase = createIngredientPurchaseMutation()
 
   const form = useForm<IngredientPurchaseType>({
     resolver: zodResolver(ingredientPurchaseSchema),
     defaultValues: {
+      status: "finished",
+      purchased_from: "uzbekistan",
       ingredients: []
     }
   })
 
-  useEffect(() => {
-    if (ingredients) {
-      form.setValue("ingredients", ingredients.data.map(i => ({
-        id: i.id,
-        quantity: 0,
-        cost_per_unit: i.cost
-      })))
-    }
-  }, [ingredients])
+  const categoriesTable = useReactTable({
+    data: categories?.data ?? [],
+    columns: categoriesColumns(),
+    getCoreRowModel: getCoreRowModel(),
+  })
 
   const table = useReactTable({
-    data: ingredients?.data ?? [],
-    columns: createPurchaseColumns(form),
-    filterFns: {},
-    state: {
-      columnFilters,
-    },
-    onColumnFiltersChange: setColumnFilters,
+    data: [],
+    columns: createPurchaseColumns(),
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   })
 
-  const purchaseTable = useReactTable({
-    data: purchases?.data ?? [],
-    columns: purchaseColumns(),
-    filterFns: {},
-    state: {
-      columnFilters,
-    },
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  })
+  useEffect(() => {
+    if (categories?.data && categories?.data.length > 0) {
+      categories.data.forEach((category, categoryIndex) => {
+        if (category.ingredients.length > 0) {
+          category.ingredients.forEach((ingredient, index) => {
+            form.setValue(
+              `ingredients.${categoryIndex}.${index}`,
+              {
+                id: ingredient.id,
+                quantity: 0,
+                cost_per_unit: ingredient.cost
+              }
+            )
+          })
+        } else {
+          form.setValue(
+            `ingredients.${categoryIndex}`, []
+          )
+        }
+      })
+    }
+  }, [categories?.data])
 
   const onSubmit = async (values: IngredientPurchaseType) => {
-    const ingredients = values.ingredients.filter(i => i.quantity > 0)
-    await createPurchase.mutateAsync({
-      ...values,
-      ingredients
-    })
+
+    const { ingredients, ...others } = values
+    const flattenedIngredients = ingredients.flat()
+
+    await createPurchase.mutateAsync({ ingredients: flattenedIngredients, ...others })
   }
 
-  if (loadingIngredients || loadingPurchases) {
+  const handleDateChange = (range: DateRange | undefined) => {
+    setDate((prev) => ({
+      ...prev,
+      from_date: range?.from ? format(startOfDay(range.from), "yyyy-MM-dd HH:mm:ss") : "",
+      to_date: range?.to ? format(endOfDay(range.to), "yyyy-MM-dd HH:mm:ss") : ""
+    }))
+  }
+
+  if (loadingIngredients || loadingPurchases || loadingCategories) {
     return <>Loading...</>
   }
 
-  if (errorIngredients || errorPurchases) {
+  if (errorIngredients || errorPurchases || errorCategories) {
     return <>Error</>
   }
 
@@ -130,26 +166,29 @@ const IngredientsPurchase = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div className="grid grid-cols-5 gap-3 mb-3">
                     <FormInput
                       name="total_cost"
                       control={form.control}
                       label="Umumiy Narxi"
+                      type="number"
                     />
-                    <FormInput
-                      name="shipping_cost"
+                    <FormSelect
                       control={form.control}
-                      label="Yetkaziz Berish Narxi"
+                      name='status'
+                      label='Status'
+                      options={purchaseOptions}
                     />
-                    <FormInput
-                      name="fee"
+                    <FormSelect
                       control={form.control}
-                      label="Soliq Narxi"
+                      name='purchased_from'
+                      label='Qayerdan olindi'
+                      options={purchaseCountryOptions}
                     />
                   </div>
                   <Table>
                     <TableHeader>
-                      {table.getHeaderGroups().map((headerGroup) => (
+                      {categoriesTable.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                           {headerGroup.headers.map((header) => {
                             return (
@@ -170,26 +209,97 @@ const IngredientsPurchase = () => {
                       ))}
                     </TableHeader>
                     <TableBody>
-                      {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                          <TableRow
-                            key={row.id}
-                            data-state={row.getIsSelected() && "selected"}
-                          >
-                            {row.getVisibleCells().map((cell) => (
-                              <TableCell key={cell.id}>
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext()
+                      {categoriesTable.getRowModel().rows?.length ? (
+                        categoriesTable.getRowModel().rows.map((row) => (
+                          <Collapsible key={row.id} asChild>
+                            <>
+                              <CollapsibleTrigger asChild>
+                                <TableRow
+                                  key={row.id}
+                                  data-state={row.getIsSelected() && "selected"}
+                                >
+                                  {row.getVisibleCells().map((cell) => (
+                                    <TableCell key={cell.id}>
+                                      {flexRender(
+                                        cell.column.columnDef.cell,
+                                        cell.getContext()
+                                      )}
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              </CollapsibleTrigger>
+                              <CollapsibleContent asChild>
+                                {categories?.data[row.index].ingredients && categories?.data[row.index].ingredients.length && (
+                                  <TableRow className="hover:bg-inherit">
+                                    <TableCell className="p-0 pl-6" colSpan={6}>
+                                      <Table>
+                                        <TableHeader>
+                                          {table.getHeaderGroups().map((headerGroup) => (
+                                            <TableRow key={headerGroup.id}>
+                                              {headerGroup.headers.map((header) => {
+                                                return (
+                                                  <TableHead key={header.id} colSpan={header.colSpan}>
+                                                    <div className="w-full flex items-center justify-between pr-2 border-r-2">
+                                                      {header.isPlaceholder
+                                                        ? null
+                                                        : flexRender(
+                                                          header.column.columnDef.header,
+                                                          header.getContext()
+                                                        )
+                                                      }
+                                                    </div>
+                                                  </TableHead>
+                                                )
+                                              })}
+                                            </TableRow>
+                                          ))}
+                                        </TableHeader>
+                                        <TableBody>
+                                          {categories?.data[row.index].ingredients.map((ingredient, index) => {
+                                            return (
+                                              <TableRow className="p-0" key={ingredient.id}>
+                                                <TableCell className="p-2 px-4">{ingredient.name}</TableCell>
+                                                <TableCell className="p-2 px-4">
+                                                  {ingredient.quantity}&nbsp;
+                                                  {
+                                                    ingredient.unit === 'count'
+                                                      ? 'dona'
+                                                      : ingredient.unit
+                                                  }
+                                                </TableCell>
+                                                <TableCell className="p-2 px-4">{ingredient.bags_count}</TableCell>
+                                                <TableCell className="p-2 px-4">
+                                                  <FormInput
+                                                    name={`ingredients.${row.index}.${index}.quantity`}
+                                                    type="number"
+                                                    control={form.control}
+                                                    step={0.01}
+                                                  />
+                                                </TableCell>
+                                                <TableCell className="p-2 px-4">
+                                                  <FormInput
+                                                    name={`ingredients.${row.index}.${index}.cost_per_unit`}
+                                                    type="number"
+                                                    control={form.control}
+                                                    step={0.01}
+                                                  />
+                                                </TableCell>
+                                              </TableRow>
+                                            )
+                                          })}
+                                        </TableBody>
+                                      </Table>
+                                    </TableCell>
+                                  </TableRow>
                                 )}
-                              </TableCell>
-                            ))}
-                          </TableRow>
+                              </CollapsibleContent>
+                            </>
+                          </Collapsible>
                         ))
                       ) : (
                         <TableRow>
                           <TableCell
-                            colSpan={createPurchaseColumns(form).length}
+                            colSpan={99}
                             className="h-24 text-center"
                           >
                             Hech narsa yo'q.
@@ -202,65 +312,28 @@ const IngredientsPurchase = () => {
               </form>
             </FormProvider>
           </Card>
-          <Card className="mx-6 mb-10">
-            <Table>
-              <TableHeader>
-                {purchaseTable.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          <div className="w-full flex items-center justify-between pr-2 border-r-2">
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )
-                            }
-                          </div>
-                        </TableHead>
-                      )
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {purchaseTable.getRowModel().rows?.length ? (
-                  purchaseTable.getRowModel().rows.map((row) => {
-                    // const ingredientLength = purchases?.data[row.index].ingredients.length ?? 0
-
-                    return (
-                      <TableRow key={row.index} onClick={() => setPurchaseIndex(row.index)}>
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                        {/* <div
-                          className={`relative w-full bg-green-200`}
-                          // style={{ marginBottom: ingredientLength * 20 }}
-                        >
-                          <div className="absolute w-[800px] bg-red-400">gkfdjgkldgjldk</div>
-                        </div> */}
-                      </TableRow>
-                    )
-                  })
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={createPurchaseColumns(form).length}
-                      className="h-24 text-center"
-                    >
-                      Hech narsa yo'q.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+          <Card className="mx-6 mb-10 p-4">
+            <Tabs defaultValue="finished" className="w-full">
+              <div className="flex items-center justify-between">
+                <TabsList className="grid w-[500px] grid-cols-3">
+                  <TabsTrigger value="finished">Tugatilgan</TabsTrigger>
+                  <TabsTrigger value="waiting">Kutilayotgan</TabsTrigger>
+                  <TabsTrigger value="on_way">Yo'lda</TabsTrigger>
+                </TabsList>
+                <div className="pr-4">
+                  <DatePickerWithRange onChange={handleDateChange} />
+                </div>
+              </div>
+              <TabsContent value="finished">
+                <IngredientPurchaseTable status="finished" from_date={date.from_date} to_date={date.to_date} />
+              </TabsContent>
+              <TabsContent value="waiting">
+                <IngredientPurchaseTable status="waiting" from_date={date.from_date} to_date={date.to_date} />
+              </TabsContent>
+              <TabsContent value="on_way">
+                <IngredientPurchaseTable status="on_way" from_date={date.from_date} to_date={date.to_date} />
+              </TabsContent>
+            </Tabs>
           </Card >
         </>
       ) : (
@@ -271,7 +344,11 @@ const IngredientsPurchase = () => {
       {purchaseIndex !== undefined && (
         <Dialog open={true} onOpenChange={() => setPurchaseIndex(undefined)}>
           <DialogContent className="py-3 px-2">
-            <PurchaseIngredientTable data={purchases?.data[purchaseIndex ?? 0].ingredients} />
+            <PurchaseIngredientTable
+              data={purchases?.data[purchaseIndex ?? 0].ingredients}
+              purchaseId={purchaseIndex}
+              handleClose={() => setPurchaseIndex(undefined)}
+            />
           </DialogContent>
         </Dialog>
       )}

@@ -38,6 +38,7 @@ import NoItems from '@/features/NoItems'
 import { format } from "date-fns"
 import AddClient from "@/features/Clients/add-client"
 import useClients from "@/hooks/useClients"
+import { formatNumberComma } from "@/lib/utils"
 
 const Clients = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
@@ -88,6 +89,7 @@ const Clients = () => {
                 <TableRow>
                   <TableHead>Ismi</TableHead>
                   <TableHead>Balans</TableHead>
+                  <TableHead>Pul birligi</TableHead>
                   <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
@@ -107,7 +109,21 @@ const Clients = () => {
                             : client.balance == 0 ? "outline"
                               : "destructive"}
                       >
-                        {client.balance}
+                        {formatNumberComma(client.balance)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          client.currency === "SUM" ? "outline"
+                            : client.currency === "USD" ? "default"
+                              : "destructive"
+                        }
+                      >
+                        {client.currency === "SUM" ? "So'm"
+                          : client.currency === "USD" ? "Dollar"
+                            : ""
+                        }
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">

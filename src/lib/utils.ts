@@ -1,3 +1,4 @@
+import { toast } from "@/components/ui/use-toast";
 import { type ClassValue, clsx } from "clsx"
 import { ChangeEvent } from "react";
 import { twMerge } from "tailwind-merge"
@@ -6,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getImageData(event: ChangeEvent<HTMLInputElement>) {
+export const getImageData = (event: ChangeEvent<HTMLInputElement>) => {
   const dataTransfer = new DataTransfer();
 
   Array.from(event.target.files!).forEach((image) =>
@@ -19,7 +20,7 @@ export function getImageData(event: ChangeEvent<HTMLInputElement>) {
   return { files, displayUrl };
 }
 
-export function formatNumberComma(number: number | null, minFraction?: number, maxFraction?: number): string {
+export const formatNumberComma = (number: number | null, minFraction?: number, maxFraction?: number): string => {
   if (!number) return "0";
   return number.toLocaleString("en-US", {
     minimumFractionDigits: minFraction ?? 0,
@@ -27,7 +28,7 @@ export function formatNumberComma(number: number | null, minFraction?: number, m
   })
 }
 
-export const convertToQueryString = (params: Record<string, string | number | boolean | null | undefined>): string => {
+export const convertToQueryString = (params: any): string => {
   const queryString = Object.entries(params)
     .flatMap(([key, value]) => {
       if (value === null || value === undefined) {
@@ -39,4 +40,26 @@ export const convertToQueryString = (params: Record<string, string | number | bo
     .join('&');
 
   return queryString ? `?${queryString}` : '';
+}
+
+export const copyToClipboard = (text: string, message: string): void => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      toast({
+        title: message
+      });
+    })
+    .catch(() => {
+      toast({
+        title: "O'zingiz nusxalashga urunib ko'ring!"
+      });
+    });
+}
+
+export const getUnit = (unit: "count" | "kg" | "gr"): string => {
+  if (unit === "count") {
+    return "dona"
+  }
+  return unit;
 }

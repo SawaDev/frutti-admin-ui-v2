@@ -1,14 +1,17 @@
+import React from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+
+import useClients from '@/hooks/useClients'
 import { FormInput } from '@/components/form/FormInput'
+import { FormSelect } from '@/components/form/FormSelect'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import useClients from '@/hooks/useClients'
+import { currencyOptions } from '@/constants/options'
 import { createClientSchema } from '@/schema/clients'
 import { ClientType } from '@/types/clients'
-import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
-import { useForm } from 'react-hook-form'
 
 interface AddClientProps {
   open: boolean
@@ -22,7 +25,9 @@ const AddClient: React.FC<AddClientProps> = ({ open, setOpen }) => {
 
   const form = useForm<ClientType>({
     resolver: zodResolver(createClientSchema),
-    defaultValues: {}
+    defaultValues: {
+      currency: "SUM"
+    }
   })
 
   const onSubmit = (values: ClientType) => {
@@ -58,6 +63,13 @@ const AddClient: React.FC<AddClientProps> = ({ open, setOpen }) => {
                     className='mx-1'
                     type='number'
                     step={0.01}
+                  />
+                  <FormSelect
+                    control={form.control}
+                    name='currency'
+                    label='Pul birligi'
+                    className='mx-1'
+                    options={currencyOptions}
                   />
                 </div>
               </ScrollArea>

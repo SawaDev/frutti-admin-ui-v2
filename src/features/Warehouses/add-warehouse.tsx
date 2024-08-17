@@ -35,9 +35,9 @@ const AddWarehouse: React.FC<SheetType> = ({ open, setOpen }) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
-              <SheetTitle>Yangi siroyni yaratish</SheetTitle>
+              <SheetTitle>Yangi sklad yaratish</SheetTitle>
               <SheetDescription>
-                Bu yerda siz yangi siryo qo'sha olasiz
+                Bu yerda siz yangi sklad qo'sha olasiz
               </SheetDescription>
             </SheetHeader>
             <div className="grid gap-2 py-4">

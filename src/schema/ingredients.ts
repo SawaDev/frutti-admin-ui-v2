@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createIngredientSchema = z.object({
   warehouse_id: z.string({ required_error: "Sklad ni tanlang!" }),
   name: z.string({ required_error: "Siryo nomini kiriting!" }),
-  category: z.string({ required_error: "Kategoriyani kiriting!" }),
+  category_id: z.string({ required_error: "Kategoriyani kiriting!" }),
   quantity: z.number({ required_error: "Siryo miqdorini kiriting!" }),
   unit: z.string({ required_error: "Birligini kiriting!" }),
   cost: z.number({ required_error: "Narxini kiriting!" }),
@@ -12,14 +12,16 @@ export const createIngredientSchema = z.object({
 
 export const ingredientPurchaseSchema = z.object({
   total_cost: z.number({ required_error: "Narxini kiriting!" }),
-  shipping_cost: z.number().optional(),
-  fee: z.number().optional(),
+  status: z.string({ required_error: "Statusni kiriting!" }),
+  purchased_from: z.string({ required_error: "Qayerdan olinganini kiriting!" }),
   ingredients: z.array(
-    z.object({
-      id: z.number(),
-      quantity: z.number(),
-      cost_per_unit: z.number()
-    })
+    z.array(
+      z.object({
+        id: z.number(),
+        quantity: z.number(),
+        cost_per_unit: z.number()
+      })
+    )
   )
 })
 
@@ -29,6 +31,16 @@ export const ingredientTransactionSchema = z.object({
     z.object({
       id: z.number(),
       quantity: z.number(),
+    })
+  )
+})
+
+export const updateIngredientPurchaseSchema = z.object({
+  status: z.string({ required_error: "Statusni kiriting!" }),
+  ingredients: z.array(
+    z.object({
+      id: z.number(),
+      cost_per_unit: z.number()
     })
   )
 })

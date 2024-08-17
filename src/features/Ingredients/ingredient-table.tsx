@@ -1,21 +1,28 @@
 import { Skeleton } from "@/components/ui/skeleton"
-import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
+import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useState } from "react"
-import { getColumns } from "./columns"
+import { categoriesColumns } from "./columns"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import useIngredients from "@/hooks/useIngredients"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { formatNumberComma, getUnit } from "@/lib/utils"
+import { MoreHorizontal } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface IngredientTableType { }
 
 const IngredientTable: React.FC<IngredientTableType> = () => {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [deleteModal, setDeleteModal] = useState<number>()
 
-  const { getAllIngredientsQuery, deleteIngredientMutation } = useIngredients()
+  const {
+    getAllIngredientCategoriesExpandedQuery,
+    deleteIngredientMutation
+  } = useIngredients()
 
-  const { data: ingredients, isLoading } = getAllIngredientsQuery()
+  const { data: categories, isLoading: loadingCategories, isError: errorCategories } = getAllIngredientCategoriesExpandedQuery()
+
 
   const deleteIngredient = deleteIngredientMutation(deleteModal)
 
@@ -25,36 +32,27 @@ const IngredientTable: React.FC<IngredientTableType> = () => {
     })
   }
 
-  const table = useReactTable({
-    data: ingredients?.data ?? [],
-    columns: getColumns(setDeleteModal),
-    filterFns: {},
-    state: {
-      columnFilters,
-    },
-    onColumnFiltersChange: setColumnFilters,
+  const categoriesTable = useReactTable({
+    data: categories?.data ?? [],
+    columns: categoriesColumns(),
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
   })
 
-  if (isLoading) {
+  if (loadingCategories) {
     return <Skeleton className="w-full h-[600px]" />
   }
+
+  if (errorCategories) return <>Error</>
 
   return (
     <Table>
       <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
+        {categoriesTable.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               return (
                 <TableHead key={header.id} colSpan={header.colSpan}>
-                  <div className="flex items-center justify-between pr-2 border-r-2">
+                  <div className="w-full flex items-center justify-between pr-2 border-r-2">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -70,26 +68,107 @@ const IngredientTable: React.FC<IngredientTableType> = () => {
         ))}
       </TableHeader>
       <TableBody>
-        {table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              data-state={row.getIsSelected() && "selected"}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext()
+        {categoriesTable.getRowModel().rows?.length ? (
+          categoriesTable.getRowModel().rows.map((row) => (
+            <Collapsible key={row.id} asChild>
+              <>
+                <CollapsibleTrigger asChild>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </CollapsibleTrigger>
+                <CollapsibleContent asChild>
+                  {categories?.data[row.index].ingredients && categories?.data[row.index].ingredients.length && (
+                    <TableRow className="hover:bg-inherit">
+                      <TableCell className="p-0 pl-6" colSpan={99}>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>
+                                <div className="w-full flex items-center justify-between pr-2 border-r-2">
+                                  Nomi
+                                </div>
+                              </TableHead>
+                              <TableHead>
+                                <div className="w-full flex items-center justify-between pr-2 border-r-2">
+                                  Miqdori
+                                </div>
+                              </TableHead>
+                              <TableHead>
+                                <div className="w-full flex items-center justify-between pr-2 border-r-2">
+                                  Narxi
+                                </div>
+                              </TableHead>
+                              <TableHead>
+                                <div className="w-full flex items-center justify-between pr-2 border-r-2">
+                                  Pochkada
+                                </div>
+                              </TableHead>
+                              <TableHead className="sr-only">
+                                Actions
+                              </TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {categories?.data[row.index].ingredients.map((ingredient) => {
+                              return (
+                                <TableRow className="p-0" key={ingredient.id}>
+                                  <TableCell className="p-2 px-4">{ingredient.name}</TableCell>
+                                  <TableCell className="p-2 px-4">
+                                    {formatNumberComma(ingredient.quantity)}&nbsp;
+                                    {
+                                      getUnit(ingredient.unit)
+                                    }
+                                  </TableCell>
+                                  <TableCell className="p-2 px-4">{formatNumberComma(ingredient.cost)}</TableCell>
+                                  <TableCell className="p-2 px-4">
+                                    {formatNumberComma(ingredient.bags_count)} - {formatNumberComma(ingredient.bag_distribution ?? 0)} dan
+                                  </TableCell>
+                                  <TableCell className="w-16">
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                                          <MoreHorizontal className="h-4 w-4" />
+                                          <span className="sr-only">Menu</span>
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
+                                        <DropdownMenuItem
+                                          className="focus:bg-red-100 focus:text-red-800"
+                                          onClick={() => setDeleteModal(ingredient.id)}
+                                        >
+                                          O'chirish
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </TableCell>
+                                </TableRow>
+                              )
+                            })}
+                          </TableBody>
+                        </Table>
+                      </TableCell>
+                    </TableRow>
                   )}
-                </TableCell>
-              ))}
-            </TableRow>
+                </CollapsibleContent>
+              </>
+            </Collapsible>
           ))
         ) : (
           <TableRow>
             <TableCell
-              colSpan={getColumns(setDeleteModal).length}
+              colSpan={99}
               className="h-24 text-center"
             >
               Hech narsa yo'q.
@@ -101,12 +180,15 @@ const IngredientTable: React.FC<IngredientTableType> = () => {
         <Dialog open={deleteModal ? true : false} onOpenChange={() => setDeleteModal(undefined)}>
           <DialogContent>
             <DialogTitle>
-              Siyoni o'chirish
+              Siryoni o'chirish
             </DialogTitle>
             <DialogDescription>
               Siryoni o'chirganingizdan so'ng uni qayta tiklab bo'lmaydi
             </DialogDescription>
             <DialogFooter>
+              <Button variant={"outline"} onClick={() => setDeleteModal(undefined)}>
+                Bekor qilish
+              </Button>
               <Button variant={"destructive"} onClick={handleDelete}>
                 O'chirish
               </Button>

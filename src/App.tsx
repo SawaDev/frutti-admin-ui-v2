@@ -1,4 +1,5 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { Toaster } from './components/ui/toaster';
 import Home from './pages/home';
@@ -18,6 +19,10 @@ import Expenses from './pages/expenses';
 import Ingredients from './pages/ingredients';
 import IngredientsPurchase from './pages/ingredients-purchases';
 import IngredientTransaction from './pages/ingredients-transactions';
+import Women from './pages/woman';
+import EditWoman from './pages/woman/EditWoman';
+import Products from './pages/products';
+import Sales from './pages/sales';
 
 function App() {
   const { token } = useAuthStore()
@@ -46,11 +51,18 @@ function App() {
               <Route path='ingredients' element={<Ingredients />} />
               <Route path='ingredients-purchases' element={<IngredientsPurchase />} />
               <Route path='ingredients-transactions' element={<IngredientTransaction />} />
+              <Route path='women' element={<Women />} />
+              <Route path='women/:id' element={<EditWoman />} />
+              <Route path='products' element={<Products />} />
+              <Route path='payments' element={<Ingredients />} />
+              <Route path='sales' element={<Sales />} />
+              <Route path='*' element={<>NOT FOUNND</>} />
             </Route>
           </Routes>
         </MainLayout>
       )}
       <Toaster />
+      <ReactQueryDevtools />
     </HashRouter>
   )
 }

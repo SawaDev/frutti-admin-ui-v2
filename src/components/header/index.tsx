@@ -3,7 +3,6 @@ import {
   CircleUser,
   Menu,
   Package2,
-  // Search,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import CustomLink from "@/components/customLink"
+import CustomLink from "@/components/custom-link"
 import useAuthStore from "@/store/auth"
 import { ListItem, NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "../ui/navigation-menu"
 import { useEffect, useRef, useState } from "react"
@@ -86,13 +85,6 @@ const Header = () => {
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 z-50 md:px-6">
       <NavigationMenu orientation="horizontal">
         <NavigationMenuList className="hidden flex-col gap-3 text-lg font-medium md:flex md:flex-row md:items-center md:text-sm">
-          <Link
-            to="#"
-            className="flex items-center gap-2 text-lg font-semibold md:text-base"
-          >
-            <Package2 className="h-6 w-6" />
-            <span className="sr-only">Mahsulotlar</span>
-          </Link>
           <NavigationMenuItem>
             <NavigationMenuTrigger
               onPointerMove={(event) => event.preventDefault()}
@@ -110,12 +102,12 @@ const Header = () => {
               onPointerMove={(event) => event.preventDefault()}
               onPointerLeave={(event) => event.preventDefault()}
             >
-              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[800px] lg:grid-cols-[.75fr_1fr_1fr]">
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
-                    <a
+                    <Link
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                      href="/products"
+                      to="/products"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Mahsulotlar
@@ -123,17 +115,23 @@ const Header = () => {
                       <p className="text-sm leading-tight text-muted-foreground">
                         Sotuvdagi mahsulotlar, ingredientlar, kontainerlar haqidagi bo'lim.
                       </p>
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </li>
-                <ListItem href="/products" title="Mahsulotlar">
-                  Mahsulorlatga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
-                </ListItem>
                 <ListItem href="/ingredients" title="Ingredientlar">
                   Ingredientlarga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
                 </ListItem>
                 <ListItem href="/containers" title="Konteynerlar">
                   Konteynerlarga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
+                </ListItem>
+                <ListItem href="/women" title="Ayollar">
+                  Ayollar haqida to'liq ma'lumot.
+                </ListItem>
+                <ListItem href="/payments" title="Ishlab chiqarish">
+                  Ishlab chiqarish xaridlariga doir ma'lumotlar.
+                </ListItem>
+                <ListItem href="/product-warehouses" title="Mahsulot Skladi">
+                  Mahsulot skladi haqida to'liq ma'lumot.
                 </ListItem>
               </ul>
             </NavigationMenuContent>
@@ -158,9 +156,9 @@ const Header = () => {
               <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr]">
                 <li className="row-span-2">
                   <NavigationMenuLink asChild>
-                    <a
+                    <Link
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
-                      href="/sales"
+                      to="/sales"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Sotuv
@@ -168,7 +166,7 @@ const Header = () => {
                       <p className="text-sm leading-tight text-muted-foreground">
                         Pul o'tkazmalari, sotuvlar harajatlar ga doir bo'lim.
                       </p>
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </li>
                 <ListItem href="/transactions" title="Pul o'tkazmalar">
@@ -233,9 +231,6 @@ const Header = () => {
           </NavigationMenuItem>
           <CustomLink to="/">
             Dashboard
-          </CustomLink>
-          <CustomLink to="/products">
-            Products
           </CustomLink>
           <NavigationMenuItem>
             <NavigationMenuTrigger

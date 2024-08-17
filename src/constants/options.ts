@@ -38,6 +38,32 @@ export const unitOptions: Option[] = [
   }
 ]
 
+export const purchaseOptions: Option[] = [
+  {
+    value: "finished",
+    label: "Yetib kelgan"
+  },
+  {
+    value: "waiting",
+    label: "Kutilmoqda"
+  },
+  {
+    value: "on_way",
+    label: "Yo'lda"
+  }
+]
+
+export const purchaseCountryOptions: Option[] = [
+  {
+    value: "uzbekistan",
+    label: "O'zbekiston"
+  },
+  {
+    value: "china",
+    label: "Xitoy"
+  }
+]
+
 export const ingredientCategoryOptions = [
   {
     value: "Rulonlar",
@@ -86,5 +112,27 @@ export const ingredientCategoryOptions = [
   {
     value: "Aramatizatorlar",
     label: "Aramatizatorlar"
+  }
+]
+
+export const currencyOptions = [
+  {
+    value: "USD",
+    label: "Dollar"
+  },
+  {
+    value: "SUM",
+    label: "So'm"
+  }
+]
+
+export const questionOptions = [
+  {
+    value: "true",
+    label: "Ha"
+  },
+  {
+    value: "false",
+    label: "Yo'q"
   }
 ]

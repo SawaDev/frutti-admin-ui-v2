@@ -17,6 +17,20 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
         control={control}
         name={name}
         render={({ field: { value, onChange, ...fieldProps } }) => {
+          const handleNumberChange = (value: string) => {
+            let inputValue = value
+
+            if (inputValue.startsWith('0')) {
+              inputValue = inputValue.replace(/^0+/, '');
+            }
+
+            if (inputValue === '') {
+              inputValue = '0';
+            }
+
+            onChange(+inputValue);
+          }
+
           return (
             <FormItem className={className}>
               {label && (
@@ -27,7 +41,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
                   <Input
                     type={type}
                     value={value}
-                    onChange={event => onChange(+event.target.value)}
+                    onChange={event => handleNumberChange(event.target.value)}
                     {...props}
                     {...fieldProps}
                     ref={ref}
