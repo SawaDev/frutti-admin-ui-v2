@@ -23,6 +23,11 @@ import Women from './pages/woman';
 import EditWoman from './pages/woman/EditWoman';
 import Products from './pages/products';
 import Sales from './pages/sales';
+import Men from './pages/men';
+import EditMan from './pages/men/EditMan';
+import Bonuses from './pages/bonuses';
+import Fees from './pages/fees';
+import Providers from './pages/providers';
 
 function App() {
   const { token } = useAuthStore()
@@ -56,6 +61,11 @@ function App() {
               <Route path='products' element={<Products />} />
               <Route path='payments' element={<Ingredients />} />
               <Route path='sales' element={<Sales />} />
+              <Route path='men' element={<Men />} />
+              <Route path='men/:id' element={<EditMan />} />
+              <Route path='bonuses' element={<Bonuses />} />
+              <Route path='fees' element={<Fees />} />
+              <Route path='providers' element={<Providers />} />
               <Route path='*' element={<>NOT FOUNND</>} />
             </Route>
           </Routes>

@@ -136,3 +136,14 @@ export const questionOptions = [
     label: "Yo'q"
   }
 ]
+
+export const paymentMethodOptions = [
+  {
+    value: "cash",
+    label: "Naqd pul"
+  },
+  {
+    value: "card",
+    label: "Karta"
+  },
+]

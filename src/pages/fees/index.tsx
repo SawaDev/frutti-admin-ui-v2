@@ -1,8 +1,6 @@
 import { MoreHorizontal, PlusCircle } from "lucide-react"
-import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -36,25 +34,21 @@ import {
 } from "@/components/ui/dialog"
 import NoItems from '@/features/NoItems'
 import { format } from "date-fns"
-import useWomen from "@/hooks/useWomen"
-import AddWoman from "@/features/Women/add-woman"
-import AddProduct from "@/features/Women/add-product"
 import { formatNumberComma } from "@/lib/utils"
+import useFees from "@/hooks/useFees"
+import AddFee from "@/features/Fees/add-fee"
 
-const Women = () => {
+const Fees = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
-  const [addProduct, setAddProduct] = useState<boolean>(false)
   const [openSheet, setOpenSheet] = useState<boolean>(false)
 
-  const navigate = useNavigate()
+  const { getAllFeesQuery, deleteFeeMutation } = useFees()
 
-  const { getAllWomenQuery, deleteWomanMutation } = useWomen()
-
-  const { data, isLoading, isError } = getAllWomenQuery()
-  const deleteWoman = deleteWomanMutation(open)
+  const { data, isLoading, isError } = getAllFeesQuery()
+  const deleteFee = deleteFeeMutation(open)
 
   const handleDelete = async () => {
-    await deleteWoman.mutateAsync().then(() => {
+    await deleteFee.mutateAsync().then(() => {
       setOpen(undefined)
     })
   }
@@ -73,21 +67,12 @@ const Women = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Ayollar</CardTitle>
+              <CardTitle>Jarimalar</CardTitle>
               <CardDescription>
-                Ayollarni bu yerdan boshqaring.
+                Jarimalarni bu yerdan boshqaring.
               </CardDescription>
             </div>
             <div className="space-x-2">
-              <Button
-                onClick={() => setAddProduct(true)}
-                size="sm"
-                variant="outline"
-                className="gap-1"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                Yangi mahsulotlar
-              </Button>
               <Button
                 onClick={() => setOpenSheet(true)}
                 size="sm"
@@ -104,7 +89,9 @@ const Women = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Ismi</TableHead>
-                  <TableHead>Balans</TableHead>
+                  <TableHead>Summa</TableHead>
+                  <TableHead>Jarimadan oldingi balans</TableHead>
+                  <TableHead>Jarimadan keyingi balans</TableHead>
                   <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
@@ -112,23 +99,22 @@ const Women = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.data.map((woman, index) => (
+                {data.data.map((fee, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
-                      {woman.name}
+                      {fee.man ? fee.man.name : fee.woman ? fee.woman.name : ''}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          woman.balance > 0 ? "success"
-                            : woman.balance == 0 ? "outline"
-                              : "destructive"}
-                      >
-                        {formatNumberComma(woman.balance)}
-                      </Badge>
+                      {formatNumberComma(fee.amount)}
+                    </TableCell>
+                    <TableCell>
+                      {formatNumberComma(fee.balance_before)}
+                    </TableCell>
+                    <TableCell>
+                      {formatNumberComma(fee.balance_after)}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(woman.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(fee.created_at, "dd-MM-yyyy hh:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -140,8 +126,7 @@ const Women = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/women/${woman.id}`)}>O'zgartirish</DropdownMenuItem>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(woman.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(fee.id)}>O'chirish</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -153,13 +138,13 @@ const Women = () => {
           <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu ayolni o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>Siz ushbu jarimani o'chirmoqchimisiz?</DialogTitle>
                 <DialogDescription>
-                  Ayolni o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
+                  Jarimani o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button disabled={deleteWoman.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
+                <Button disabled={deleteFee.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -167,10 +152,9 @@ const Women = () => {
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
-      <AddWoman open={openSheet} setOpen={setOpenSheet} />
-      <AddProduct open={addProduct} setOpen={setAddProduct} />
+      <AddFee open={openSheet} setOpen={setOpenSheet} />
     </>
   )
 }
 
-export default Women
+export default Fees

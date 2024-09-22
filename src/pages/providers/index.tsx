@@ -1,8 +1,6 @@
 import { MoreHorizontal, PlusCircle } from "lucide-react"
-import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -36,25 +34,25 @@ import {
 } from "@/components/ui/dialog"
 import NoItems from '@/features/NoItems'
 import { format } from "date-fns"
-import useWomen from "@/hooks/useWomen"
-import AddWoman from "@/features/Women/add-woman"
-import AddProduct from "@/features/Women/add-product"
 import { formatNumberComma } from "@/lib/utils"
+import useProviders from "@/hooks/useProviders"
+import { useNavigate } from "react-router-dom"
+import { Badge } from "@/components/ui/badge"
+import AddProvider from "@/features/Providers/add-provider"
 
-const Women = () => {
+const Providers = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
-  const [addProduct, setAddProduct] = useState<boolean>(false)
   const [openSheet, setOpenSheet] = useState<boolean>(false)
 
   const navigate = useNavigate()
 
-  const { getAllWomenQuery, deleteWomanMutation } = useWomen()
+  const { getAllProvidersQuery, deleteProviderMutation } = useProviders()
 
-  const { data, isLoading, isError } = getAllWomenQuery()
-  const deleteWoman = deleteWomanMutation(open)
+  const { data, isLoading, isError } = getAllProvidersQuery()
+  const deleteProvider = deleteProviderMutation(open)
 
   const handleDelete = async () => {
-    await deleteWoman.mutateAsync().then(() => {
+    await deleteProvider.mutateAsync().then(() => {
       setOpen(undefined)
     })
   }
@@ -73,21 +71,12 @@ const Women = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Ayollar</CardTitle>
+              <CardTitle>Yetkazib beruvchilar</CardTitle>
               <CardDescription>
-                Ayollarni bu yerdan boshqaring.
+                Yetkazib beruvchilarni bu yerdan boshqaring.
               </CardDescription>
             </div>
             <div className="space-x-2">
-              <Button
-                onClick={() => setAddProduct(true)}
-                size="sm"
-                variant="outline"
-                className="gap-1"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                Yangi mahsulotlar
-              </Button>
               <Button
                 onClick={() => setOpenSheet(true)}
                 size="sm"
@@ -112,23 +101,23 @@ const Women = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.data.map((woman, index) => (
+                {data.data.map((provider, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
-                      {woman.name}
+                      {provider.name}
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant={
-                          woman.balance > 0 ? "success"
-                            : woman.balance == 0 ? "outline"
+                          provider.balance > 0 ? "success"
+                            : provider.balance == 0 ? "outline"
                               : "destructive"}
                       >
-                        {formatNumberComma(woman.balance)}
+                        {formatNumberComma(provider.balance)}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(woman.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(provider.created_at, "dd-MM-yyyy hh:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -140,8 +129,8 @@ const Women = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/women/${woman.id}`)}>O'zgartirish</DropdownMenuItem>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(woman.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/providers/${provider.id}`)}>O'zgartirish</DropdownMenuItem>
+                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(provider.id)}>O'chirish</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -153,13 +142,13 @@ const Women = () => {
           <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu ayolni o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>Siz ushbu yetkazib beruvchini o'chirmoqchimisiz?</DialogTitle>
                 <DialogDescription>
-                  Ayolni o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
+                  Yetkazib beruvchi o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button disabled={deleteWoman.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
+                <Button disabled={deleteProvider.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -167,10 +156,9 @@ const Women = () => {
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
-      <AddWoman open={openSheet} setOpen={setOpenSheet} />
-      <AddProduct open={addProduct} setOpen={setAddProduct} />
+      <AddProvider open={openSheet} setOpen={setOpenSheet} />
     </>
   )
 }
 
-export default Women
+export default Providers

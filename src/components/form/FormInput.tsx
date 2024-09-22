@@ -3,6 +3,7 @@ import { Control, FieldValues, Path } from "react-hook-form";
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
+import { Checkbox } from "../ui/checkbox";
 
 interface FormInputProps<T extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
   control: Control<T, any>;
@@ -18,17 +19,11 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
         name={name}
         render={({ field: { value, onChange, ...fieldProps } }) => {
           const handleNumberChange = (value: string) => {
-            let inputValue = value
-
-            if (inputValue.startsWith('0')) {
-              inputValue = inputValue.replace(/^0+/, '');
+            if (value.length) {
+              onChange(+value);
+            } else {
+              onChange(undefined)
             }
-
-            if (inputValue === '') {
-              inputValue = '0';
-            }
-
-            onChange(+inputValue);
           }
 
           return (
@@ -45,6 +40,12 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
                     {...props}
                     {...fieldProps}
                     ref={ref}
+                  />
+                ) : type === 'checkbox' ? (
+                  <Checkbox
+                    checked={value}
+                    onCheckedChange={(value) => onChange(value)}
+                    {...fieldProps}
                   />
                 ) : (
                   <Input

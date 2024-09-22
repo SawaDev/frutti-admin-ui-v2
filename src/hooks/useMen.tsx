@@ -2,18 +2,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
-import { CreateWomanType, GetAllWomenResponse, GetSingleWomanResponse, UpdateWomanType } from "@/types/woman";
-import { z } from "zod";
-import { womanProductsSchema } from "@/schema/woman";
+import { CreateManType, GetAllMenResponse, GetSingleManResponse, UpdateManType } from "@/types/man";
 
-const useWomen = () => {
+const useMen = () => {
   const queryClient = useQueryClient();
 
-  const createWomanMutation = () => useMutation({
-    mutationFn: async (data: CreateWomanType) => {
+  const createMenMutation = () => useMutation({
+    mutationFn: async (data: CreateManType) => {
       try {
         const response = await api.post(
-          '/women',
+          '/men',
           data
         );
         return response.data;
@@ -26,37 +24,15 @@ const useWomen = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["women"] })
+      queryClient.invalidateQueries({ queryKey: ["men"] })
     }
   })
 
-  const createWomanProductsMutation = () => useMutation({
-    mutationFn: async (data: z.infer<typeof womanProductsSchema>["women"]) => {
-      try {
-        const response = await api.post(
-          '/women/products',
-          data
-        );
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["women"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] })
-    }
-  })
-
-  const getAllWomenQuery = () => useQuery<GetAllWomenResponse, Error>({
-    queryKey: ["women"],
+  const getAllMenQuery = () => useQuery<GetAllMenResponse, Error>({
+    queryKey: ["men"],
     queryFn: async () => {
       try {
-        const response = await api.get(`/women`);
+        const response = await api.get(`/men`);
 
         return structuredClone(response.data);
       } catch (error: any) {
@@ -69,11 +45,11 @@ const useWomen = () => {
     },
   })
 
-  const getSingleWomanQuery = (id: string | undefined) => useQuery<GetSingleWomanResponse, Error>({
-    queryKey: ["women", id],
+  const getSingleManQuery = (id: string | undefined) => useQuery<GetSingleManResponse, Error>({
+    queryKey: ["men", id],
     queryFn: async () => {
       try {
-        const response = await api.get(`/women/${id}`);
+        const response = await api.get(`/men/${id}`);
 
         return structuredClone(response.data);
       } catch (error: any) {
@@ -86,12 +62,12 @@ const useWomen = () => {
     },
   })
 
-  const updateWomanMutation = (id: string | undefined) =>
-    useMutation<GetSingleWomanResponse, AxiosError, UpdateWomanType, () => void>({
+  const updateManMutation = (id: string | undefined) =>
+    useMutation<GetSingleManResponse, AxiosError, UpdateManType, () => void>({
       mutationFn: async (data) => {
         try {
           const response = await api.patch(
-            `/women/${id}`,
+            `/men/${id}`,
             data
           );
           if (response?.data) {
@@ -109,16 +85,16 @@ const useWomen = () => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["women", id] })
-        queryClient.invalidateQueries({ queryKey: ["women"] })
+        queryClient.invalidateQueries({ queryKey: ["men", id] })
+        queryClient.invalidateQueries({ queryKey: ["men"] })
       }
     })
 
-  const deleteWomanMutation = (id: number | undefined) =>
+  const deleteManMutation = (id: number | undefined) =>
     useMutation({
       mutationFn: async () => {
         try {
-          const response = await api.delete(`/women/${id}`);
+          const response = await api.delete(`/men/${id}`);
           if (response?.data) {
             toast({
               description: "Muvaffaqiyatli o'chirildi!"
@@ -134,18 +110,17 @@ const useWomen = () => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["women"] })
+        queryClient.invalidateQueries({ queryKey: ["men"] })
       }
     })
 
   return {
-    createWomanMutation,
-    createWomanProductsMutation,
-    getAllWomenQuery,
-    getSingleWomanQuery,
-    updateWomanMutation,
-    deleteWomanMutation
+    createMenMutation,
+    getAllMenQuery,
+    getSingleManQuery,
+    updateManMutation,
+    deleteManMutation
   }
 };
 
-export default useWomen
+export default useMen
