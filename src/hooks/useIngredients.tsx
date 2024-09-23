@@ -18,6 +18,27 @@ import { ExpenseCategoryType, GetAllExpenseCategoriesResponse } from "@/types/ex
 const useIngredients = () => {
   const queryClient = useQueryClient();
 
+  const createIngredientMutation = () => useMutation({
+    mutationFn: async (data: CreateIngredient) => {
+      try {
+        const response = await api.post(
+          '/ingredients',
+          data
+        );
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
+    }
+  })
+
   const getAllIngredientsQuery = () => useQuery<GetAllIngredientsResponse, Error>({
     queryKey: ["ingredients"],
     queryFn: async () => {
@@ -52,11 +73,11 @@ const useIngredients = () => {
     },
   })
 
-  const createIngredientMutation = () => useMutation({
+  const updateIngredientMutation = (id: number) => useMutation({
     mutationFn: async (data: CreateIngredient) => {
       try {
-        const response = await api.post(
-          '/ingredients',
+        const response = await api.put(
+          `/ingredients/${id}`,
           data
         );
         return response.data;
@@ -70,6 +91,7 @@ const useIngredients = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ingredients"] })
+      queryClient.invalidateQueries({ queryKey: ["ingredients", id] })
     }
   })
 
@@ -266,9 +288,10 @@ const useIngredients = () => {
   })
 
   return {
+    createIngredientMutation,
     getAllIngredientsQuery,
     getSingleIngredientQuery,
-    createIngredientMutation,
+    updateIngredientMutation,
     deleteIngredientMutation,
     getAllIngredientPurchasesQuery,
     createIngredientPurchaseMutation,
