@@ -10,7 +10,7 @@ export interface FormSelectProps<T extends FieldValues> extends React.InputHTMLA
   control: Control<T, any>;
   name: Path<T>;
   options: Option[] | undefined
-  label?: string;
+  label?: string | React.ReactNode;
   handleNew?: () => void;
 }
 
