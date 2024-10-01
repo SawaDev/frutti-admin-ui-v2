@@ -5,10 +5,10 @@ import { Product } from "./products";
 import { Transaction } from "./transactions";
 
 export type ExtendedProduct = Product & {
-  sale_quantity: number,
-  sale_price: number,
-  sale_distribution: number | null
-}
+  sale_quantity: number;
+  sale_price: number;
+  sale_distribution: number | null;
+};
 
 export interface Sale {
   id: number;
@@ -19,8 +19,8 @@ export interface Sale {
   is_free: boolean;
 
   client?: Client;
-  products?: ExtendedProduct[]
-  transaction?: Transaction
+  products?: ExtendedProduct[];
+  transaction?: Transaction;
 
   created_at: string;
   updated_at: string;
@@ -38,7 +38,11 @@ export interface GetSingleSaleResponse {
 
 export type CreateSaleType = z.infer<typeof createSaleSchema>;
 
-export type CreateSaleDataType = Omit<CreateSaleType, "wallet_id" | "client_id"> & {
-  wallet_id: number,
-  client_id: number
-}
+export type CreateSaleDataType = Omit<
+  CreateSaleType,
+  "wallet_id" | "client_id" | "is_free"
+> & {
+  is_free: boolean;
+  wallet_id: number;
+  client_id: number;
+};

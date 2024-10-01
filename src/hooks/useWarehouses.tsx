@@ -7,10 +7,10 @@ const useWarehouses = () => {
   const queryClient = useQueryClient();
 
   const getAllWarehousesQuery = () => useQuery<GetAllWarehousesResponse, Error>({
-    queryKey: ["warehouses"],
+    queryKey: ["ingredient-warehouses"],
     queryFn: async () => {
       try {
-        const response = await api.get(`/warehouses`);
+        const response = await api.get(`/ingredient-warehouses`);
 
         return structuredClone(response.data);
       } catch (error: any) {
@@ -24,10 +24,10 @@ const useWarehouses = () => {
   })
 
   const getSingleWarehouseQuery = (id: string | undefined) => useQuery<GetSingleWarehouseResponse, Error>({
-    queryKey: ["warehouses", id],
+    queryKey: ["ingredient-warehouses", id],
     queryFn: async () => {
       try {
-        const response = await api.get(`/warehouses/${id}`);
+        const response = await api.get(`/ingredient-warehouses/${id}`);
 
         return structuredClone(response.data);
       } catch (error: any) {
@@ -44,7 +44,7 @@ const useWarehouses = () => {
     mutationFn: async (data: CreateWarehouse) => {
       try {
         const response = await api.post(
-          '/warehouses',
+          '/ingredient-warehouses',
           data
         );
         return response.data;
@@ -57,15 +57,36 @@ const useWarehouses = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["warehouses"] })
+      queryClient.invalidateQueries({ queryKey: ["ingredient-warehouses"] })
     }
   })
 
-  const deleteWarehouseMutation = (id: number | undefined) =>
+  const updateWarehouseMutation = (id: string | undefined) => useMutation({
+    mutationFn: async (data: CreateWarehouse) => {
+      try {
+        const response = await api.put(
+          `/ingredient-warehouses/${id}`,
+          data
+        );
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ingredient-warehouses", id] })
+    }
+  })
+
+  const deleteWarehouseMutation = (id: string | undefined) =>
     useMutation({
       mutationFn: async () => {
         try {
-          const response = await api.delete(`/warehouses/${id}`);
+          const response = await api.delete(`/ingredient-warehouses/${id}`);
           if (response?.data) {
             toast({
               description: "Muvaffaqiyatli o'chirildi!"
@@ -81,7 +102,7 @@ const useWarehouses = () => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["warehouses"] })
+        queryClient.invalidateQueries({ queryKey: ["ingredient-warehouses"] })
       }
     })
 
@@ -89,6 +110,7 @@ const useWarehouses = () => {
     getAllWarehousesQuery,
     getSingleWarehouseQuery,
     createWarehouseMutation,
+    updateWarehouseMutation,
     deleteWarehouseMutation
   }
 };

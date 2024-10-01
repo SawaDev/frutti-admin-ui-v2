@@ -11,89 +11,90 @@ import {
   GetAllIngredientsResponse,
   GetSingleIngredientResponse,
   IngredientPurchasesQueryParams,
-  UpdateIngredientPurchaseType
+  UpdateIngredientPurchaseType,
 } from "@/types/ingredients";
-import { ExpenseCategoryType, GetAllExpenseCategoriesResponse } from "@/types/expenses";
+import {
+  ExpenseCategoryType,
+  GetAllExpenseCategoriesResponse,
+} from "@/types/expenses";
 
 const useIngredients = () => {
   const queryClient = useQueryClient();
 
-  const createIngredientMutation = () => useMutation({
-    mutationFn: async (data: CreateIngredient) => {
-      try {
-        const response = await api.post(
-          '/ingredients',
-          data
-        );
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
-    }
-  })
+  const createIngredientMutation = () =>
+    useMutation({
+      mutationFn: async (data: CreateIngredient) => {
+        try {
+          const response = await api.post("/ingredients", data);
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+      },
+    });
 
-  const getAllIngredientsQuery = () => useQuery<GetAllIngredientsResponse, Error>({
-    queryKey: ["ingredients"],
-    queryFn: async () => {
-      try {
-        const response = await api.get(`/ingredients`);
+  const getAllIngredientsQuery = () =>
+    useQuery<GetAllIngredientsResponse, Error>({
+      queryKey: ["ingredients"],
+      queryFn: async () => {
+        try {
+          const response = await api.get(`/ingredients`);
 
-        return structuredClone(response.data);
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-  })
+          return structuredClone(response.data);
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+    });
 
-  const getSingleIngredientQuery = (id: string | undefined) => useQuery<GetSingleIngredientResponse, Error>({
-    queryKey: ["ingredients", id],
-    queryFn: async () => {
-      try {
-        const response = await api.get(`/ingredients/${id}`);
+  const getSingleIngredientQuery = (id: string | undefined) =>
+    useQuery<GetSingleIngredientResponse, Error>({
+      queryKey: ["ingredients", id],
+      queryFn: async () => {
+        try {
+          const response = await api.get(`/ingredients/${id}`);
 
-        return structuredClone(response.data);
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-  })
+          return structuredClone(response.data);
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+    });
 
-  const updateIngredientMutation = (id: number) => useMutation({
-    mutationFn: async (data: CreateIngredient) => {
-      try {
-        const response = await api.put(
-          `/ingredients/${id}`,
-          data
-        );
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
-      queryClient.invalidateQueries({ queryKey: ["ingredients", id] })
-    }
-  })
+  const updateIngredientMutation = (id: number) =>
+    useMutation({
+      mutationFn: async (data: CreateIngredient) => {
+        try {
+          const response = await api.put(`/ingredients/${id}`, data);
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+        queryClient.invalidateQueries({ queryKey: ["ingredients", id] });
+      },
+    });
 
   const deleteIngredientMutation = (id: number | undefined) =>
     useMutation({
@@ -102,8 +103,8 @@ const useIngredients = () => {
           const response = await api.delete(`/ingredients/${id}`);
           if (response?.data) {
             toast({
-              description: "Muvaffaqiyatli o'chirildi!"
-            })
+              description: "Muvaffaqiyatli o'chirildi!",
+            });
           }
           return response.data;
         } catch (error: any) {
@@ -111,181 +112,207 @@ const useIngredients = () => {
             variant: "destructive",
             title: "Error!",
             description: error?.response?.data?.message,
-          })
+          });
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["ingredients"] })
-      }
-    })
+        queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+      },
+    });
 
-  const getAllIngredientPurchasesQuery = (data: IngredientPurchasesQueryParams | undefined) => useQuery<GetAllIngredientPurchasesTypeResponse, Error>({
-    queryKey: data ? ["purchases", ...Object.values(data)] : ["purchases"],
-    queryFn: async () => {
-      try {
-        const response = await api.post(`/purchases`, data);
+  const getAllIngredientPurchasesQuery = (
+    data: IngredientPurchasesQueryParams | undefined,
+  ) =>
+    useQuery<GetAllIngredientPurchasesTypeResponse, Error>({
+      queryKey: data ? ["purchases", ...Object.values(data)] : ["purchases"],
+      queryFn: async () => {
+        try {
+          const response = await api.post(`/purchases`, data);
 
-        return structuredClone(response.data);
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-  })
+          return structuredClone(response.data);
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+    });
 
-  const createIngredientPurchaseMutation = () => useMutation({
-    mutationFn: async (data: CreateIngredientPurchaseType) => {
-      try {
-        const response = await api.post(
-          '/purchases/new',
-          data
-        );
+  const createIngredientPurchaseMutation = () =>
+    useMutation({
+      mutationFn: async (data: CreateIngredientPurchaseType) => {
+        try {
+          const response = await api.post("/purchases/new", data);
 
-        toast({
-          title: "Muvaffaqiyatli saqlandi!"
-        })
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
-      queryClient.invalidateQueries({ queryKey: ["purchases"] })
-    }
-  })
+          toast({
+            title: "Muvaffaqiyatli saqlandi!",
+          });
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+        queryClient.invalidateQueries({ queryKey: ["purchases"] });
+      },
+    });
 
-  const updateIngredientPurchaseMutation = (id: number) => useMutation({
-    mutationFn: async (data: UpdateIngredientPurchaseType) => {
-      try {
-        const response = await api.patch(
-          `/purchases/${id}`,
-          data
-        );
+  const updateIngredientPurchaseMutation = (id: number) =>
+    useMutation({
+      mutationFn: async (data: UpdateIngredientPurchaseType) => {
+        try {
+          const response = await api.patch(`/purchases/${id}`, data);
 
-        toast({
-          title: "Muvaffaqiyatli saqlandi!"
-        })
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
-      queryClient.invalidateQueries({ queryKey: ["purchases"] })
-    }
-  })
+          toast({
+            title: "Muvaffaqiyatli saqlandi!",
+          });
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+        queryClient.invalidateQueries({ queryKey: ["purchases"] });
+      },
+    });
 
-  const getAllIngredientTransactionsQuery = () => useQuery<GetAllIngredienTransactionsResponse, Error>({
-    queryKey: ["ingredient-transactions"],
-    queryFn: async () => {
-      try {
-        const response = await api.get(`/ingredient-transactions`);
+  const getAllIngredientTransactionsQuery = () =>
+    useQuery<GetAllIngredienTransactionsResponse, Error>({
+      queryKey: ["ingredient-transactions"],
+      queryFn: async () => {
+        try {
+          const response = await api.get(`/ingredient-transactions`);
 
-        return structuredClone(response.data);
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-  })
+          return structuredClone(response.data);
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+    });
 
-  const createIngredientTransactionMutation = () => useMutation({
-    mutationFn: async (data: CreateIngredientTransaction) => {
-      try {
-        const response = await api.post(
-          '/ingredient-transactions',
-          data
-        );
+  const createIngredientTransactionMutation = () =>
+    useMutation({
+      mutationFn: async (data: CreateIngredientTransaction) => {
+        try {
+          const response = await api.post("/ingredient-transactions", data);
 
-        toast({
-          title: "Muvaffaqiyatli saqlandi!"
-        })
+          toast({
+            title: "Muvaffaqiyatli saqlandi!",
+          });
 
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ingredients"] })
-      queryClient.invalidateQueries({ queryKey: ["ingredient-transactions"] })
-    }
-  })
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+        queryClient.invalidateQueries({
+          queryKey: ["ingredient-transactions"],
+        });
+      },
+    });
 
-  const getAllIngredientCategoriesQuery = () => useQuery<GetAllExpenseCategoriesResponse, Error>({
-    queryKey: ["ingredients", "category-options"],
-    queryFn: async () => {
-      try {
-        const response = await api.get(`/ingredients/category-options`);
+  const getAllIngredientCategoriesQuery = () =>
+    useQuery<GetAllExpenseCategoriesResponse, Error>({
+      queryKey: ["ingredients", "category-options"],
+      queryFn: async () => {
+        try {
+          const response = await api.get(`/ingredients/category-options`);
 
-        return structuredClone(response.data);
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-  })
+          return structuredClone(response.data);
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+    });
 
-  const createIngredientCategoryMutation = () => useMutation({
-    mutationFn: async (data: ExpenseCategoryType) => {
-      try {
-        const response = await api.post(
-          '/ingredients/categories',
-          data
-        );
-        return response.data;
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ingredients", "category-options"] })
-    }
-  })
+  const createIngredientCategoryMutation = () =>
+    useMutation({
+      mutationFn: async (data: ExpenseCategoryType) => {
+        try {
+          const response = await api.post("/ingredients/categories", data);
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["ingredients", "category-options"],
+        });
+      },
+    });
 
-  const getAllIngredientCategoriesExpandedQuery = () => useQuery<GetAllIngredientCategories, Error>({
-    queryKey: ["ingredients", "categories"],
-    queryFn: async () => {
-      try {
-        const response = await api.get(`/ingredients/categories`);
+  const getAllIngredientCategoriesExpandedQuery = () =>
+    useQuery<GetAllIngredientCategories, Error>({
+      queryKey: ["ingredients", "category-options"],
+      queryFn: async () => {
+        try {
+          const response = await api.get(`/ingredients/categories`);
 
-        return structuredClone(response.data);
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: error?.response?.data?.message,
-        })
-      }
-    },
-  })
+          return structuredClone(response.data);
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+    });
+
+  const deleteIngredientCategoryMutation = (id: number | undefined) =>
+    useMutation({
+      mutationFn: async () => {
+        try {
+          const response = await api.delete(`/ingredients/categories/${id}`);
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli o'chirildi!",
+            });
+          }
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ingredients", "category-options"] });
+      },
+    });
 
   return {
     createIngredientMutation,
@@ -300,8 +327,9 @@ const useIngredients = () => {
     createIngredientTransactionMutation,
     getAllIngredientCategoriesQuery,
     createIngredientCategoryMutation,
-    getAllIngredientCategoriesExpandedQuery
-  }
+    getAllIngredientCategoriesExpandedQuery,
+    deleteIngredientCategoryMutation
+  };
 };
 
-export default useIngredients
+export default useIngredients;

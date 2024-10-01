@@ -1,11 +1,14 @@
 import { createWarehouseSchema } from "@/schema/warehouses";
 import { z } from "zod";
+import { Ingredient } from "./ingredients";
 
 export interface Warehouse {
   id: number;
 
   name: string;
   created_at: string;
+
+  ingredients?: Ingredient[]
 }
 
 export interface GetAllWarehousesResponse {

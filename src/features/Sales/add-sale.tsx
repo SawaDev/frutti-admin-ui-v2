@@ -117,6 +117,7 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
 
     const data = {
       ...values,
+      is_free: values.is_free === "true" ? true : false,
       client_id: Number(values.client_id),
       wallet_id: Number(values.wallet_id),
       products: filteredProducts,

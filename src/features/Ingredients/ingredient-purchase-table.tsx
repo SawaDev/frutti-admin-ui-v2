@@ -88,6 +88,7 @@ const IngredientPurchaseTable: React.FC<IngredientPurchaseTableProps> = ({ statu
         <Dialog open={true} onOpenChange={() => setPurchaseIndex(undefined)}>
           <DialogContent className="py-3 px-2">
             <PurchaseIngredientTable
+              editable={status === "finished" ? false : true}
               purchaseId={purchaseIndex}
               data={purchases?.data.find(d => d.id === purchaseIndex)?.ingredients}
               handleClose={() => setPurchaseIndex(undefined)}

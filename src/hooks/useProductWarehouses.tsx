@@ -61,7 +61,7 @@ const useProductWarehouses = () => {
     },
   })
 
-  const deleteProductWarehouseMutation = (id: number | undefined) =>
+  const deleteProductWarehouseMutation = (id: string | undefined) =>
     useMutation({
       mutationFn: async () => {
         try {

@@ -34,10 +34,10 @@ import { format } from "date-fns";
 import { GetAllSalesResponse } from "@/types/sales";
 
 interface SaleTableType {
-  data: GetAllSalesResponse | undefined
+  data: GetAllSalesResponse | undefined;
 }
 
-const SaleTable: React.FC<SaleTableType> = ({data}) => {
+const SaleTable: React.FC<SaleTableType> = ({ data }) => {
   const [deleteModal, setDeleteModal] = useState<number>();
 
   const { deleteSaleMutation } = useSales();
@@ -54,15 +54,16 @@ const SaleTable: React.FC<SaleTableType> = ({data}) => {
     <Table>
       <TableHeader>
         <TableRow>
-            <TableHead>Klient</TableHead>
-            <TableHead>To'langan Summa</TableHead>
-            <TableHead>Mahsulotning Summasi</TableHead>
-            <TableHead>Kassa</TableHead>
-            <TableHead>To'lov turi</TableHead>
-            <TableHead>Yaratilingan sana</TableHead>
-            <TableHead>
-              <span className="sr-only">Harakatlar</span>
-            </TableHead>
+          <TableHead>Klient</TableHead>
+          <TableHead>To'langan Summa</TableHead>
+          <TableHead>Mahsulotning Summasi</TableHead>
+          <TableHead>Kassa</TableHead>
+          <TableHead>To'lov turi</TableHead>
+          <TableHead>Aksiyami</TableHead>
+          <TableHead>Yaratilingan sana</TableHead>
+          <TableHead>
+            <span className="sr-only">Harakatlar</span>
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -86,6 +87,9 @@ const SaleTable: React.FC<SaleTableType> = ({data}) => {
                         : sale.transaction?.type === "card"
                           ? "Karta"
                           : ""}
+                    </TableCell>
+                    <TableCell className="p-2 px-4">
+                      {sale.is_free ? "Ha" : "Yo'q"}
                     </TableCell>
                     <TableCell>
                       {format(sale.created_at, "dd-MM-yyyy HH:mm:ss")}
@@ -146,24 +150,31 @@ const SaleTable: React.FC<SaleTableType> = ({data}) => {
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {data?.data[saleIndex].products?.map((product) => {
-                                return (
-                                  <TableRow className="p-0" key={product.id}>
-                                    <TableCell className="p-2 px-4">
-                                      {product.name}
-                                    </TableCell>
-                                    <TableCell className="p-2 px-4">
-                                      {formatNumberComma(product.sale_quantity)}
-                                    </TableCell>
-                                    <TableCell className="p-2 px-4">
-                                      {formatNumberComma(product.sale_price)}
-                                    </TableCell>
-                                    <TableCell className="p-2 px-4">
-                                      {formatNumberComma(product.sale_price * product.sale_quantity)}
-                                    </TableCell>
-                                  </TableRow>
-                                );
-                              })}
+                              {data?.data[saleIndex].products?.map(
+                                (product) => {
+                                  return (
+                                    <TableRow className="p-0" key={product.id}>
+                                      <TableCell className="p-2 px-4">
+                                        {product.name}
+                                      </TableCell>
+                                      <TableCell className="p-2 px-4">
+                                        {formatNumberComma(
+                                          product.sale_quantity,
+                                        )}
+                                      </TableCell>
+                                      <TableCell className="p-2 px-4">
+                                        {formatNumberComma(product.sale_price)}
+                                      </TableCell>
+                                      <TableCell className="p-2 px-4">
+                                        {formatNumberComma(
+                                          product.sale_price *
+                                            product.sale_quantity,
+                                        )}
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                },
+                              )}
                             </TableBody>
                           </Table>
                         </TableCell>

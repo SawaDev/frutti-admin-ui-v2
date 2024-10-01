@@ -8,22 +8,23 @@ export const createIngredientSchema = z.object({
   unit: z.string({ required_error: "Birligini kiriting!" }),
   cost: z.number({ required_error: "Narxini kiriting!" }),
   bag_distribution: z.number().optional(),
-})
+});
 
 export const ingredientPurchaseSchema = z.object({
   total_cost: z.number({ required_error: "Narxini kiriting!" }),
   status: z.string({ required_error: "Statusni kiriting!" }),
   purchased_from: z.string({ required_error: "Qayerdan olinganini kiriting!" }),
+  provider_id: z.string({ required_error: "Yetkazib beruvchini kiriting!" }),
   ingredients: z.array(
     z.array(
       z.object({
         id: z.number(),
         quantity: z.number(),
-        cost_per_unit: z.number()
-      })
-    )
-  )
-})
+        cost_per_unit: z.number(),
+      }),
+    ),
+  ),
+});
 
 export const ingredientTransactionSchema = z.object({
   comment: z.string().optional(),
@@ -31,16 +32,16 @@ export const ingredientTransactionSchema = z.object({
     z.object({
       id: z.number(),
       quantity: z.number(),
-    })
-  )
-})
+    }),
+  ),
+});
 
 export const updateIngredientPurchaseSchema = z.object({
   status: z.string({ required_error: "Statusni kiriting!" }),
   ingredients: z.array(
     z.object({
       id: z.number(),
-      cost_per_unit: z.number()
-    })
-  )
-})
+      cost_per_unit: z.number(),
+    }),
+  ),
+});

@@ -28,6 +28,11 @@ import EditMan from './pages/men/EditMan';
 import Bonuses from './pages/bonuses';
 import Fees from './pages/fees';
 import Providers from './pages/providers';
+import Warehouses from './pages/ingredient-warehouses';
+import EditWarehouse from './pages/ingredient-warehouses/EditIngredientWarehouse';
+import IngredientsCategories from './pages/ingredient-categories';
+import ProductWarehouses from './pages/product-warehouses';
+import EditProductWarehouse from './pages/product-warehouses/EditProductWarehouse';
 
 function App() {
   const { token } = useAuthStore()
@@ -56,6 +61,9 @@ function App() {
               <Route path='ingredients' element={<Ingredients />} />
               <Route path='ingredients-purchases' element={<IngredientsPurchase />} />
               <Route path='ingredients-transactions' element={<IngredientTransaction />} />
+              <Route path='ingredient-warehouses' element={<Warehouses />} />
+              <Route path='ingredient-categories' element={<IngredientsCategories />} />
+              <Route path='ingredient-warehouses/:id' element={<EditWarehouse />} />
               <Route path='women' element={<Women />} />
               <Route path='women/:id' element={<EditWoman />} />
               <Route path='products' element={<Products />} />
@@ -66,6 +74,8 @@ function App() {
               <Route path='bonuses' element={<Bonuses />} />
               <Route path='fees' element={<Fees />} />
               <Route path='providers' element={<Providers />} />
+              <Route path='product-warehouses' element={<ProductWarehouses />} />
+              <Route path='product-warehouses/:id' element={<EditProductWarehouse />} />
               <Route path='*' element={<>NOT FOUNND</>} />
             </Route>
           </Routes>

@@ -1,11 +1,7 @@
-import { Link } from "react-router-dom"
-import {
-  CircleUser,
-  Menu,
-  Package2,
-} from "lucide-react"
+import { Link } from "react-router-dom";
+import { CircleUser, Menu, Package2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,16 +9,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import CustomLink from "@/components/custom-link"
-import useAuthStore from "@/store/auth"
-import { ListItem, NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "../ui/navigation-menu"
-import { useEffect, useRef, useState } from "react"
-import { Skeleton } from "@/components/ui/skeleton"
-import useCurrencies from "@/hooks/useCurrencies"
-import { useCurrencyStore } from "@/store/currency"
-import UpdateCurrency from "@/features/Currencies/update-currency"
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import CustomLink from "@/components/custom-link";
+import useAuthStore from "@/store/auth";
+import {
+  ListItem,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "../ui/navigation-menu";
+import { useEffect, useRef, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import useCurrencies from "@/hooks/useCurrencies";
+import { useCurrencyStore } from "@/store/currency";
+import UpdateCurrency from "@/features/Currencies/update-currency";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -30,16 +34,17 @@ const Header = () => {
 
   const targetRef = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const { activeCurrency, setCurrencies, setActiveCurrency } = useCurrencyStore()
-  const { logout } = useAuthStore()
+  const { activeCurrency, setCurrencies, setActiveCurrency } =
+    useCurrencyStore();
+  const { logout } = useAuthStore();
 
-  const { getAllCurrenciesQuery } = useCurrencies()
-  const { data, isLoading, isError } = getAllCurrenciesQuery()
+  const { getAllCurrenciesQuery } = useCurrencies();
+  const { data, isLoading, isError } = getAllCurrenciesQuery();
 
   useEffect(() => {
-    setCurrencies(data?.data)
-    setActiveCurrency(data?.data[0] !== undefined ? data?.data[0] : null)
-  }, [data])
+    setCurrencies(data?.data);
+    setActiveCurrency(data?.data[0] !== undefined ? data?.data[0] : null);
+  }, [data]);
 
   useEffect(() => {
     const observerCallback = (mutationsList: any) => {
@@ -73,16 +78,15 @@ const Header = () => {
     };
   }, []);
 
-  if (isLoading) (
+  if (isLoading)
     <div className="flex w-full flex-col">
       <Skeleton className="h-20 w-full rounded-lg" />
-    </div>
-  )
+    </div>;
 
-  if (isError) return <>Can't load currencies!</>
+  if (isError) return <>Can't load currencies!</>;
 
   return (
-    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 z-50 md:px-6">
+    <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <NavigationMenu orientation="horizontal">
         <NavigationMenuList className="hidden flex-col gap-3 text-lg font-medium md:flex md:flex-row md:items-center md:text-sm">
           <NavigationMenuItem>
@@ -113,20 +117,12 @@ const Header = () => {
                         Mahsulotlar
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        Sotuvdagi mahsulotlar, ingredientlar, kontainerlar haqidagi bo'lim.
+                        Sotuvdagi mahsulotlar, ingredientlar, kontainerlar
+                        haqidagi bo'lim.
                       </p>
                     </Link>
                   </NavigationMenuLink>
                 </li>
-                <ListItem href="/ingredients" title="Ingredientlar">
-                  Ingredientlarga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
-                </ListItem>
-                <ListItem href="/containers" title="Konteynerlar">
-                  Konteynerlarga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
-                </ListItem>
-                <ListItem href="/payments" title="Ishlab chiqarish">
-                  Ishlab chiqarish xaridlariga doir ma'lumotlar.
-                </ListItem>
                 <ListItem href="/product-warehouses" title="Mahsulot Skladi">
                   Mahsulot skladi haqida to'liq ma'lumot.
                 </ListItem>
@@ -157,9 +153,7 @@ const Header = () => {
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
                       to="/sales"
                     >
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        Sotuv
-                      </div>
+                      <div className="mb-2 mt-4 text-lg font-medium">Sotuv</div>
                       <p className="text-sm leading-tight text-muted-foreground">
                         Pul o'tkazmalari, sotuvlar harajatlar ga doir bo'lim.
                       </p>
@@ -173,7 +167,8 @@ const Header = () => {
                   Sotuvlar haqida to'liq ma'lumot.
                 </ListItem>
                 <ListItem href="/wallets" title="Hamyonlar">
-                  Ingredientlarga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
+                  Ingredientlarga doir ma'lumotlarni ko'rish va ular ustida
+                  amallar bajarish.
                 </ListItem>
                 <ListItem href="/clients" title="Klientlar">
                   Klientlar haqida ma'lumotlar.
@@ -192,43 +187,50 @@ const Header = () => {
                 }
               }}
             >
-              Sklad
+              Siryolar
             </NavigationMenuTrigger>
             <NavigationMenuContent
               onPointerMove={(event) => event.preventDefault()}
               onPointerLeave={(event) => event.preventDefault()}
             >
-              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr]">
+              <ul className="grid gap-3 p-4 capitalize md:w-[560px] lg:w-[700px] lg:grid-cols-[1fr_1fr_1fr_1fr]">
                 <li className="row-span-2">
                   <NavigationMenuLink asChild>
-                    <a
+                    <Link
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
-                      href="/warehouses"
+                      to="/ingredients"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">
-                        Sklad
+                        Siryolar
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        Sklad va unga doir bo'lim.
+                        Siryolar haqida to'liq ma'lumot.
                       </p>
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </li>
-                <ListItem href="/ingredients" title="Siryolar">
-                  Siryolar haqida to'liq ma'lumot.
-                </ListItem>
                 <ListItem href="/ingredients-purchases" title="Siryo xaridlari">
                   Siryo xaridlariga doir ma'lumotlar.
                 </ListItem>
-                <ListItem href="/ingredients-transactions" title="Ishlatilingan Siryolar">
+                <ListItem
+                  href="/ingredients-transactions"
+                  title="Ishlatilingan Siryolar"
+                >
                   Ishlatilingan siryolar haqida to'liq ma'lumot.
+                </ListItem>
+                <ListItem href="/ingredient-warehouses" title="Siryolar skladi">
+                  Siryolar skladi haqida to'liq ma'lumot.
+                </ListItem>
+                <ListItem
+                  href="/ingredient-categories"
+                  title="Siryo Kategoriyalari"
+                >
+                  Siryolar kategoriyalari haqida to'liq ma'lumot.
                 </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <CustomLink to="/">
-            Dashboard
-          </CustomLink>
+          <CustomLink to="/">Dashboard</CustomLink>
           <NavigationMenuItem>
             <NavigationMenuTrigger
               onPointerMove={(event) => event.preventDefault()}
@@ -285,9 +287,7 @@ const Header = () => {
               <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr_1fr]">
                 <li className="row-span-2">
                   <NavigationMenuLink asChild>
-                    <div
-                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
-                    >
+                    <div className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md">
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Ishchilar
                       </div>
@@ -298,7 +298,8 @@ const Header = () => {
                   </NavigationMenuLink>
                 </li>
                 <ListItem href="/men" title="Erkaklar">
-                  Erkaklarga doir ma'lumotlarni ko'rish va ular ustida amallar bajarish.
+                  Erkaklarga doir ma'lumotlarni ko'rish va ular ustida amallar
+                  bajarish.
                 </ListItem>
                 <ListItem href="/women" title="Ayollar">
                   Ayollar haqida to'liq ma'lumot.
@@ -315,24 +316,19 @@ const Header = () => {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <div className="transition-colors hover:text-foreground text-muted-foreground cursor-pointer" onClick={() => setOpen(true)}>
+          <div
+            className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
+            onClick={() => setOpen(true)}
+          >
             Kurs
           </div>
-          <CustomLink to="/users">
-            Foydalanuvchilar
-          </CustomLink>
-          <CustomLink to="/posts">
-            Postlar
-          </CustomLink>
+          <CustomLink to="/users">Foydalanuvchilar</CustomLink>
+          <CustomLink to="/posts">Postlar</CustomLink>
         </NavigationMenuList>
       </NavigationMenu>
       <Sheet>
         <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="shrink-0 md:hidden"
-          >
+          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Menu</span>
           </Button>
@@ -346,27 +342,13 @@ const Header = () => {
               <Package2 className="h-6 w-6" />
               <span className="sr-only">User</span>
             </CustomLink>
-            <CustomLink to="/">
-              Dashboard
-            </CustomLink>
-            <CustomLink to="/orders">
-              Orders
-            </CustomLink>
-            <CustomLink to="/products">
-              Products
-            </CustomLink>
-            <CustomLink to="/clients">
-              Klientlar
-            </CustomLink>
-            <CustomLink to="/analytics">
-              Analytics
-            </CustomLink>
-            <CustomLink to="/users">
-              Foydalanuvchilar
-            </CustomLink>
-            <CustomLink to="/posts">
-              Postlar
-            </CustomLink>
+            <CustomLink to="/">Dashboard</CustomLink>
+            <CustomLink to="/orders">Orders</CustomLink>
+            <CustomLink to="/products">Products</CustomLink>
+            <CustomLink to="/clients">Klientlar</CustomLink>
+            <CustomLink to="/analytics">Analytics</CustomLink>
+            <CustomLink to="/users">Foydalanuvchilar</CustomLink>
+            <CustomLink to="/posts">Postlar</CustomLink>
           </nav>
         </SheetContent>
       </Sheet>
@@ -385,7 +367,9 @@ const Header = () => {
             <DropdownMenuItem>Sozlamalar</DropdownMenuItem>
             <DropdownMenuItem>Yordam</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => logout()}>Chiqish</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()}>
+              Chiqish
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -395,7 +379,7 @@ const Header = () => {
         defaultCurrency={activeCurrency}
       />
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
