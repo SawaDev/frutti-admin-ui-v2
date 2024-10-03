@@ -120,8 +120,8 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
                   </TableRow>
                 </CollapsibleTrigger>
                 <CollapsibleContent asChild>
-                  {data?.data[saleIndex].products &&
-                    data?.data[saleIndex].products?.length && (
+                  {data?.data[saleIndex]?.products &&
+                    data?.data[saleIndex]?.products?.length && (
                       <TableRow className="hover:bg-inherit">
                         <TableCell className="p-0 pl-6" colSpan={99}>
                           <Table>
@@ -150,7 +150,7 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {data?.data[saleIndex].products?.map(
+                              {data?.data[saleIndex]?.products?.map(
                                 (product) => {
                                   return (
                                     <TableRow className="p-0" key={product.id}>
