@@ -33,6 +33,7 @@ import EditWarehouse from './pages/ingredient-warehouses/EditIngredientWarehouse
 import IngredientsCategories from './pages/ingredient-categories';
 import ProductWarehouses from './pages/product-warehouses';
 import EditProductWarehouse from './pages/product-warehouses/EditProductWarehouse';
+import Discounts from './pages/discounts';
 
 function App() {
   const { token } = useAuthStore()
@@ -76,6 +77,7 @@ function App() {
               <Route path='providers' element={<Providers />} />
               <Route path='product-warehouses' element={<ProductWarehouses />} />
               <Route path='product-warehouses/:id' element={<EditProductWarehouse />} />
+              <Route path='discounts' element={<Discounts />} />
               <Route path='*' element={<>NOT FOUNND</>} />
             </Route>
           </Routes>

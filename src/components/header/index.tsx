@@ -146,7 +146,7 @@ const Header = () => {
               onPointerMove={(event) => event.preventDefault()}
               onPointerLeave={(event) => event.preventDefault()}
             >
-              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr]">
+              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr_1fr]">
                 <li className="row-span-2">
                   <NavigationMenuLink asChild>
                     <Link
@@ -167,11 +167,14 @@ const Header = () => {
                   Sotuvlar haqida to'liq ma'lumot.
                 </ListItem>
                 <ListItem href="/wallets" title="Hamyonlar">
-                  Ingredientlarga doir ma'lumotlarni ko'rish va ular ustida
+                  Hamyonlarga doir ma'lumotlarni ko'rish va ular ustida
                   amallar bajarish.
                 </ListItem>
                 <ListItem href="/clients" title="Klientlar">
                   Klientlar haqida ma'lumotlar.
+                </ListItem>
+                <ListItem href="/discounts" title="Chegirmalar">
+                  Chegirmalar haqida ma'lumotlar.
                 </ListItem>
               </ul>
             </NavigationMenuContent>

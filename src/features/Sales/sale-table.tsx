@@ -172,7 +172,7 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
                                         )}
                                       </TableCell>
                                     </TableRow>
-                                  );//test
+                                  );
                                 },
                               )}
                             </TableBody>

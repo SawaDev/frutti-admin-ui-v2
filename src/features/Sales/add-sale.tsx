@@ -124,7 +124,8 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
     };
 
     createSale.mutateAsync(data).then(() => {
-      form.reset();
+      form.reset({});
+      setOpen(false)
     });
   };
 
