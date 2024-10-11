@@ -115,6 +115,7 @@ const useSales = () => {
         queryClient.invalidateQueries({ queryKey: ["sales"] });
         queryClient.invalidateQueries({ queryKey: ["clients"] });
         queryClient.invalidateQueries({ queryKey: ["wallets"] });
+        queryClient.invalidateQueries({ queryKey: ["products"] });
       },
     });
 
