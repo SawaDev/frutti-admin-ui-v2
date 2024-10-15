@@ -1,3 +1,4 @@
+import { FormDatePicker } from "@/components/form/FormDatePicker";
 import { FormInput } from "@/components/form/FormInput";
 import { FormSelect } from "@/components/form/FormSelect";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { paymentMethodOptions, questionOptions } from "@/constants/options";
+import { paymentMethodOptions, questionOptions, saleOptions } from "@/constants/options";
 import useClients from "@/hooks/useClients";
 import useProducts from "@/hooks/useProducts";
 import useSales from "@/hooks/useSales";
@@ -36,6 +37,7 @@ import { SheetType } from "@/types/other";
 import { CreateSaleType } from "@/types/sales";
 import { Wallet } from "@/types/wallets";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { InfoIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -57,6 +59,7 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
       is_free: "false",
       transaction_type: "cash",
       payment_received: 0,
+      status: "finished"
     },
   });
 
@@ -122,6 +125,7 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
       client_id: Number(values.client_id),
       wallet_id: Number(values.wallet_id),
       products: filteredProducts,
+      date: values.date ? format(values.date, "dd-MM-yyyy") : undefined
     };
 
     createSale.mutateAsync(data).then(() => {
@@ -136,7 +140,7 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="sm:max-w-[80vw]">
+      <SheetContent className="sm:max-w-[90vw] w-[90vw]">
         <ScrollArea className="z-[9999] h-[96vh]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -249,6 +253,17 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
                   name="is_free"
                   label="Aksiyami?"
                   options={questionOptions}
+                />
+                <FormSelect
+                  control={form.control}
+                  name="status"
+                  label="Status"
+                  options={saleOptions}
+                />
+                <FormDatePicker
+                  control={form.control}
+                  name="date"
+                  label="Sotuv kuni"
                 />
               </div>
               <Card>

@@ -57,7 +57,7 @@ export const getColumns = (setOpen: (value: number) => void) => {
     {
       accessorKey: "wallet.name",
       header: () => (
-        <span>Hamyon</span>
+        <span>Kassa</span>
       ),
     },
     {

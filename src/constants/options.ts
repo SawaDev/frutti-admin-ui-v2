@@ -168,3 +168,14 @@ export const discountTypeOptions = [
     label: "Foiz",
   },
 ];
+
+export const saleOptions: Option[] = [
+  {
+    value: "finished",
+    label: "Tugatilgan",
+  },
+  {
+    value: "waiting",
+    label: "Kutilmoqda",
+  }
+];

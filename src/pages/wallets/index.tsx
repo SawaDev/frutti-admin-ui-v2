@@ -32,7 +32,7 @@ const Wallets = () => {
         className="relative w-[300px] min-h-[180px] flex items-center justify-center cursor-pointer hover:bg-gray-200/10">
         <CardContent className="flex flex-col items-center pt-4 text-center capitalize gap-3">
           <ArrowRightLeft />
-          <p>Hamyonlar orasidagi pul o'tkazmasi</p>
+          <p>Kassalar orasidagi pul o'tkazmasi</p>
         </CardContent>
       </Card>
       <Card
@@ -40,7 +40,7 @@ const Wallets = () => {
         className="relative w-[300px] min-h-[180px] flex items-center justify-center cursor-pointer hover:bg-gray-200/10">
         <CardContent className="flex flex-col items-center gap-3">
           <PlusCircleIcon />
-          <p>Yangi Hamyon Qo'shish</p>
+          <p>Yangi Kassa Qo'shish</p>
         </CardContent>
       </Card>
       <AddExchange open={openExchange} setOpen={setOpenExchange} />

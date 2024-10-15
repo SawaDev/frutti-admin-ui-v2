@@ -134,7 +134,7 @@ const ProductWarehouseDetails: React.FC<ProductWarehouseDetailsProps> = ({
               <CardHeader>
                 <CardTitle>Sklad haqida</CardTitle>
                 <CardDescription>
-                  Bu yerda siz ushbu hamyon haqidagi asosiy ma'lumotlarni
+                  Bu yerda siz ushbu sklad haqidagi asosiy ma'lumotlarni
                   o'zgartirishingiz mumkin
                 </CardDescription>
               </CardHeader>

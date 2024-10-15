@@ -64,7 +64,7 @@ const AddTransaction: React.FC<SheetType> = ({ open, setOpen }) => {
                       control={form.control}
                       name='wallet_id'
                       options={wallets?.data.map(wallet => ({ value: wallet.id.toString(), label: wallet.name }))}
-                      label='Hamyon'
+                      label='Kassa'
                     />
                   )}
                   {!loadingClients && (

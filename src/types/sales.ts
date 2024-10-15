@@ -17,6 +17,8 @@ export interface Sale {
   distribution: number | null;
   currency_name: string | null;
   is_free: boolean;
+  date?: string;
+  status: "finished" | "waiting"
 
   client?: Client;
   products?: ExtendedProduct[];

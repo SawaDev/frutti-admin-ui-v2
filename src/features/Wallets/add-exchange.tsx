@@ -71,7 +71,7 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
                           .filter(wallet => wallet.id.toString() !== form.getValues("to_wallet_id"))
                           .map(wallet => ({ value: wallet.id.toString(), label: wallet.name }))
                       }
-                      label='Qaysi Hamyondan'
+                      label='Qaysi Kassadan'
                     />
                   )}
                   {!loadingWallets && (
@@ -83,7 +83,7 @@ const AddExpense: React.FC<SheetType> = ({ open, setOpen }) => {
                           .filter(wallet => wallet.id.toString() !== form.getValues("from_wallet_id"))
                           .map(wallet => ({ value: wallet.id.toString(), label: wallet.name }))
                       }
-                      label='Qaysi Hamyonga'
+                      label='Qaysi Kassaga'
                     />
                   )}
                   <FormInput

@@ -60,6 +60,7 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
           <TableHead>Kassa</TableHead>
           <TableHead>To'lov turi</TableHead>
           <TableHead>Aksiyami</TableHead>
+          <TableHead>Savdo qilingan sana</TableHead>
           <TableHead>Yaratilingan sana</TableHead>
           <TableHead>
             <span className="sr-only">Harakatlar</span>
@@ -90,6 +91,9 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
                     </TableCell>
                     <TableCell className="p-2 px-4">
                       {sale.is_free ? "Ha" : "Yo'q"}
+                    </TableCell>
+                    <TableCell>
+                      {sale.date}
                     </TableCell>
                     <TableCell>
                       {format(sale.created_at, "dd-MM-yyyy HH:mm:ss")}

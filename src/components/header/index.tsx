@@ -166,8 +166,8 @@ const Header = () => {
                 <ListItem href="/sales" title="Sotuvlar">
                   Sotuvlar haqida to'liq ma'lumot.
                 </ListItem>
-                <ListItem href="/wallets" title="Hamyonlar">
-                  Hamyonlarga doir ma'lumotlarni ko'rish va ular ustida
+                <ListItem href="/wallets" title="Kassa">
+                  Kassaga doir ma'lumotlarni ko'rish va ular ustida
                   amallar bajarish.
                 </ListItem>
                 <ListItem href="/clients" title="Klientlar">

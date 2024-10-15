@@ -54,7 +54,7 @@ const WalletDetails: React.FC<WalletDetailsProps> = ({ data }) => {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-              Hamyon Ma'lumotlari
+              Kassa Ma'lumotlari
             </h1>
           </div>
           <div className="flex gap-3">
@@ -70,7 +70,7 @@ const WalletDetails: React.FC<WalletDetailsProps> = ({ data }) => {
               </DialogTrigger>
               <DialogContent>
                 <DialogDescription>
-                  Hamyon o'chgandan so'ng unga bog'liq barcha ma'lumotlar ham yo'q bo'ladi va ularni tiklab bo'lmaydi!
+                  Kassa o'chgandan so'ng unga bog'liq barcha ma'lumotlar ham yo'q bo'ladi va ularni tiklab bo'lmaydi!
                 </DialogDescription>
                 <DialogFooter>
                   <DialogClose>
@@ -101,9 +101,9 @@ const WalletDetails: React.FC<WalletDetailsProps> = ({ data }) => {
           <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
             <Card>
               <CardHeader>
-                <CardTitle>Hamyon haqida</CardTitle>
+                <CardTitle>Kassa haqida</CardTitle>
                 <CardDescription>
-                  Bu yerda siz ushbu hamyon haqidagi asosiy ma'lumotlarni o'zgartirishingiz mumkin
+                  Bu yerda siz ushbu kassa haqidagi asosiy ma'lumotlarni o'zgartirishingiz mumkin
                 </CardDescription>
               </CardHeader>
               <CardContent>

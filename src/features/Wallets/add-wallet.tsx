@@ -47,9 +47,9 @@ const AddWallet: React.FC<SheetType> = ({ open, setOpen }) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
-              <SheetTitle>Yangi hamyon yaratish</SheetTitle>
+              <SheetTitle>Yangi kassa yaratish</SheetTitle>
               <SheetDescription>
-                Bu yerda yangi hamyonni qo'sha olasiz
+                Bu yerda yangi kas qo'sha olasiz
               </SheetDescription>
             </SheetHeader>
             <ScrollArea className="grid h-[calc(100vh-200px)] gap-2 py-4">

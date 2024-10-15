@@ -88,7 +88,7 @@ const Transactions = () => {
                   <TableHead>Haridor</TableHead>
                   <TableHead>Turi</TableHead>
                   <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
-                  <TableHead>Hamyon</TableHead>
+                  <TableHead>Kassa</TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
                   </TableHead>
