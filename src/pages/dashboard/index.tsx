@@ -59,101 +59,101 @@ const Daashboard = () => {
   const monthlyStats =
     statistics.data.monthly.length === 2
       ? {
-          total_transactions: statistics.data.monthly[1].total_transactions,
+          total_transactions: statistics.data.monthly[1]?.total_transactions,
           transactions_change:
-            statistics.data.monthly[0].total_transactions === 0
-              ? "+" + statistics.data.monthly[1].total_transactions
-              : statistics.data.monthly[1].total_transactions /
-                    statistics.data.monthly[0].total_transactions >
+            statistics.data.monthly[0]?.total_transactions === 0
+              ? "+" + statistics.data.monthly[1]?.total_transactions
+              : statistics.data.monthly[1]?.total_transactions /
+                    statistics.data.monthly[0]?.total_transactions >
                   1
                 ? "+" +
                   (
-                    (statistics.data.monthly[1].total_transactions /
-                      statistics.data.monthly[0].total_transactions -
+                    (statistics.data.monthly[1]?.total_transactions /
+                      statistics.data.monthly[0]?.total_transactions -
                       1) *
                     100
                   ).toFixed(2)
                 : "-" +
                   (
                     (1 -
-                      statistics.data.monthly[1].total_transactions /
-                        statistics.data.monthly[0].total_transactions) *
+                      statistics.data.monthly[1]?.total_transactions /
+                        statistics.data.monthly[0]?.total_transactions) *
                     100
                   ).toFixed(2),
-          total_net_profit: statistics.data.monthly[1].total_net_profit,
+          total_net_profit: statistics.data.monthly[1]?.total_net_profit,
           net_profit_change:
-            statistics.data.monthly[0].total_net_profit === 0
-              ? "+" + statistics.data.monthly[1].total_net_profit
-              : statistics.data.monthly[1].total_net_profit /
-                    statistics.data.monthly[0].total_net_profit >
+            statistics.data.monthly[0]?.total_net_profit === 0
+              ? "+" + statistics.data.monthly[1]?.total_net_profit
+              : statistics.data.monthly[1]?.total_net_profit /
+                    statistics.data.monthly[0]?.total_net_profit >
                   1
                 ? "+" +
                   (
-                    (statistics.data.monthly[1].total_net_profit /
-                      statistics.data.monthly[0].total_net_profit -
+                    (statistics.data.monthly[1]?.total_net_profit /
+                      statistics.data.monthly[0]?.total_net_profit -
                       1) *
                     100
                   ).toFixed(2)
                 : "-" +
                   (
                     (1 -
-                      statistics.data.monthly[1].total_net_profit /
-                        statistics.data.monthly[0].total_net_profit) *
+                      statistics.data.monthly[1]?.total_net_profit /
+                        statistics.data.monthly[0]?.total_net_profit) *
                     100
                   ).toFixed(2),
           total_product_quantity:
-            statistics.data.monthly[1].total_product_quantity,
+            statistics.data.monthly[1]?.total_product_quantity,
           product_quantity_change:
-            statistics.data.monthly[0].total_product_quantity === 0
-              ? "+" + statistics.data.monthly[1].total_product_quantity
-              : statistics.data.monthly[1].total_product_quantity /
-                    statistics.data.monthly[0].total_product_quantity >
+            statistics.data.monthly[0]?.total_product_quantity === 0
+              ? "+" + statistics.data.monthly[1]?.total_product_quantity
+              : statistics.data.monthly[1]?.total_product_quantity /
+                    statistics.data.monthly[0]?.total_product_quantity >
                   1
                 ? "+" +
                   (
-                    (statistics.data.monthly[1].total_product_quantity /
-                      statistics.data.monthly[0].total_product_quantity -
+                    (statistics.data.monthly[1]?.total_product_quantity /
+                      statistics.data.monthly[0]?.total_product_quantity -
                       1) *
                     100
                   ).toFixed(2)
                 : "-" +
                   (
                     (1 -
-                      statistics.data.monthly[1].total_product_quantity /
-                        statistics.data.monthly[0].total_product_quantity) *
+                      statistics.data.monthly[1]?.total_product_quantity /
+                        statistics.data.monthly[0]?.total_product_quantity) *
                     100
                   ).toFixed(2),
-          total_price: statistics.data.monthly[1].total_price,
+          total_price: statistics.data.monthly[1]?.total_price,
           price_change:
-            statistics.data.monthly[0].total_price === 0
-              ? "+" + statistics.data.monthly[1].total_price
-              : statistics.data.monthly[1].total_price /
-                    statistics.data.monthly[0].total_price >
+            statistics.data.monthly[0]?.total_price === 0
+              ? "+" + statistics.data.monthly[1]?.total_price
+              : statistics.data.monthly[1]?.total_price /
+                    statistics.data.monthly[0]?.total_price >
                   1
                 ? "+" +
                   (
-                    (statistics.data.monthly[1].total_price /
-                      statistics.data.monthly[0].total_price -
+                    (statistics.data.monthly[1]?.total_price /
+                      statistics.data.monthly[0]?.total_price -
                       1) *
                     100
                   ).toFixed(2)
                 : "-" +
                   (
                     (1 -
-                      statistics.data.monthly[1].total_price /
-                        statistics.data.monthly[0].total_price) *
+                      statistics.data.monthly[1]?.total_price /
+                        statistics.data.monthly[0]?.total_price) *
                     100
                   ).toFixed(2),
         }
       : {
-          total_transactions: statistics.data.monthly[0].total_transactions,
+          total_transactions: statistics.data.monthly[0]?.total_transactions,
           transactions_change: 0,
-          total_net_profit: statistics.data.monthly[0].total_net_profit,
+          total_net_profit: statistics.data.monthly[0]?.total_net_profit,
           net_profit_change: 0,
           total_product_quantity:
-            statistics.data.monthly[0].total_product_quantity,
+            statistics.data.monthly[0]?.total_product_quantity,
           product_quantity_change: 0,
-          total_price: statistics.data.monthly[0].total_price,
+          total_price: statistics.data.monthly[0]?.total_price,
           price_change: 0,
         };
 
@@ -210,10 +210,10 @@ const Daashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {formatNumberComma(monthlyStats.total_transactions)}
+                {formatNumberComma(monthlyStats?.total_transactions)}
               </div>
               <p className="text-xs text-muted-foreground">
-                {monthlyStats.transactions_change}% Ohirgi oyga nisbatan
+                {monthlyStats?.transactions_change}% Ohirgi oyga nisbatan
               </p>
             </CardContent>
           </Card>
@@ -248,13 +248,13 @@ const Daashboard = () => {
               <div className="mt-2 flex w-full justify-between text-xl font-bold">
                 <span>So'mda:</span>
                 <span>
-                  {formatNumberComma(statistics.data.debts["SUM"].total_debt)}
+                  {formatNumberComma(statistics.data.debts["SUM"]?.total_debt)}
                 </span>
               </div>
               <div className="flex w-full justify-between text-xl font-bold">
                 <span>Dollarda:</span>
                 <span>
-                  ${formatNumberComma(statistics.data.debts.USD.total_debt)}
+                  ${formatNumberComma(statistics.data.debts.USD?.total_debt)}
                 </span>
               </div>
             </CardContent>
