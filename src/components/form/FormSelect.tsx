@@ -15,7 +15,7 @@ export interface FormSelectProps<T extends FieldValues> extends React.InputHTMLA
 }
 
 const FormSelect = React.forwardRef<HTMLInputElement, FormSelectProps<any>>(
-  ({ className, control, name, options, label, handleNew, ...props }, ref) => {
+  ({ className, control, name, options, label, handleNew, disabled, ...props }, ref) => {
     return (
       <FormField
         control={control}
@@ -24,7 +24,7 @@ const FormSelect = React.forwardRef<HTMLInputElement, FormSelectProps<any>>(
         render={({ field }) => (
           <FormItem>
             {label && <FormLabel>{label}</FormLabel>}
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select disabled={disabled} onValueChange={field.onChange} value={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Tanlang..." />

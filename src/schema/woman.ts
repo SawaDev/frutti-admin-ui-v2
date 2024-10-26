@@ -11,6 +11,7 @@ export const updateWomanSchema = z.object({
 })
 
 export const womanProductsSchema = z.object({
+  date: z.string().nullable(),
   women: z.array(
     z.object({
       woman_id: z.number({ required_error: "Ayolni kiriting!" }),

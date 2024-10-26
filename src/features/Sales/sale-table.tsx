@@ -32,6 +32,7 @@ import {
 import useSales from "@/hooks/useSales";
 import { format } from "date-fns";
 import { GetAllSalesResponse } from "@/types/sales";
+import AddSale from "./add-sale";
 
 interface SaleTableType {
   data: GetAllSalesResponse | undefined;
@@ -39,6 +40,7 @@ interface SaleTableType {
 
 const SaleTable: React.FC<SaleTableType> = ({ data }) => {
   const [deleteModal, setDeleteModal] = useState<number>();
+  const [editSheet, setEditSheet] = useState<number | undefined>(undefined);
 
   const { deleteSaleMutation } = useSales();
 
@@ -92,9 +94,7 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
                     <TableCell className="p-2 px-4">
                       {sale.is_free ? "Ha" : "Yo'q"}
                     </TableCell>
-                    <TableCell>
-                      {sale.date}
-                    </TableCell>
+                    <TableCell>{sale.date}</TableCell>
                     <TableCell>
                       {format(sale.created_at, "dd-MM-yyyy HH:mm:ss")}
                     </TableCell>
@@ -112,6 +112,12 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
+                          <DropdownMenuItem
+                            className="focus:bg-blue-100 focus:text-blue-800"
+                            onClick={() => setEditSheet(sale.id)}
+                          >
+                            O'zgartirish
+                          </DropdownMenuItem>
                           <DropdownMenuItem
                             className="focus:bg-red-100 focus:text-red-800"
                             onClick={() => setDeleteModal(sale.id)}
@@ -202,9 +208,9 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
           onOpenChange={() => setDeleteModal(undefined)}
         >
           <DialogContent>
-            <DialogTitle>Siryoni o'chirish</DialogTitle>
+            <DialogTitle>Sotuvni o'chirish</DialogTitle>
             <DialogDescription>
-              Siryoni o'chirganingizdan so'ng uni qayta tiklab bo'lmaydi
+              Sotuvni o'chirganingizdan so'ng uni qayta tiklab bo'lmaydi
             </DialogDescription>
             <DialogFooter>
               <Button
@@ -220,6 +226,8 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
           </DialogContent>
         </Dialog>
       )}
+
+      <AddSale open={!!editSheet} setOpen={() => setEditSheet(undefined)} edit={editSheet}/>
     </Table>
   );
 };

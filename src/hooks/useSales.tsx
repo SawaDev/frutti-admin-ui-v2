@@ -4,7 +4,6 @@ import { toast } from "@/components/ui/use-toast";
 import {
   GetAllSalesResponse,
   GetSingleSaleResponse,
-  CreateSaleType,
   CreateSaleDataType,
 } from "@/types/sales";
 
@@ -18,8 +17,8 @@ const useSales = () => {
           const response = await api.post("/sales", data);
           if (response?.data) {
             toast({
-              description: "Muvaffaqiyatli yaratildi!"
-            })
+              description: "Muvaffaqiyatli yaratildi!",
+            });
           }
           return response.data;
         } catch (error: any) {
@@ -65,17 +64,36 @@ const useSales = () => {
 
           return structuredClone(response.data);
         } catch (error: any) {
-          console.log(error)
+          console.log(error);
         }
       },
       enabled: !!id,
-      retry: 0
+      retry: 0,
     });
 
-  const updateSaleMutation = (id: number) =>
-    useMutation({
-      mutationFn: async (data: CreateSaleType) => {
+  const getSaleById = (id: string | null) =>
+    useQuery<GetSingleSaleResponse, Error>({
+      queryKey: ["sales", id],
+      queryFn: async () => {
         try {
+          if(!id) return;
+          const response = await api.get(`/sales/${id}`);
+
+          return structuredClone(response.data);
+        } catch (error: any) {
+          console.log(error);
+        }
+      },
+      enabled: !!id,
+      retry: 0,
+    });
+
+  const updateSaleMutation = (id?: number) =>
+    useMutation({
+      mutationFn: async (data: CreateSaleDataType) => {
+        try {
+          console.log(id, data)
+          if(!id) return;
           const response = await api.put(`/sales/${id}`, data);
           return response.data;
         } catch (error: any) {
@@ -88,7 +106,7 @@ const useSales = () => {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["sales"] });
-        queryClient.invalidateQueries({ queryKey: ["sales", id] });
+        queryClient.invalidateQueries({ queryKey: ["sales", id?.toString()] });
       },
     });
 
@@ -123,6 +141,7 @@ const useSales = () => {
     createSaleMutation,
     getAllSalesQuery,
     getLastSaleQuery,
+    getSaleById,
     updateSaleMutation,
     deleteSaleMutation,
   };

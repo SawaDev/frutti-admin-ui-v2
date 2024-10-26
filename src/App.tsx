@@ -2,7 +2,6 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { Toaster } from './components/ui/toaster';
-import Home from './pages/home';
 import MainLayout from './layouts/MainLayout';
 import Posts from './pages/posts';
 import EditPost from './pages/posts/EditPost';
@@ -34,6 +33,8 @@ import IngredientsCategories from './pages/ingredient-categories';
 import ProductWarehouses from './pages/product-warehouses';
 import EditProductWarehouse from './pages/product-warehouses/EditProductWarehouse';
 import Discounts from './pages/discounts';
+import Production from './pages/production';
+import Daashboard from './pages/dashboard';
 
 function App() {
   const { token } = useAuthStore()
@@ -48,7 +49,7 @@ function App() {
         <MainLayout>
           <Routes>
             <Route path='/'>
-              <Route index element={<Home />} />
+              <Route index element={<Daashboard />} />
               <Route path='posts' element={<Posts />} />
               <Route path='posts/:id' element={<EditPost />} />
               <Route path='users' element={<Users />} />
@@ -78,6 +79,7 @@ function App() {
               <Route path='product-warehouses' element={<ProductWarehouses />} />
               <Route path='product-warehouses/:id' element={<EditProductWarehouse />} />
               <Route path='discounts' element={<Discounts />} />
+              <Route path='production' element={<Production />} />
               <Route path='*' element={<>NOT FOUNND</>} />
             </Route>
           </Routes>

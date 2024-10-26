@@ -18,19 +18,10 @@ import ProductTable from "@/features/Products/product-table"
 const Products = () => {
   const [openSheet, setOpenSheet] = useState<boolean>(false)
   const [addWarehouseSheet, setAddWarehouseSheet] = useState<boolean>(false)
-  // const [date, setDate] = useState<{ from_date: string, to_date: string }>({ from_date: "", to_date: "" })
 
   const { getAllProductsQuery } = useProducts()
 
   const { data, isLoading, isError } = getAllProductsQuery()
-
-  // const handleDateChange = (range: DateRange | undefined) => {
-  //   setDate((prev) => ({
-  //     ...prev,
-  //     from_date: range?.from ? format(startOfDay(range.from), "yyyy-MM-dd HH:mm:ss") : "",
-  //     to_date: range?.to ? format(endOfDay(range.to), "yyyy-MM-dd HH:mm:ss") : ""
-  //   }))
-  // }
 
   if (isLoading) {
     return <>Loading...</>

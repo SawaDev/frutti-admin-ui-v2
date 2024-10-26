@@ -167,8 +167,8 @@ const Header = () => {
                   Sotuvlar haqida to'liq ma'lumot.
                 </ListItem>
                 <ListItem href="/wallets" title="Kassa">
-                  Kassaga doir ma'lumotlarni ko'rish va ular ustida
-                  amallar bajarish.
+                  Kassaga doir ma'lumotlarni ko'rish va ular ustida amallar
+                  bajarish.
                 </ListItem>
                 <ListItem href="/clients" title="Klientlar">
                   Klientlar haqida ma'lumotlar.
@@ -309,6 +309,9 @@ const Header = () => {
                 </ListItem>
                 <ListItem href="/providers" title="Yetkazib beruvchilar">
                   Yetkazib beruvchilar haqida to'liq ma'lumot.
+                </ListItem>
+                <ListItem href="/production" title="Ishlab chiqarish">
+                  Ishlab chiqarish haqida to'liq ma'lumot.
                 </ListItem>
                 <ListItem href="/bonuses" title="Bonuslar">
                   Bonuslar haqida to'liq ma'lumot.

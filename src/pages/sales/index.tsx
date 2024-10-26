@@ -1,30 +1,36 @@
-import { PlusCircle } from "lucide-react"
-import { useState } from "react"
+import { PlusCircle } from "lucide-react";
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
-import NoItems from '@/features/NoItems'
-import AddSale from "@/features/Sales/add-sale"
-import useSales from "@/hooks/useSales"
-import { Skeleton } from "@/components/ui/skeleton"
-import SaleTable from "@/features/Sales/sale-table"
+import NoItems from "@/features/NoItems";
+import AddSale from "@/features/Sales/add-sale";
+import useSales from "@/hooks/useSales";
+import { Skeleton } from "@/components/ui/skeleton";
+import SaleTable from "@/features/Sales/sale-table";
 
 const Sales = () => {
-  const [openSheet, setOpenSheet] = useState<boolean>(false)
+  const [openSheet, setOpenSheet] = useState<boolean>(false);
 
-  const {getAllSalesQuery} = useSales()
+  const { getAllSalesQuery } = useSales();
 
   const { data, isLoading, isError } = getAllSalesQuery();
 
   if (isLoading) {
-    return <Skeleton className="h-[600px] w-full" />;
+    return (
+      <div className="flex w-full flex-col">
+        {Array.from({ length: 12 }).map((_, index) => (
+          <Skeleton key={index} className="h-[20px] w-full" />
+        ))}
+      </div>
+    );
   }
 
   if (isError) {
@@ -53,17 +59,17 @@ const Sales = () => {
                 Qo'shish
               </Button>
             </div>
-          </CardHeader >
+          </CardHeader>
           <CardContent>
-            <SaleTable data={data}/>
+            <SaleTable data={data} />
           </CardContent>
-        </Card >
+        </Card>
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
-      <AddSale open={openSheet} setOpen={setOpenSheet} />
+      {openSheet && <AddSale open={openSheet} setOpen={setOpenSheet} />}
     </>
-  )
-}
+  );
+};
 
-export default Sales
+export default Sales;

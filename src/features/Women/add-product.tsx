@@ -20,6 +20,8 @@ import { womanProductsSchema } from "@/schema/woman";
 import { SheetType } from "@/types/other";
 import { Skeleton } from "@/components/ui/skeleton";
 import { z } from "zod";
+import { FormDatePicker } from "@/components/form/FormDatePicker";
+import { format } from "date-fns";
 
 const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
   const { createWomanProductsMutation, getAllWomenQuery } = useWomen();
@@ -32,7 +34,9 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
 
   const form = useForm<z.infer<typeof womanProductsSchema>>({
     resolver: zodResolver(womanProductsSchema),
-    defaultValues: {},
+    defaultValues: {
+      date: null,
+    },
   });
 
   useEffect(() => {
@@ -64,6 +68,10 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
   const onSubmit = (values: z.infer<typeof womanProductsSchema>) => {
     const filteredWomen = [];
 
+    const finalDate = values.date
+      ? format(values.date, "dd-MM-yyyy")
+      : format(new Date(), "dd-MM-yyyy");
+
     for (let i = 0; i < values.women.length; i++) {
       const newProducts = values.women[i].products.filter(
         (product) => product.quantity,
@@ -72,6 +80,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
       if (newProducts.length > 0) {
         filteredWomen.push({
           woman_id: values.women[i].woman_id,
+          date: finalDate,
           products: newProducts,
         });
       }
@@ -94,24 +103,32 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <SheetHeader>
+              <SheetHeader >
                 <SheetTitle>Chiqarilgan mahsulotlarni kiritish</SheetTitle>
                 <SheetDescription>
                   Bu yerda siz yangi chiqarilgan mahsulotlarni qo'sha olasiz
                 </SheetDescription>
+                <FormDatePicker
+                  control={form.control}
+                  name="date"
+                  label="Kunni kiriting"
+                  className="max-w-[300px]"
+                />
               </SheetHeader>
               <div className="grid gap-2 py-4">
                 <div className="relative">
                   {/* <div className="h-[calc(100vh-400px)] overflow-x-auto">
                     
                   </div> */}
-                  <ScrollArea className="w-[110vw] h-[calc(100vh-180px)] whitespace-nowrap rounded-md border pr-[14vw]">
-                    <div className="flex w-max flex-col relative">
-                      <div className="flex gap-2 sticky top-0 border-b mb-1 z-10 bg-white transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                        <div className="!w-[200px] min-w-[200px] sticky left-0 h-12 px-4 flex justify-start items-center bg-white font-medium text-muted-foreground">Ayollar</div>
+                  <ScrollArea className="h-[calc(100vh-260px)] w-[110vw] whitespace-nowrap rounded-md border pr-[14vw]">
+                    <div className="relative flex w-max flex-col">
+                      <div className="sticky top-0 z-10 mb-1 flex gap-2 border-b bg-white transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                        <div className="sticky left-0 flex h-12 !w-[200px] min-w-[200px] items-center justify-start bg-white px-4 font-medium text-muted-foreground">
+                          Ayollar
+                        </div>
                         {products?.data.map((product, index) => (
                           <div
-                            className="w-[140px] shrink-0 h-12 pr-4 flex justify-start items-center font-medium text-muted-foreground"
+                            className="flex h-12 w-[140px] shrink-0 items-center justify-start pr-4 font-medium text-muted-foreground"
                             key={index}
                           >
                             {product.name} (
@@ -124,13 +141,16 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                       </div>
                       <div className="flex flex-col pb-3">
                         {women?.data.map((woman, womanIndex) => (
-                          <div className="flex flex-row relative gap-2 hover:bg-muted/50" key={womanIndex}>
-                            <div className="!w-[200px] min-w-[200px] sticky left-0 h-12 px-4 flex justify-start items-center bg-white font-medium text-muted-foreground">
+                          <div
+                            className="relative flex flex-row gap-2 hover:bg-muted/50"
+                            key={womanIndex}
+                          >
+                            <div className="sticky left-0 flex h-12 !w-[200px] min-w-[200px] items-center justify-start bg-white px-4 font-medium text-muted-foreground">
                               {woman.name}
                             </div>
                             {products?.data.map((_, productIndex) => (
                               <div
-                                className="w-[140px] shrink-0 h-12 flex justify-start items-center font-medium text-muted-foreground"
+                                className="flex h-12 w-[140px] shrink-0 items-center justify-start font-medium text-muted-foreground"
                                 key={productIndex}
                               >
                                 <FormInput
@@ -154,7 +174,8 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                   disabled={
                     !form.formState.isValid ||
                     !form.formState.isDirty ||
-                    form.formState.isLoading
+                    form.formState.isLoading ||
+                    createWomanProducts.isPending
                   }
                   type="submit"
                 >

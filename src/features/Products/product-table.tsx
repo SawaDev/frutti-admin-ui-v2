@@ -7,11 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { productColumns } from "./columns"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog"
+import AddProduct from "./add-product"
+import { Product } from "@/types/products"
 
 interface ProductTableType { }
 
 const ProductTable: FC<ProductTableType> = () => {
   const [deleteModal, setDeleteModal] = useState<number>()
+  const [openSheet, setOpenSheet] = useState<Product | null>(null)
 
   const {
     getAllProductsQuery,
@@ -30,7 +33,7 @@ const ProductTable: FC<ProductTableType> = () => {
 
   const productsTable = useReactTable({
     data: products?.data ?? [],
-    columns: productColumns(setDeleteModal),
+    columns: productColumns(setDeleteModal, setOpenSheet),
     getCoreRowModel: getCoreRowModel(),
   })
 
@@ -88,6 +91,9 @@ const ProductTable: FC<ProductTableType> = () => {
           </TableRow>
         )}
       </TableBody>
+      {openSheet && (
+        <AddProduct open={!!openSheet} setOpen={() => setOpenSheet(null)} edit={openSheet}/>
+      )}
       {deleteModal !== undefined && (
         <Dialog open={deleteModal ? true : false} onOpenChange={() => setDeleteModal(undefined)}>
           <DialogContent>

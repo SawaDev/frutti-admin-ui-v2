@@ -25,13 +25,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { paymentMethodOptions, questionOptions, saleOptions } from "@/constants/options";
+import {
+  paymentMethodOptions,
+  questionOptions,
+  saleOptions,
+} from "@/constants/options";
 import useClients from "@/hooks/useClients";
 import useProducts from "@/hooks/useProducts";
 import useSales from "@/hooks/useSales";
 import useWallets from "@/hooks/useWallets";
 import { formatNumberComma } from "@/lib/utils";
 import { createSaleSchema } from "@/schema/sales";
+import { useCurrencyStore } from "@/store/currency";
 import { Client } from "@/types/clients";
 import { SheetType } from "@/types/other";
 import { CreateSaleType } from "@/types/sales";
@@ -42,16 +47,28 @@ import { InfoIcon } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const AddSale: FC<SheetType> = ({ open, setOpen }) => {
+const AddSale: FC<SheetType & { edit?: number }> = ({
+  open,
+  setOpen,
+  edit,
+}) => {
   const [client, setClient] = useState<Client | undefined>(undefined);
   const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
 
-  const { createSaleMutation, getLastSaleQuery } = useSales();
+  const { activeCurrency } = useCurrencyStore();
+
+  const {
+    createSaleMutation,
+    getLastSaleQuery,
+    getSaleById,
+    updateSaleMutation,
+  } = useSales();
   const { getAllWalletsQuery } = useWallets();
   const { getAllClientsQuery } = useClients();
   const { getAllProductsQuery } = useProducts();
 
   const createSale = createSaleMutation();
+  const updateSale = updateSaleMutation(edit);
 
   const form = useForm<CreateSaleType>({
     resolver: zodResolver(createSaleSchema),
@@ -59,20 +76,25 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
       is_free: "false",
       transaction_type: "cash",
       payment_received: 0,
-      status: "finished"
+      status: "finished",
     },
   });
+
+  const clientId = form.watch("client_id");
+  const walletId = form.watch("wallet_id");
 
   const { data: wallets, isLoading: loadingWallets } = getAllWalletsQuery();
   const { data: clients, isLoading: loadingClients } = getAllClientsQuery();
   const { data: products, isLoading: loadingProducts } = getAllProductsQuery();
-  const { data: lastSale } = getLastSaleQuery(form.getValues("client_id"));
+  const { data: sale, isLoading: loadingSale } = getSaleById(
+    edit ? edit.toString() : null,
+  );
+  const { data: lastSale } = getLastSaleQuery(edit ? null : clientId);
 
   useEffect(() => {
     if (products) {
       products.data.forEach((product, index) => {
         form.setValue(`products.${index}.product_id`, product.id);
-        form.setValue(`products.${index}.price`, product.price);
       });
     }
   }, [products]);
@@ -95,29 +117,69 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
   }, [lastSale]);
 
   useEffect(() => {
-    if (form.getValues("client_id")) {
+    if (clientId) {
       const foundClient = clients?.data.find(
-        (client) => client.id.toString() === form.getValues("client_id"),
+        (client) => client.id.toString() === clientId,
       );
 
       setClient(foundClient);
     }
-  }, [form.getValues("client_id")]);
+  }, [clientId]);
 
   useEffect(() => {
-    if (form.getValues("wallet_id")) {
+    if (walletId) {
       const foundWallet = wallets?.data.find(
-        (wallet) => wallet.id.toString() === form.getValues("wallet_id"),
+        (wallet) => wallet.id.toString() === walletId,
       );
 
       setWallet(foundWallet);
     }
-  }, [form.getValues("wallet_id")]);
+  }, [walletId]);
+
+  useEffect(() => {
+    if (!loadingSale && edit && sale?.data && products) {
+      form.reset({
+        wallet_id: sale.data.transaction?.wallet_id
+          ? sale.data.transaction?.wallet_id.toString()
+          : undefined,
+        client_id: sale.data.client_id
+          ? sale.data.client_id.toString()
+          : undefined,
+        transaction_type: sale.data.transaction?.type ?? "cash",
+        payment_received: sale.data.transaction?.amount ?? 0,
+        currency_name: sale.data.currency_name ?? activeCurrency?.name,
+        distribution: sale.data.distribution ?? activeCurrency?.distribution,
+        is_free: sale.data.is_free ? "true" : "false",
+        date: sale.data.date ?? undefined,
+        status: sale.data.status,
+      });
+
+      products.data.forEach((product, index) => {
+        sale.data.products?.forEach((innerProduct) => {
+          if (innerProduct.id === product.id) {
+            form.setValue(`products.${index}.price`, innerProduct.sale_price);
+            form.setValue(
+              `products.${index}.quantity`,
+              innerProduct.sale_quantity,
+            );
+          }
+        });
+        form.setValue(`products.${index}.product_id`, product.id);
+      });
+    }
+  }, [loadingSale, sale, edit, products]);
 
   const onSubmit = (values: CreateSaleType) => {
-    const filteredProducts = values.products.filter(
-      (product) => product?.quantity,
-    );
+    const filteredProducts = values.products
+      .map((item, index) => ({
+        ...item,
+        price: item?.price
+          ? item.price
+          : client?.currency === "USD"
+            ? products?.data[index].price_in_dollar
+            : products?.data[index].price,
+      }))
+      .filter((product) => product?.quantity);
 
     const data = {
       ...values,
@@ -125,13 +187,22 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
       client_id: Number(values.client_id),
       wallet_id: Number(values.wallet_id),
       products: filteredProducts,
-      date: values.date ? format(values.date, "dd-MM-yyyy") : undefined
+      date: values.date
+        ? format(values.date, "yyyy-MM-dd")
+        : format(new Date(), "yyyy-MM-dd"),
     };
 
-    createSale.mutateAsync(data).then(() => {
-      form.reset({});
-      setOpen(false);
-    });
+    if (edit) {
+      updateSale.mutateAsync(data).finally(() => {
+        form.reset({});
+        setOpen(false);
+      });
+    } else {
+      createSale.mutateAsync(data).finally(() => {
+        form.reset({});
+        setOpen(false);
+      });
+    }
   };
 
   if (loadingWallets || loadingClients || loadingProducts) {
@@ -140,15 +211,21 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="sm:max-w-[90vw] w-[90vw]">
+      <SheetContent className="w-[90vw] sm:max-w-[90vw]">
         <ScrollArea className="z-[9999] h-[96vh]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>Yangi sotuvni kiritish</CardTitle>
+                  <CardTitle>
+                    {edit
+                      ? "Sotuv ma'lumotlarini o'zgartirish"
+                      : "Yangi sotuvni kiritish"}
+                  </CardTitle>
                   <CardDescription>
-                    Bu yerda siz yangi sotuv ma'lumotlarni kiritishingiz mumkin
+                    {edit
+                      ? "Bu yerda siz sotuv ma'lumotlarni o'zgartirishingiz mumkin"
+                      : "Bu yerda siz yangi sotuv ma'lumotlarni kiritishingiz mumkin"}
                   </CardDescription>
                 </div>
                 <div>
@@ -200,6 +277,7 @@ const AddSale: FC<SheetType> = ({ open, setOpen }) => {
                     label: client.name,
                     value: client.id.toString(),
                   }))}
+                  disabled={!!edit}
                 />
                 <FormSelect
                   control={form.control}
