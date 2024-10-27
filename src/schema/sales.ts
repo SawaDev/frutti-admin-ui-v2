@@ -15,6 +15,7 @@ export const createSaleSchema = z.object({
       .object({
         product_id: z.number().optional(),
         quantity: z.number().optional(),
+        free_item: z.number().optional(),
         price: z.number().optional(),
       })
       .optional(),

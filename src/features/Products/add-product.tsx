@@ -43,7 +43,9 @@ const AddProduct: FC<SheetType & { edit?: Product }> = ({
 
   const form = useForm<CreateProductType>({
     resolver: zodResolver(createProductSchema),
-    defaultValues: {},
+    defaultValues: {
+      quantity: 0
+    },
   });
 
   useEffect(() => {

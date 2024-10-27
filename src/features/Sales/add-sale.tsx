@@ -82,6 +82,7 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
 
   const clientId = form.watch("client_id");
   const walletId = form.watch("wallet_id");
+  const is_free = form.watch("is_free") === "false" ? false : true;
 
   const { data: wallets, isLoading: loadingWallets } = getAllWalletsQuery();
   const { data: clients, isLoading: loadingClients } = getAllClientsQuery();
@@ -158,10 +159,17 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
         sale.data.products?.forEach((innerProduct) => {
           if (innerProduct.id === product.id) {
             form.setValue(`products.${index}.price`, innerProduct.sale_price);
-            form.setValue(
-              `products.${index}.quantity`,
-              innerProduct.sale_quantity,
-            );
+            if (sale.data.is_free) {
+              form.setValue(
+                `products.${index}.free_item`,
+                innerProduct.sale_quantity,
+              );
+            } else {
+              form.setValue(
+                `products.${index}.quantity`,
+                innerProduct.sale_quantity,
+              );
+            }
           }
         });
         form.setValue(`products.${index}.product_id`, product.id);
@@ -171,6 +179,7 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
 
   const onSubmit = (values: CreateSaleType) => {
     const filteredProducts = values.products
+      .filter((product) => product?.quantity || (is_free && product?.free_item))
       .map((item, index) => ({
         ...item,
         price: item?.price
@@ -178,8 +187,7 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
           : client?.currency === "USD"
             ? products?.data[index].price_in_dollar
             : products?.data[index].price,
-      }))
-      .filter((product) => product?.quantity);
+      }));
 
     const data = {
       ...values,
@@ -313,6 +321,7 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
                     label: wallet.name,
                     value: wallet.id.toString(),
                   }))}
+                  disabled={!!edit}
                 />
                 <FormInput
                   control={form.control}
@@ -330,6 +339,7 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
                   control={form.control}
                   name="is_free"
                   label="Aksiyami?"
+                  disabled={!!edit}
                   options={questionOptions}
                 />
                 <FormSelect
@@ -354,6 +364,7 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
                       <TableHead>Narxi (dollarda)</TableHead>
                       <TableHead>Yangilangan Narx</TableHead>
                       <TableHead>Soni</TableHead>
+                      {is_free && <TableHead>Aksiyadagilar Soni</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -381,8 +392,22 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
                               name={`products.${productIndex}.quantity`}
                               min={0}
                               max={product.quantity}
+                              disabled={!!edit && sale?.data.is_free}
                             />
                           </TableCell>
+                          {is_free && (
+                            <TableCell>
+                              <FormInput
+                                control={form.control}
+                                type="number"
+                                step={0.01}
+                                name={`products.${productIndex}.free_item`}
+                                min={0}
+                                max={product.quantity}
+                                disabled={!!edit && !sale?.data.is_free}
+                              />
+                            </TableCell>
+                          )}
                         </TableRow>
                       );
                     })}
