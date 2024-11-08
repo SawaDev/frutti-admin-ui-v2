@@ -124,7 +124,6 @@ const AddProduct: FC<SheetType & { edit?: Product }> = ({
                     name="quantity"
                     type="number"
                     label="Miqdori"
-                    disabled={!!edit}
                   />
                   <FormInput
                     control={form.control}
