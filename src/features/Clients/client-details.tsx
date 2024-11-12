@@ -82,7 +82,6 @@ export const ClientDetails: React.FC<ClientDetailsProps> = ({ data }) => {
                     name="balance"
                     control={form.control}
                     label="Balans"
-                    disabled
                   />
                 </div>
               </CardContent>
