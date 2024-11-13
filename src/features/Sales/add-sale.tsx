@@ -179,7 +179,6 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
 
   const onSubmit = (values: CreateSaleType) => {
     const filteredProducts = values.products
-      .filter((product) => product?.quantity || (is_free && product?.free_item))
       .map((item, index) => ({
         ...item,
         price: item?.price
@@ -187,7 +186,10 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
           : client?.currency === "USD"
             ? products?.data[index].price_in_dollar
             : products?.data[index].price,
-      }));
+      }))
+      .filter(
+        (product) => product?.quantity || (is_free && product?.free_item),
+      );
 
     const data = {
       ...values,
