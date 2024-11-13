@@ -30,7 +30,6 @@ export const ClientDetails: React.FC<ClientDetailsProps> = ({ data }) => {
 
   const formDefaults = {
     name: data.name || "",
-    balance: data.balance || 0,
   };
 
   const form = useForm<ClientType>({
@@ -81,6 +80,7 @@ export const ClientDetails: React.FC<ClientDetailsProps> = ({ data }) => {
                   <FormInput
                     name="balance"
                     type="number"
+                    defaultValue={data.balance}
                     control={form.control}
                     label="Balans"
                   />
