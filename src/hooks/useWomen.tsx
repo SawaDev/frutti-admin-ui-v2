@@ -31,7 +31,7 @@ const useWomen = () => {
   })
 
   const createWomanProductsMutation = () => useMutation({
-    mutationFn: async (data: z.infer<typeof womanProductsSchema>["women"]) => {
+    mutationFn: async (data: z.infer<typeof womanProductsSchema>) => {
       try {
         const response = await api.post(
           '/women/products',

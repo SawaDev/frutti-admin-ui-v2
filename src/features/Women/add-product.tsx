@@ -80,13 +80,17 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
       if (newProducts.length > 0) {
         filteredWomen.push({
           woman_id: values.women[i].woman_id,
-          date: finalDate,
           products: newProducts,
         });
       }
     }
 
-    createWomanProducts.mutateAsync(filteredWomen).then(() => {
+    const finalData = {
+      date: finalDate,
+      women: filteredWomen,
+    };
+
+    createWomanProducts.mutateAsync(finalData).then(() => {
       setOpen(false);
     });
   };
@@ -103,7 +107,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <SheetHeader >
+              <SheetHeader>
                 <SheetTitle>Chiqarilgan mahsulotlarni kiritish</SheetTitle>
                 <SheetDescription>
                   Bu yerda siz yangi chiqarilgan mahsulotlarni qo'sha olasiz
