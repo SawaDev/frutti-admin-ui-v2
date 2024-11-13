@@ -89,7 +89,7 @@ const ProductTable: FC<ProductTableType> = () => {
         </TableHeader>
         <TableBody>
           {productsTable.getRowModel().rows?.length ? (
-            [...productsTable.getRowModel().rows, ...productsTable.getRowModel().rows,...productsTable.getRowModel().rows,...productsTable.getRowModel().rows,...productsTable.getRowModel().rows,].map((row) => (
+            productsTable.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
