@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
-import { ClientType, GetAllClientsResponse, GetSingleClientResponse, UpdateClientType } from "@/types/clients";
+import { ClientType, GetAllClientsResponse, GetSingleClientResponse } from "@/types/clients";
 
 const useClients = () => {
   const queryClient = useQueryClient();
@@ -63,7 +63,7 @@ const useClients = () => {
   })
 
   const updateClientMutation = (id: string | undefined) =>
-    useMutation<GetSingleClientResponse, AxiosError, UpdateClientType, () => void>({
+    useMutation<GetSingleClientResponse, AxiosError, ClientType, () => void>({
       mutationFn: async (data) => {
         try {
           const response = await api.patch(

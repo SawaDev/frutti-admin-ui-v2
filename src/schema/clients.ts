@@ -8,4 +8,5 @@ export const createClientSchema = z.object({
 
 export const updateClientSchema = z.object({
   name: z.string({ required_error: "Ismi ni kiriting!" }).min(1, "Ism 1 yoki undan ko'p xarfdan iborat bo'lishi kerak!"),
+  balance: z.number({ required_error: "Balans ni kiriting!" }),
 })

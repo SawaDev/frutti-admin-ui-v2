@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form"
 import { ChevronLeft } from "lucide-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { FormInput } from "@/components/form/FormInput"
-import { GetSingleClientResponse, UpdateClientType } from "@/types/clients"
+import { GetSingleClientResponse, ClientType } from "@/types/clients"
 import useClients from "@/hooks/useClients"
 import { updateClientSchema } from "@/schema/clients"
 
@@ -33,12 +33,12 @@ export const ClientDetails: React.FC<ClientDetailsProps> = ({ data }) => {
     balance: data.balance || 0,
   };
 
-  const form = useForm<UpdateClientType>({
+  const form = useForm<ClientType>({
     resolver: zodResolver(updateClientSchema),
     defaultValues: formDefaults
   })
 
-  const onSubmit = async (values: UpdateClientType) => {
+  const onSubmit = async (values: ClientType) => {
     await updateClient.mutateAsync(values)
   }
 
@@ -80,6 +80,7 @@ export const ClientDetails: React.FC<ClientDetailsProps> = ({ data }) => {
                   />
                   <FormInput
                     name="balance"
+                    type="number"
                     control={form.control}
                     label="Balans"
                   />

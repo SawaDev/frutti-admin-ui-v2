@@ -21,5 +21,3 @@ export interface GetSingleClientResponse {
 }
 
 export type ClientType = z.infer<typeof createClientSchema>
-
-export type UpdateClientType = Omit<ClientType, "balance">
