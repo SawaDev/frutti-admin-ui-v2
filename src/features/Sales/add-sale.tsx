@@ -390,10 +390,9 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
                             <FormInput
                               control={form.control}
                               type="number"
-                              step={0.01}
                               name={`products.${productIndex}.quantity`}
                               min={0}
-                              max={product.quantity}
+                              max={edit ? undefined : product.quantity}
                               disabled={!!edit && sale?.data.is_free}
                             />
                           </TableCell>
@@ -402,10 +401,9 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
                               <FormInput
                                 control={form.control}
                                 type="number"
-                                step={0.01}
                                 name={`products.${productIndex}.free_item`}
                                 min={0}
-                                max={product.quantity}
+                                max={edit ? undefined : product.quantity}
                                 disabled={!!edit && !sale?.data.is_free}
                               />
                             </TableCell>
