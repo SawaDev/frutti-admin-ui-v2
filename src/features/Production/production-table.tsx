@@ -29,8 +29,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useSales from "@/hooks/useSales";
 import { GetProductsProductionResponse } from "@/types/products";
+import useWomen from "@/hooks/useWomen";
 
 interface ProductProductionTableType {
   data: GetProductsProductionResponse | undefined;
@@ -94,15 +94,15 @@ const CollapsedRows: React.FC<{
 const ProductProductionTable: React.FC<ProductProductionTableType> = ({
   data,
 }) => {
-  const [deleteModal, setDeleteModal] = useState<number>();
+  const [deleteModal, setDeleteModal] = useState<string | null>(null);
 
-  const { deleteSaleMutation } = useSales();
+  const { deleteWomanProductsMutation } = useWomen();
 
-  const deleteSale = deleteSaleMutation(deleteModal);
+  const deleteSale = deleteWomanProductsMutation();
 
   const handleDelete = () => {
-    deleteSale.mutateAsync().then(() => {
-      setDeleteModal(undefined);
+    deleteSale.mutateAsync(deleteModal).then(() => {
+      setDeleteModal(null);
     });
   };
 
@@ -149,7 +149,7 @@ const ProductProductionTable: React.FC<ProductProductionTableType> = ({
                             <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
                             <DropdownMenuItem
                               className="focus:bg-red-100 focus:text-red-800"
-                              onClick={() => setDeleteModal(1)}
+                              onClick={() => setDeleteModal(date.date)}
                             >
                               O'chirish
                             </DropdownMenuItem>
@@ -234,10 +234,10 @@ const ProductProductionTable: React.FC<ProductProductionTableType> = ({
             </TableRow>
           )}
         </TableBody>
-        {deleteModal !== undefined && (
+        {!!deleteModal && (
           <Dialog
             open={deleteModal ? true : false}
-            onOpenChange={() => setDeleteModal(undefined)}
+            onOpenChange={() => setDeleteModal(null)}
           >
             <DialogContent>
               <DialogTitle>Sotuvni o'chirish</DialogTitle>
@@ -247,7 +247,7 @@ const ProductProductionTable: React.FC<ProductProductionTableType> = ({
               <DialogFooter>
                 <Button
                   variant={"outline"}
-                  onClick={() => setDeleteModal(undefined)}
+                  onClick={() => setDeleteModal(null)}
                 >
                   Bekor qilish
                 </Button>
