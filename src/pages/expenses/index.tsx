@@ -1,14 +1,14 @@
-import { PlusCircle } from "lucide-react"
-import { useState } from "react"
+import { PlusCircle } from "lucide-react";
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -16,60 +16,60 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import NoItems from '@/features/NoItems'
-import useExpenses from "@/hooks/useExpenses"
-import AddExpense from "@/features/Expenses/add-expense"
-import { getColumns } from "./columns"
+} from "@tanstack/react-table";
+import NoItems from "@/features/NoItems";
+import useExpenses from "@/hooks/useExpenses";
+import AddExpense from "@/features/Expenses/add-expense";
+import { getColumns } from "./columns";
 
 const Expenses = () => {
-  const [open, setOpen] = useState<number | undefined>(undefined)
-  const [openSheet, setOpenSheet] = useState<boolean>(false)
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    []
-  )
+  const [deleteExpenseId, setDeleteExpenseId] = useState<number | undefined>(
+    undefined,
+  );
+  const [openSheet, setOpenSheet] = useState<boolean>(false);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const { getAllExpensesQuery, deleteExpenseMutation } = useExpenses()
+  const { getAllExpensesQuery, deleteExpenseMutation } = useExpenses();
 
-  const { data, isLoading, isError } = getAllExpensesQuery()
-  const deleteExpense = deleteExpenseMutation(open)
+  const { data, isLoading, isError } = getAllExpensesQuery();
+  const deleteExpense = deleteExpenseMutation(deleteExpenseId);
 
   const handleDelete = async () => {
     await deleteExpense.mutateAsync().then(() => {
-      setOpen(undefined)
-    })
-  }
+      setDeleteExpenseId(undefined);
+    });
+  };
 
   const table = useReactTable({
     data: data?.data ?? [],
-    columns: getColumns(setOpen),
+    columns: getColumns(setDeleteExpenseId),
     state: {
       columnFilters,
     },
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-  })
+  });
 
   if (isLoading) {
-    return <>Loading...</>
+    return <>Loading...</>;
   }
 
   if (isError) {
-    return <>Error</>
+    return <>Error</>;
   }
 
   return (
@@ -84,16 +84,26 @@ const Expenses = () => {
               </CardDescription>
             </div>
             <div>
-              <Button onClick={() => setOpenSheet(true)} size="sm" variant="ghost" className="gap-1">
+              <Button
+                onClick={() => setOpenSheet(true)}
+                size="sm"
+                variant="ghost"
+                className="gap-1"
+              >
                 <PlusCircle className="h-3.5 w-3.5" />
                 Kategoriya qo'shish
               </Button>
-              <Button onClick={() => setOpenSheet(true)} size="sm" variant="ghost" className="gap-1">
+              <Button
+                onClick={() => setOpenSheet(true)}
+                size="sm"
+                variant="ghost"
+                className="gap-1"
+              >
                 <PlusCircle className="h-3.5 w-3.5" />
                 Qo'shish
               </Button>
             </div>
-          </CardHeader >
+          </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
@@ -105,11 +115,11 @@ const Expenses = () => {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                         </TableHead>
-                      )
+                      );
                     })}
                   </TableRow>
                 ))}
@@ -117,14 +127,12 @@ const Expenses = () => {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                    >
+                    <TableRow key={row.id}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}
@@ -133,7 +141,7 @@ const Expenses = () => {
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={getColumns(setOpen).length}
+                      colSpan={99}
                       className="h-24 text-center"
                     >
                       Hech narsa yo'q.
@@ -143,26 +151,37 @@ const Expenses = () => {
               </TableBody>
             </Table>
           </CardContent>
-          <Dialog open={open !== undefined ? true : false} onOpenChange={() => setOpen(undefined)}>
+          <Dialog
+            open={deleteExpenseId !== undefined ? true : false}
+            onOpenChange={() => setDeleteExpenseId(undefined)}
+          >
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu harajatni o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>
+                  Siz ushbu harajatni o'chirmoqchimisiz?
+                </DialogTitle>
                 <DialogDescription>
                   Harajatni o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button disabled={deleteExpense.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
+                <Button
+                  disabled={deleteExpense.isPending}
+                  variant={"destructive"}
+                  onClick={handleDelete}
+                >
+                  O'chirish
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </Card >
+        </Card>
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddExpense open={openSheet} setOpen={setOpenSheet} />
     </>
-  )
-}
+  );
+};
 
-export default Expenses
+export default Expenses;

@@ -67,7 +67,7 @@ const IngredientsPurchase = () => {
 
   return (
     <>
-      {ingredients?.data.length ? (
+      {ingredients?.data?.length ? (
         <>
           <Card className="mx-6 my-10 p-4">
             <CardHeader className="flex flex-row items-center justify-between">
