@@ -51,7 +51,7 @@ const NewPurchase: React.FC<SheetType> = ({ open, setOpen }) => {
   useEffect(() => {
     if (categories?.data && categories?.data.length > 0) {
       categories.data.forEach((category, categoryIndex) => {
-        if (category.ingredients.length > 0) {
+        if (category.ingredients?.length > 0) {
           category.ingredients.forEach((ingredient, index) => {
             form.setValue(
               `ingredients.${categoryIndex}.${index}`,
@@ -178,7 +178,7 @@ const NewPurchase: React.FC<SheetType> = ({ open, setOpen }) => {
                             </TableRow>
                           </CollapsibleTrigger>
                           <CollapsibleContent asChild>
-                            {categories?.data[row.index].ingredients && categories?.data[row.index].ingredients.length && (
+                            {categories?.data[row.index].ingredients && categories?.data[row.index].ingredients?.length && (
                               <TableRow className="hover:bg-inherit">
                                 <TableCell className="p-0 pl-6" colSpan={6}>
                                   <Table>
