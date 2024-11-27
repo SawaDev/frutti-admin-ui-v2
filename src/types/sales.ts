@@ -18,7 +18,7 @@ export interface Sale {
   currency_name: string | null;
   is_free: boolean;
   date?: string;
-  status: "finished" | "waiting"
+  status: "finished" | "waiting";
 
   client?: Client;
   products?: ExtendedProduct[];
@@ -26,6 +26,12 @@ export interface Sale {
 
   created_at: string;
   updated_at: string;
+}
+
+export interface GetSalesParamsType {
+  from_date?: string;
+  to_date?: string;
+  is_free?: boolean;
 }
 
 export interface GetAllSalesResponse {

@@ -1,22 +1,22 @@
-import { MoreHorizontal, PlusCircle } from "lucide-react"
-import { useState } from "react"
+import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { useState } from "react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -24,42 +24,32 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
-import NoItems from '@/features/NoItems'
-import { format } from "date-fns"
-import useTransactions from "@/hooks/useTransactions"
-import { formatNumberComma } from "@/lib/utils"
-import AddTransaction from "@/features/Transactions/add-transaction"
+} from "@/components/ui/table";
+import NoItems from "@/features/NoItems";
+import { format } from "date-fns";
+import useTransactions from "@/hooks/useTransactions";
+import { formatNumberComma } from "@/lib/utils";
+import AddTransaction from "@/features/Transactions/add-transaction";
+import DeleteTransaction from "@/features/Transactions/delete-transaction";
+import { Transaction } from "@/types/transactions";
 
 const Transactions = () => {
-  const [open, setOpen] = useState<number | undefined>(undefined)
-  const [openSheet, setOpenSheet] = useState<boolean>(false)
+  const [open, setOpen] = useState<number | undefined>(undefined);
+  const [openSheet, setOpenSheet] = useState<boolean>(false);
+  const [editTransaction, setEditTransaction] = useState<
+    Transaction | undefined
+  >(undefined);
 
-  const { getAllTransactionsQuery, deleteTransactionMutation } = useTransactions()
+  const { getAllTransactionsQuery } = useTransactions();
 
-  const { data, isLoading, isError } = getAllTransactionsQuery()
-  const deleteTransaction = deleteTransactionMutation(open)
-
-  const handleDelete = async () => {
-    await deleteTransaction.mutateAsync().then(() => {
-      setOpen(undefined)
-    })
-  }
+  const { data, isLoading, isError } = getAllTransactionsQuery();
 
   if (isLoading) {
-    return <>Loading...</>
+    return <>Loading...</>;
   }
 
   if (isError) {
-    return <>Error</>
+    return <>Error</>;
   }
 
   return (
@@ -74,12 +64,17 @@ const Transactions = () => {
               </CardDescription>
             </div>
             <div>
-              <Button onClick={() => setOpenSheet(true)} size="sm" variant="ghost" className="gap-1">
+              <Button
+                onClick={() => setOpenSheet(true)}
+                size="sm"
+                variant="ghost"
+                className="gap-1"
+              >
                 <PlusCircle className="h-3.5 w-3.5" />
                 Qo'shish
               </Button>
             </div>
-          </CardHeader >
+          </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
@@ -87,7 +82,9 @@ const Transactions = () => {
                   <TableHead>Miqdori</TableHead>
                   <TableHead>Haridor</TableHead>
                   <TableHead>Turi</TableHead>
-                  <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Yaratilingan Sana
+                  </TableHead>
                   <TableHead>Kassa</TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
@@ -104,7 +101,11 @@ const Transactions = () => {
                       {transaction.client?.name}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={transaction.type === "cash" ? "success" : "secondary"}>
+                      <Badge
+                        variant={
+                          transaction.type === "cash" ? "success" : "secondary"
+                        }
+                      >
                         {transaction.type === "cash" ? "Naqd" : "Karta"}
                       </Badge>
                     </TableCell>
@@ -117,14 +118,29 @@ const Transactions = () => {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <Button
+                            aria-haspopup="true"
+                            size="icon"
+                            variant="ghost"
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Menu</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(transaction.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="focus:bg-blue-100 focus:text-blue-800"
+                            onClick={() => setEditTransaction(transaction)}
+                          >
+                            O'zgartirish
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="focus:bg-red-100 focus:text-red-800"
+                            onClick={() => setOpen(transaction.id)}
+                          >
+                            O'chirish
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -133,26 +149,19 @@ const Transactions = () => {
               </TableBody>
             </Table>
           </CardContent>
-          <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Siz ushbu pul o'tkazmani o'chirmoqchimisiz?</DialogTitle>
-                <DialogDescription>
-                  Pul o'tkazma o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button disabled={deleteTransaction.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </Card >
+          <DeleteTransaction open={open} setOpen={setOpen} />
+        </Card>
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddTransaction open={openSheet} setOpen={setOpenSheet} />
+      <AddTransaction
+        editData={editTransaction}
+        open={!!editTransaction}
+        setOpen={() => setEditTransaction(undefined)}
+      />
     </>
-  )
-}
+  );
+};
 
-export default Transactions
+export default Transactions;

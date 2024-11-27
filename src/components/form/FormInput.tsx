@@ -19,10 +19,10 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
         name={name}
         render={({ field: { value, onChange, ...fieldProps } }) => {
           const handleNumberChange = (value: string) => {
-            if (value.length) {
-              onChange(+value);
+            if (value === '') {
+              onChange('');
             } else {
-              onChange(undefined)
+              onChange(+value);
             }
           }
 

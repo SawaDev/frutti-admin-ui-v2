@@ -126,6 +126,9 @@ const Header = () => {
                 <ListItem href="/product-warehouses" title="Mahsulot Skladi">
                   Mahsulot skladi haqida to'liq ma'lumot.
                 </ListItem>
+                <ListItem href="/production" title="Ishlab chiqarish">
+                  Ishlab chiqarish haqida to'liq ma'lumot.
+                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -146,12 +149,12 @@ const Header = () => {
               onPointerMove={(event) => event.preventDefault()}
               onPointerLeave={(event) => event.preventDefault()}
             >
-              <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr_1fr_1fr]">
+              <ul className="grid gap-3 p-4 capitalize md:w-[560px] lg:w-[700px] lg:grid-cols-[1fr_1fr_1fr_1fr]">
                 <li className="row-span-2">
                   <NavigationMenuLink asChild>
                     <Link
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
-                      to="/sales"
+                      to="/ingredients"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">Sotuv</div>
                       <p className="text-sm leading-tight text-muted-foreground">
@@ -160,11 +163,8 @@ const Header = () => {
                     </Link>
                   </NavigationMenuLink>
                 </li>
-                <ListItem href="/transactions" title="Pul o'tkazmalar">
-                  Pul o'tkazmalariga doir ma'lumotlar.
-                </ListItem>
-                <ListItem href="/sales" title="Sotuvlar">
-                  Sotuvlar haqida to'liq ma'lumot.
+                <ListItem href="/transactions" title="Pul o'tkazmalari">
+                  Pul o'tkazmalari haqida ma'lumotlar.
                 </ListItem>
                 <ListItem href="/wallets" title="Kassa">
                   Kassaga doir ma'lumotlarni ko'rish va ular ustida amallar
@@ -229,6 +229,9 @@ const Header = () => {
                   title="Siryo Kategoriyalari"
                 >
                   Siryolar kategoriyalari haqida to'liq ma'lumot.
+                </ListItem>
+                <ListItem href="/providers" title="Yetkazib beruvchilar">
+                  Yetkazib beruvchilar haqida to'liq ma'lumot.
                 </ListItem>
               </ul>
             </NavigationMenuContent>
@@ -306,12 +309,6 @@ const Header = () => {
                 </ListItem>
                 <ListItem href="/women" title="Ayollar">
                   Ayollar haqida to'liq ma'lumot.
-                </ListItem>
-                <ListItem href="/providers" title="Yetkazib beruvchilar">
-                  Yetkazib beruvchilar haqida to'liq ma'lumot.
-                </ListItem>
-                <ListItem href="/production" title="Ishlab chiqarish">
-                  Ishlab chiqarish haqida to'liq ma'lumot.
                 </ListItem>
                 <ListItem href="/bonuses" title="Bonuslar">
                   Bonuslar haqida to'liq ma'lumot.

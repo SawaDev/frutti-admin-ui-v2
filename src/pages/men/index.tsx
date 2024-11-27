@@ -1,23 +1,23 @@
-import { MoreHorizontal, PlusCircle } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -25,46 +25,46 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
-import NoItems from '@/features/NoItems'
-import { format } from "date-fns"
-import { formatNumberComma } from "@/lib/utils"
-import useMen from "@/hooks/useMen"
-import AddMan from "@/features/Men/add-man"
-import AddWorkDay from "@/features/Men/add-work-day"
+  DialogTitle,
+} from "@/components/ui/dialog";
+import NoItems from "@/features/NoItems";
+import { format } from "date-fns";
+import { formatNumberComma } from "@/lib/utils";
+import useMen from "@/hooks/useMen";
+import AddMan from "@/features/Men/add-man";
+import AddWorkDay from "@/features/Men/add-work-day";
 
 const Men = () => {
-  const [open, setOpen] = useState<number | undefined>(undefined)
-  const [addWorkDay, setAddWorkDay] = useState<boolean>(false)
-  const [openSheet, setOpenSheet] = useState<boolean>(false)
+  const [open, setOpen] = useState<number | undefined>(undefined);
+  const [addWorkDay, setAddWorkDay] = useState<boolean>(false);
+  const [openSheet, setOpenSheet] = useState<boolean>(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const { getAllMenQuery, deleteManMutation } = useMen()
+  const { getAllMenQuery, deleteManMutation } = useMen();
 
-  const { data, isLoading, isError } = getAllMenQuery()
-  const deleteMan = deleteManMutation(open)
+  const { data, isLoading, isError } = getAllMenQuery();
+  const deleteMan = deleteManMutation(open);
 
   const handleDelete = async () => {
     await deleteMan.mutateAsync().then(() => {
-      setOpen(undefined)
-    })
-  }
+      setOpen(undefined);
+    });
+  };
 
   if (isLoading) {
-    return <>Loading...</>
+    return <>Loading...</>;
   }
 
   if (isError) {
-    return <>Error</>
+    return <>Error</>;
   }
 
   return (
@@ -98,14 +98,16 @@ const Men = () => {
                 Qo'shish
               </Button>
             </div>
-          </CardHeader >
+          </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Ismi</TableHead>
                   <TableHead>Balans</TableHead>
-                  <TableHead className="hidden md:table-cell">Yaratilingan Sana</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Yaratilingan Sana
+                  </TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
                   </TableHead>
@@ -114,15 +116,16 @@ const Men = () => {
               <TableBody>
                 {data.data.map((man, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">
-                      {man.name}
-                    </TableCell>
+                    <TableCell className="font-medium">{man.name}</TableCell>
                     <TableCell>
                       <Badge
                         variant={
-                          man.balance > 0 ? "success"
-                            : man.balance == 0 ? "outline"
-                              : "destructive"}
+                          man.balance > 0
+                            ? "success"
+                            : man.balance == 0
+                              ? "outline"
+                              : "destructive"
+                        }
                       >
                         {formatNumberComma(man.balance)}
                       </Badge>
@@ -133,15 +136,28 @@ const Men = () => {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <Button
+                            aria-haspopup="true"
+                            size="icon"
+                            variant="ghost"
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Menu</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => navigate(`/men/${man.id}`)}>O'zgartirish</DropdownMenuItem>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(man.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => navigate(`/men/${man.id}`)}
+                          >
+                            O'zgartirish
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="focus:bg-red-100 focus:text-red-800"
+                            onClick={() => setOpen(man.id)}
+                          >
+                            O'chirish
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -150,7 +166,10 @@ const Men = () => {
               </TableBody>
             </Table>
           </CardContent>
-          <Dialog open={open ? true : false} onOpenChange={() => setOpen(undefined)}>
+          <Dialog
+            open={open ? true : false}
+            onOpenChange={() => setOpen(undefined)}
+          >
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Siz ushbu erkakni o'chirmoqchimisiz?</DialogTitle>
@@ -159,18 +178,24 @@ const Men = () => {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button disabled={deleteMan.isPending} variant={"destructive"} onClick={handleDelete}>O'chirish</Button>
+                <Button
+                  disabled={deleteMan.isPending}
+                  variant={"destructive"}
+                  onClick={handleDelete}
+                >
+                  O'chirish
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </Card >
+        </Card>
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddMan open={openSheet} setOpen={setOpenSheet} />
       <AddWorkDay open={addWorkDay} setOpen={setAddWorkDay} />
     </>
-  )
-}
+  );
+};
 
-export default Men
+export default Men;

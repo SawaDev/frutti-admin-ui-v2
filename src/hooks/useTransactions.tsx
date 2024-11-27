@@ -61,6 +61,26 @@ const useTransactions = () => {
     }
   })
 
+  const updateTransactionMutation = (id: number | undefined) =>
+    useMutation({
+      mutationFn: async (data: Partial<TransactionDataType>) => {
+        try {
+          if (!id) return;
+          const response = await api.patch(`/transactions/${id}`, data);
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      },
+    });
+
   const deleteTransactionMutation = (id: number | undefined) =>
     useMutation({
       mutationFn: async () => {
@@ -89,6 +109,7 @@ const useTransactions = () => {
     getAllTransactionsQuery,
     getSingleTransactionQuery,
     createTransactionMutation,
+    updateTransactionMutation,
     deleteTransactionMutation
   }
 };

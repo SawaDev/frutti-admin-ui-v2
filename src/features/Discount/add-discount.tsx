@@ -51,7 +51,7 @@ const AddDiscount: React.FC<SheetType> = ({ open, setOpen }) => {
   if (loadingClients) {
     return "Loading...";
   }
-  console.log("errors", form.formState.errors);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
@@ -115,7 +115,10 @@ const AddDiscount: React.FC<SheetType> = ({ open, setOpen }) => {
               </ScrollArea>
             </div>
             <SheetFooter>
-              <Button disabled={form.formState.isLoading || createDiscount.isPending} type="submit">
+              <Button
+                disabled={form.formState.isLoading || createDiscount.isPending}
+                type="submit"
+              >
                 Saqlash
               </Button>
             </SheetFooter>

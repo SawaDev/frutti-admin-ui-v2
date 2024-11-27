@@ -68,7 +68,6 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                     placeholder='Kunlik ish soati'
                     className='mx-1'
                     type='number'
-                    step={0.01}
                   />
                   <FormInput
                     control={form.control}

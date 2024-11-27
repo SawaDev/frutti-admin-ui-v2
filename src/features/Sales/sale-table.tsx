@@ -61,7 +61,6 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
           <TableHead>Mahsulotning Summasi</TableHead>
           <TableHead>Kassa</TableHead>
           <TableHead>To'lov turi</TableHead>
-          <TableHead>Aksiyami</TableHead>
           <TableHead>Savdo qilingan sana</TableHead>
           <TableHead>Yaratilingan sana</TableHead>
           <TableHead>
@@ -90,9 +89,6 @@ const SaleTable: React.FC<SaleTableType> = ({ data }) => {
                         : sale.transaction?.type === "card"
                           ? "Karta"
                           : ""}
-                    </TableCell>
-                    <TableCell className="p-2 px-4">
-                      {sale.is_free ? "Ha" : "Yo'q"}
                     </TableCell>
                     <TableCell>{sale.date}</TableCell>
                     <TableCell>

@@ -5,7 +5,9 @@ import {
   GetAllSalesResponse,
   GetSingleSaleResponse,
   CreateSaleDataType,
+  GetSalesParamsType,
 } from "@/types/sales";
+import { convertToQueryString } from "@/lib/utils";
 
 const useSales = () => {
   const queryClient = useQueryClient();
@@ -37,12 +39,14 @@ const useSales = () => {
       },
     });
 
-  const getAllSalesQuery = () =>
+  const getAllSalesQuery = (params?: GetSalesParamsType) =>
     useQuery<GetAllSalesResponse, Error>({
-      queryKey: ["sales"],
+      queryKey: ["sales", params?.from_date, params?.to_date, params?.is_free],
       queryFn: async () => {
         try {
-          const response = await api.get(`/sales`);
+          const response = await api.get(
+            `/sales${params ? convertToQueryString(params) : ""}`,
+          );
 
           return structuredClone(response.data);
         } catch (error: any) {
@@ -76,7 +80,7 @@ const useSales = () => {
       queryKey: ["sales", id],
       queryFn: async () => {
         try {
-          if(!id) return;
+          if (!id) return;
           const response = await api.get(`/sales/${id}`);
 
           return structuredClone(response.data);
@@ -92,8 +96,8 @@ const useSales = () => {
     useMutation({
       mutationFn: async (data: CreateSaleDataType) => {
         try {
-          console.log(id, data)
-          if(!id) return;
+          console.log(id, data);
+          if (!id) return;
           const response = await api.put(`/sales/${id}`, data);
           return response.data;
         } catch (error: any) {
