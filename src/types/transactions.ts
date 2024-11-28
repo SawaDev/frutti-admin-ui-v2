@@ -5,6 +5,7 @@ import { Client } from "./clients"
 
 export interface Transaction {
   id: number
+  wallet_id?: number
   wallet: Wallet
   client: Client | null
   type: "cash" | "card"

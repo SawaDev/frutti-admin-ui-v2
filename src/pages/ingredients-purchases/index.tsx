@@ -5,8 +5,6 @@ import { DateRange } from "react-day-picker"
 
 import NoItems from '@/features/NoItems'
 import useIngredients from "@/hooks/useIngredients"
-import AddIngredient from "@/features/Ingredients/add-ingredient"
-import AddWarehouse from "@/features/Warehouses/add-warehouse"
 import PurchaseIngredientTable from "@/features/PurchaseIngredient/purchase-ingredient-table"
 import DatePickerWithRange from "@/components/filters/date-range"
 import IngredientPurchaseTable from "@/features/Ingredients/ingredient-purchase-table"
@@ -27,9 +25,7 @@ const IngredientsPurchase = () => {
   const currentMonthStart = startOfMonth(new Date());
   const currentMonthEnd = endOfMonth(new Date());
 
-  const [openSheet, setOpenSheet] = useState<boolean>(false)
   const [newPurchase, setNewPurchase] = useState<boolean>(false)
-  const [addWarehouseSheet, setAddWarehouseSheet] = useState<boolean>(false)
   const [purchaseIndex, setPurchaseIndex] = useState<number | undefined>()
   const [date, setDate] = useState<{ from_date: string, to_date: string }>({
     from_date: format(currentMonthStart, "yyyy-MM-dd HH:mm:ss"),
@@ -78,14 +74,6 @@ const IngredientsPurchase = () => {
                 </CardDescription>
               </div>
               <div className="space-x-3">
-                <Button type="button" onClick={() => setAddWarehouseSheet(true)} size="sm" variant="outline" className="gap-1">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  Sklad qo'shish
-                </Button>
-                <Button type="button" onClick={() => setOpenSheet(true)} size="sm" variant="outline" className="gap-1">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  Siryo qo'shish
-                </Button>
                 <Button type="button" onClick={() => setNewPurchase(true)} size="sm" variant="outline" className="gap-1">
                   <PlusCircle className="h-3.5 w-3.5" />
                   Yangi harid
@@ -116,11 +104,9 @@ const IngredientsPurchase = () => {
           </Card >
         </>
       ) : (
-        <NoItems setOpen={setOpenSheet} />
+        <NoItems setOpen={setNewPurchase} />
       )}
 
-      <AddIngredient open={openSheet} setOpen={setOpenSheet} />
-      <AddWarehouse open={addWarehouseSheet} setOpen={setAddWarehouseSheet} />
       <NewPurchase open={newPurchase} setOpen={setNewPurchase} />
 
       {purchaseIndex !== undefined && (
