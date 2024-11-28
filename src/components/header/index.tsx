@@ -154,7 +154,7 @@ const Header = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
-                      to="/ingredients"
+                      to="/sales"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">Sotuv</div>
                       <p className="text-sm leading-tight text-muted-foreground">
