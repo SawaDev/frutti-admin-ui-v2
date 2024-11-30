@@ -95,8 +95,8 @@ const AddBonus: React.FC<SheetType> = ({ open, setOpen }) => {
                   <FormTextarea
                     control={form.control}
                     name='comment'
-                    label="To'lov turi"
-                    placeholder="To'lov turi"
+                    label="Kommentariya"
+                    placeholder="Kommentariya"
                     className='mx-1'
                   />
                 </div>

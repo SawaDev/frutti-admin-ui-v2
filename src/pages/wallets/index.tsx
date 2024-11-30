@@ -29,7 +29,7 @@ const Wallets = () => {
       ))}
       <Card
         onClick={() => setOpenExchange(true)}
-        className="relative w-[300px] min-h-[180px] flex items-center justify-center cursor-pointer hover:bg-gray-200/10">
+        className="relative w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:bg-gray-200/10">
         <CardContent className="flex flex-col items-center pt-4 text-center capitalize gap-3">
           <ArrowRightLeft />
           <p>Kassalar orasidagi pul o'tkazmasi</p>
@@ -37,7 +37,7 @@ const Wallets = () => {
       </Card>
       <Card
         onClick={() => setOpen(true)}
-        className="relative w-[300px] min-h-[180px] flex items-center justify-center cursor-pointer hover:bg-gray-200/10">
+        className="relative w-[300px] min-h-[120px] flex items-center justify-center cursor-pointer hover:bg-gray-200/10">
         <CardContent className="flex flex-col items-center gap-3">
           <PlusCircleIcon />
           <p>Yangi Kassa Qo'shish</p>

@@ -35,7 +35,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
   const form = useForm<z.infer<typeof womanProductsSchema>>({
     resolver: zodResolver(womanProductsSchema),
     defaultValues: {
-      date: null,
+      date: format(new Date(), "dd-MM-yyyy"),
     },
   });
 

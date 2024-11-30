@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { createFeeSchema } from "@/schema/fees"
+import { createFeeSchema, updateFeeSchema } from "@/schema/fees"
 import { Man } from "./man";
 import { Woman } from "./woman";
 
@@ -27,3 +27,5 @@ export interface GetAllFeesResponse {
 }
 
 export type CreateFeeType = z.infer<typeof createFeeSchema>
+
+export type UpdateFeeType = z.infer<typeof updateFeeSchema>

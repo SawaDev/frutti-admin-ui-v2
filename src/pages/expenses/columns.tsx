@@ -14,7 +14,10 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import useExpenses from "@/hooks/useExpenses";
 
-export const getColumns = (setDeleteExpenseId: (value: number) => void) => {
+export const getColumns = (
+  setDeleteExpenseId: (value: number) => void,
+  setEditExpenseId: (value: Expense) => void,
+) => {
   const { getAllExpenseCategoriesQuery } = useExpenses();
 
   const { data: categories } = getAllExpenseCategoriesQuery();
@@ -75,6 +78,12 @@ export const getColumns = (setDeleteExpenseId: (value: number) => void) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
+            <DropdownMenuItem
+              className="focus:bg-blue-100 focus:text-blue-800"
+              onClick={() => setEditExpenseId(row.original)}
+            >
+              O'zgartirish
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="focus:bg-red-100 focus:text-red-800"
               onClick={() => setDeleteExpenseId(Number(row.original.id))}

@@ -11,10 +11,10 @@ interface PurchaseTableProps {
 }
 
 const PurchaseTable: React.FC<PurchaseTableProps> = ({ data, setPurchaseIndex }) => {
-
+   
   const table = useReactTable({
     data: data ?? [],
-    columns: purchaseColumns(),
+    columns: purchaseColumns(setPurchaseIndex),
     getCoreRowModel: getCoreRowModel(),
   })
 

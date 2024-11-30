@@ -7,3 +7,7 @@ export const createFeeSchema = z.object({
   man_id: z.string().optional(),
   woman_id: z.string().optional(),  
 })
+
+export const updateFeeSchema = z.object({
+  amount: z.number().min(1, "Summa 0 dan katta bo'lishi kerak"),
+})

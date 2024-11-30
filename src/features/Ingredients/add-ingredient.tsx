@@ -102,12 +102,6 @@ const AddIngredient: React.FC<SheetType> = ({ open, setOpen }) => {
                     type='number'
                     label={"Narxi"}
                   />
-                  <FormInput
-                    control={form.control}
-                    name='bag_distribution'
-                    type='number'
-                    label='Qanchadan'
-                  />
                 </div>
               </ScrollArea>
             </div>

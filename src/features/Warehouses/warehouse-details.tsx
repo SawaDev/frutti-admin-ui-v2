@@ -166,11 +166,6 @@ const WarehouseDetails: React.FC<WarehouseDetailsProps> = ({ data }) => {
                             Narxi
                           </div>
                         </TableHead>
-                        <TableHead>
-                          <div className="flex w-full items-center justify-between border-r-2 pr-2">
-                            Pochkada
-                          </div>
-                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -185,13 +180,6 @@ const WarehouseDetails: React.FC<WarehouseDetailsProps> = ({ data }) => {
                           </TableCell>
                           <TableCell className="p-2 px-4">
                             {formatNumberComma(ingredient.cost)}
-                          </TableCell>
-                          <TableCell className="p-2 px-4">
-                            {formatNumberComma(ingredient.bags_count)} -{" "}
-                            {formatNumberComma(
-                              ingredient.bag_distribution ?? 0,
-                            )}{" "}
-                            dan
                           </TableCell>
                         </TableRow>
                       ))}

@@ -35,6 +35,7 @@ import EditProductWarehouse from './pages/product-warehouses/EditProductWarehous
 import Discounts from './pages/discounts';
 import Production from './pages/production';
 import Daashboard from './pages/dashboard';
+import ExpenseCategories from './pages/expense-categories';
 
 function App() {
   const { token } = useAuthStore()
@@ -60,6 +61,7 @@ function App() {
               <Route path='wallets/:id' element={<EditWallet />} />
               <Route path='transactions' element={<Transactions />} />
               <Route path='expenses' element={<Expenses />} />
+              <Route path='expense-categories' element={<ExpenseCategories />} />
               <Route path='ingredients' element={<Ingredients />} />
               <Route path='ingredients-purchases' element={<IngredientsPurchase />} />
               <Route path='ingredients-transactions' element={<IngredientTransaction />} />

@@ -38,12 +38,10 @@ import NoItems from "@/features/NoItems";
 import { format } from "date-fns";
 import useWomen from "@/hooks/useWomen";
 import AddWoman from "@/features/Women/add-woman";
-import AddProduct from "@/features/Women/add-product";
 import { formatNumberComma } from "@/lib/utils";
 
 const Women = () => {
   const [open, setOpen] = useState<number | undefined>(undefined);
-  const [addProduct, setAddProduct] = useState<boolean>(false);
   const [openSheet, setOpenSheet] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -77,15 +75,6 @@ const Women = () => {
               <CardDescription>Ayollarni bu yerdan boshqaring.</CardDescription>
             </div>
             <div className="space-x-2">
-              <Button
-                onClick={() => setAddProduct(true)}
-                size="sm"
-                variant="outline"
-                className="gap-1"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                Ishlab chiqarish
-              </Button>
               <Button
                 onClick={() => setOpenSheet(true)}
                 size="sm"
@@ -191,7 +180,6 @@ const Women = () => {
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddWoman open={openSheet} setOpen={setOpenSheet} />
-      <AddProduct open={addProduct} setOpen={setAddProduct} />
     </>
   );
 };

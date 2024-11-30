@@ -20,7 +20,9 @@ export const ingredientPurchaseSchema = z.object({
       z.object({
         id: z.number(),
         quantity: z.number(),
+        space: z.number(),
         cost_per_unit: z.number(),
+        shipping_price: z.number(),
       }),
     ),
   ),

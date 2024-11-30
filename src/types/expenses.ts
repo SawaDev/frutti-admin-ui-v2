@@ -48,3 +48,10 @@ export type ExpenseDataType = Omit<ExpenseType, "wallet_id" | "category_id"> & {
   wallet_id: number;
   category_id: number | null;
 };
+
+export interface ExpenseCategoryDataType {
+  id?: number
+  name: string
+  created_at?: string
+  updated_at?: string
+}

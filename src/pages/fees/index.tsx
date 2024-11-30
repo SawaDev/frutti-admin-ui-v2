@@ -37,10 +37,13 @@ import { format } from "date-fns"
 import { formatNumberComma } from "@/lib/utils"
 import useFees from "@/hooks/useFees"
 import AddFee from "@/features/Fees/add-fee"
+import { Fee } from '@/types/fees'
+import EditFee from "@/features/Fees/edit-fee"
 
 const Fees = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
   const [openSheet, setOpenSheet] = useState<boolean>(false)
+  const [editFee, setEditFee] = useState<Fee | undefined>(undefined)
 
   const { getAllFeesQuery, deleteFeeMutation } = useFees()
 
@@ -126,7 +129,18 @@ const Fees = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(fee.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="focus:bg-blue-100 focus:text-blue-800" 
+                            onClick={() => setEditFee(fee)}
+                          >
+                            O'zgartirish
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="focus:bg-red-100 focus:text-red-800" 
+                            onClick={() => setOpen(fee.id)}
+                          >
+                            O'chirish
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -153,6 +167,11 @@ const Fees = () => {
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddFee open={openSheet} setOpen={setOpenSheet} />
+      <EditFee 
+        open={editFee !== undefined} 
+        setOpen={() => setEditFee(undefined)} 
+        fee={editFee} 
+      />
     </>
   )
 }

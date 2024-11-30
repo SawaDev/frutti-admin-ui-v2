@@ -18,14 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -35,6 +27,8 @@ import NoItems from "@/features/NoItems";
 import useExpenses from "@/hooks/useExpenses";
 import AddExpense from "@/features/Expenses/add-expense";
 import { getColumns } from "./columns";
+import DeleteExpense from "@/features/Expenses/delete-expense";
+import { Expense } from "@/types/expenses";
 
 const Expenses = () => {
   const [deleteExpenseId, setDeleteExpenseId] = useState<number | undefined>(
@@ -42,21 +36,16 @@ const Expenses = () => {
   );
   const [openSheet, setOpenSheet] = useState<boolean>(false);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [editExpense, setEditExpense] = useState<Expense | undefined>(
+    undefined,
+  );
 
-  const { getAllExpensesQuery, deleteExpenseMutation } = useExpenses();
-
+  const { getAllExpensesQuery } = useExpenses();
   const { data, isLoading, isError } = getAllExpensesQuery();
-  const deleteExpense = deleteExpenseMutation(deleteExpenseId);
-
-  const handleDelete = async () => {
-    await deleteExpense.mutateAsync().then(() => {
-      setDeleteExpenseId(undefined);
-    });
-  };
 
   const table = useReactTable({
     data: data?.data ?? [],
-    columns: getColumns(setDeleteExpenseId),
+    columns: getColumns(setDeleteExpenseId, setEditExpense),
     state: {
       columnFilters,
     },
@@ -84,15 +73,6 @@ const Expenses = () => {
               </CardDescription>
             </div>
             <div>
-              <Button
-                onClick={() => setOpenSheet(true)}
-                size="sm"
-                variant="ghost"
-                className="gap-1"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                Kategoriya qo'shish
-              </Button>
               <Button
                 onClick={() => setOpenSheet(true)}
                 size="sm"
@@ -140,10 +120,7 @@ const Expenses = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={99}
-                      className="h-24 text-center"
-                    >
+                    <TableCell colSpan={99} className="h-24 text-center">
                       Hech narsa yo'q.
                     </TableCell>
                   </TableRow>
@@ -151,35 +128,20 @@ const Expenses = () => {
               </TableBody>
             </Table>
           </CardContent>
-          <Dialog
-            open={deleteExpenseId !== undefined ? true : false}
-            onOpenChange={() => setDeleteExpenseId(undefined)}
-          >
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>
-                  Siz ushbu harajatni o'chirmoqchimisiz?
-                </DialogTitle>
-                <DialogDescription>
-                  Harajatni o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  disabled={deleteExpense.isPending}
-                  variant={"destructive"}
-                  onClick={handleDelete}
-                >
-                  O'chirish
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <DeleteExpense
+            expenseId={deleteExpenseId}
+            setExpenseId={setDeleteExpenseId}
+          />
         </Card>
       ) : (
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddExpense open={openSheet} setOpen={setOpenSheet} />
+      <AddExpense
+        expense={editExpense}
+        open={!!editExpense}
+        setOpen={() => setEditExpense(undefined)}
+      />
     </>
   );
 };

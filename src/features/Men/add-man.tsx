@@ -21,7 +21,7 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
   const form = useForm<CreateManType>({
     resolver: zodResolver(createManSchema),
     defaultValues: {
-      hours_per_day: 8
+      hours_per_day: 12
     }
   })
 
@@ -71,9 +71,9 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                   />
                   <FormInput
                     control={form.control}
-                    name='payment_per_hour'
-                    label="Soatbay to'lov summasi"
-                    placeholder="Soatbay to'lov summasi"
+                    name='payment_per_day'
+                    label="Kunlik to'lov summasi"
+                    placeholder="Kunlik to'lov summasi"
                     className='mx-1'
                     type='number'
                     step={0.01}

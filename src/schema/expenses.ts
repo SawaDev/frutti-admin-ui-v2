@@ -8,5 +8,5 @@ export const expenseSchema = z.object({
 })
 
 export const expenseCategorySchema = z.object({
-  name: z.string({ required_error: "Kategoriya nomini kiriting!" })
+  name: z.string().min(1, 'Kategoriya nomi kiritilishi shart'),
 })

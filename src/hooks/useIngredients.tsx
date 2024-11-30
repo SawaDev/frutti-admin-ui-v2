@@ -188,6 +188,25 @@ const useIngredients = () => {
       },
     });
 
+  const deletePurchaseIngredientMutation = (id: number | undefined) =>
+    useMutation({
+      mutationFn: async () => {
+        try {
+          const response = await api.delete(`/purchases/${id}`);
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["purchases"] });
+      },
+    });
+
   const getAllIngredientTransactionsQuery = () =>
     useQuery<GetAllIngredienTransactionsResponse, Error>({
       queryKey: ["ingredient-transactions"],
@@ -230,6 +249,25 @@ const useIngredients = () => {
         queryClient.invalidateQueries({
           queryKey: ["ingredient-transactions"],
         });
+      },
+    });
+
+  const deleteIngredientTransactionMutation = (id: number | undefined) =>
+    useMutation({
+      mutationFn: async () => {
+        try {
+          const response = await api.delete(`/ingredient-transactions/${id}`);
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ingredient-transactions"] });
       },
     });
 
@@ -310,7 +348,9 @@ const useIngredients = () => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["ingredients", "category-options"] });
+        queryClient.invalidateQueries({
+          queryKey: ["ingredients", "category-options"],
+        });
       },
     });
 
@@ -323,12 +363,14 @@ const useIngredients = () => {
     getAllIngredientPurchasesQuery,
     createIngredientPurchaseMutation,
     updateIngredientPurchaseMutation,
+    deletePurchaseIngredientMutation,
     getAllIngredientTransactionsQuery,
     createIngredientTransactionMutation,
+    deleteIngredientTransactionMutation,
     getAllIngredientCategoriesQuery,
     createIngredientCategoryMutation,
     getAllIngredientCategoriesExpandedQuery,
-    deleteIngredientCategoryMutation
+    deleteIngredientCategoryMutation,
   };
 };
 

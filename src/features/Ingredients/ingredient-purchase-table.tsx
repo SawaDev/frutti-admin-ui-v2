@@ -6,6 +6,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import PurchaseIngredientTable from "../PurchaseIngredient/purchase-ingredient-table"
 import useIngredients from "@/hooks/useIngredients"
 import { Skeleton } from "@/components/ui/skeleton"
+import DeletePurchaseIngredient from "./delete-purchase-ingredient"
 
 interface IngredientPurchaseTableProps {
   status: "finished" | "waiting" | "on_way"
@@ -15,6 +16,7 @@ interface IngredientPurchaseTableProps {
 
 const IngredientPurchaseTable: React.FC<IngredientPurchaseTableProps> = ({ status, from_date, to_date }) => {
   const [purchaseIndex, setPurchaseIndex] = useState<number | undefined>()
+  const [deletePurchase, setDeletePurchase] = useState<number | undefined>()
 
   const { getAllIngredientPurchasesQuery } = useIngredients()
 
@@ -22,7 +24,7 @@ const IngredientPurchaseTable: React.FC<IngredientPurchaseTableProps> = ({ statu
 
   const table = useReactTable({
     data: purchases?.data ?? [],
-    columns: purchaseColumns(),
+    columns: purchaseColumns(setDeletePurchase),
     getCoreRowModel: getCoreRowModel(),
   })
 
@@ -96,6 +98,11 @@ const IngredientPurchaseTable: React.FC<IngredientPurchaseTableProps> = ({ statu
           </DialogContent>
         </Dialog>
       )}
+
+      <DeletePurchaseIngredient 
+        open={deletePurchase}
+        setOpen={setDeletePurchase}
+      />
     </Table>
   )
 }

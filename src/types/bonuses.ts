@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { createBonusSchema } from "@/schema/bonuses"
+import { createBonusSchema, updateBonusSchema } from "@/schema/bonuses"
 import { Man } from "./man"
 import { Woman } from "./woman"
 
@@ -29,3 +29,5 @@ export interface GetAllBonusesResponse {
 }
 
 export type CreateBonusType = z.infer<typeof createBonusSchema>
+
+export type UpdateBonusType = z.infer<typeof updateBonusSchema>

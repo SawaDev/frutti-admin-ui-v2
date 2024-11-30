@@ -37,11 +37,13 @@ import { format } from "date-fns"
 import { formatNumberComma } from "@/lib/utils"
 import useBonuses from "@/hooks/useBonuses"
 import AddBonus from "@/features/Bonus/add-bonus"
+import EditBonus from "@/features/Bonus/edit-bonus"
+import { Bonus } from '@/types/bonuses'
 
 const Bonuses = () => {
   const [open, setOpen] = useState<number | undefined>(undefined)
   const [openSheet, setOpenSheet] = useState<boolean>(false)
-
+  const [editBonus, setEditBonus] = useState<Bonus | undefined>(undefined)
 
   const { getAllBonusesQuery, deleteBonusMutation } = useBonuses()
 
@@ -131,7 +133,18 @@ const Bonuses = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem className="focus:bg-red-100 focus:text-red-800" onClick={() => setOpen(bonus.id)}>O'chirish</DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="focus:bg-blue-100 focus:text-blue-800" 
+                            onClick={() => setEditBonus(bonus)}
+                          >
+                            O'zgartirish
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="focus:bg-red-100 focus:text-red-800" 
+                            onClick={() => setOpen(bonus.id)}
+                          >
+                            O'chirish
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -158,6 +171,11 @@ const Bonuses = () => {
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddBonus open={openSheet} setOpen={setOpenSheet} />
+      <EditBonus 
+        open={editBonus !== undefined} 
+        setOpen={() => setEditBonus(undefined)} 
+        bonus={editBonus} 
+      />
     </>
   )
 }

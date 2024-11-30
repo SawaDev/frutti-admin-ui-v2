@@ -77,6 +77,7 @@ const AddSale: FC<SheetType & { edit?: number }> = ({
       transaction_type: "cash",
       payment_received: 0,
       status: "finished",
+      date: format(new Date(), "yyyy-MM-dd"),
     },
   });
 

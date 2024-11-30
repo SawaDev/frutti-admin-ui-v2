@@ -1,8 +1,11 @@
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { formatNumberComma, getUnit } from "@/lib/utils"
 import { ExtendedIngredient, GetAllIngredientPurchasesTypeResponse } from "@/types/ingredients"
 import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
+import { MoreHorizontal } from "lucide-react"
 import { useMemo } from "react"
 
 export const purchaseIngredientColumns = () => {
@@ -30,7 +33,7 @@ export const purchaseIngredientColumns = () => {
   )
 }
 
-export const purchaseColumns = () => {
+export const purchaseColumns = (setDelete: (id: number) => void) => {
   return useMemo<ColumnDef<GetAllIngredientPurchasesTypeResponse["data"][0], any>[]>(
     () => [
       {
@@ -79,7 +82,34 @@ export const purchaseColumns = () => {
               return <></>
           }
         },
-      }
+      },
+      {
+        accessorFn: (row) => row.id,
+        id: "actions",
+        header: () => <span className="sr-only">Harakatlar</span>,
+        cell: (info) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button aria-haspopup="true" size="icon" variant="ghost">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
+              <DropdownMenuItem
+                className="focus:bg-red-100 focus:text-red-800"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  setDelete(info.row.original.id)
+                }}
+              >
+                O'chirish
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
     ],
     []
   )

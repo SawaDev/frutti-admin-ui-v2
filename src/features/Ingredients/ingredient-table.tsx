@@ -109,11 +109,6 @@ const IngredientTable: React.FC<IngredientTableType> = () => {
                                   Narxi
                                 </div>
                               </TableHead>
-                              <TableHead>
-                                <div className="w-full flex items-center justify-between pr-2 border-r-2">
-                                  Pochkada
-                                </div>
-                              </TableHead>
                               <TableHead className="sr-only">
                                 Actions
                               </TableHead>
@@ -131,9 +126,6 @@ const IngredientTable: React.FC<IngredientTableType> = () => {
                                     }
                                   </TableCell>
                                   <TableCell className="p-2 px-4">{formatNumberComma(ingredient.cost)}</TableCell>
-                                  <TableCell className="p-2 px-4">
-                                    {formatNumberComma(ingredient.bags_count)} - {formatNumberComma(ingredient.bag_distribution ?? 0)} dan
-                                  </TableCell>
                                   <TableCell className="w-16">
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>

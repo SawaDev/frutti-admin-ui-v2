@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/card";
 import NoItems from "@/features/NoItems";
 import useSales from "@/hooks/useSales";
-import SaleTable from "../Sales/sale-table";
 import { useNavigate } from "react-router-dom";
+import ProductDiscountTable from "./product-discount-table";
 
 const ProductDiscounts = () => {
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ const ProductDiscounts = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <SaleTable data={data} />
+            <ProductDiscountTable data={data} />
           </CardContent>
         </Card>
       ) : (

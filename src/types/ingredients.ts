@@ -26,7 +26,6 @@ export interface Ingredient {
   average_cost: number;
   cost: number;
   bag_distribution?: number | null;
-  bags_count: number;
 
   created_at: string;
 }
@@ -50,6 +49,7 @@ export type CreateIngredientPurchaseType = {
   ingredients: {
     id: number;
     quantity: number;
+    space: number | null;
     cost_per_unit: number;
   }[]
 }

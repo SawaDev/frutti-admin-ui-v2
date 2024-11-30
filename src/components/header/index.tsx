@@ -270,6 +270,9 @@ const Header = () => {
                     </Link>
                   </NavigationMenuLink>
                 </li>
+                <ListItem href="/expense-categories" title="Harajat turlari">
+                  Harajat turlari haqida to'liq ma'lumot.
+                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
