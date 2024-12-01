@@ -319,6 +319,9 @@ const Header = () => {
                 <ListItem href="/fees" title="Shtraflar">
                   Shtraflar haqida to'liq ma'lumot.
                 </ListItem>
+                <ListItem href="/advances" title="Avanslar">
+                  Avanslar haqida to'liq ma'lumot.
+                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>

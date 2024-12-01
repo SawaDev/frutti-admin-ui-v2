@@ -14,6 +14,7 @@ export interface Man {
   status: "working" | "in_holiday",
   hours_per_day: number;
   payment_per_hour: number;
+  salary_type: "monthly" | "daily" | "by_product";
 
   work_days: ExtendedWorkDay[]
 

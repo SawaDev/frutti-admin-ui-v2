@@ -34,27 +34,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import NoItems from "@/features/NoItems";
+// import NoItems from "@/features/NoItems";
 import { format } from "date-fns";
-import { formatNumberComma } from "@/lib/utils";
-import useMen from "@/hooks/useMen";
-import AddMan from "@/features/Men/add-man";
-import AddWorkDay from "@/features/Men/add-work-day";
+// import { formatNumberComma } from "@/lib/utils";
+import usePayments from "@/hooks/usePayments";
+// import AddPayment from "@/features/Payments/add-payment";
 
-const Men = () => {
+const Payments = () => {
   const [open, setOpen] = useState<number | undefined>(undefined);
-  const [addWorkDay, setAddWorkDay] = useState<boolean>(false);
-  const [openSheet, setOpenSheet] = useState<boolean>(false);
+  // const [openSheet, setOpenSheet] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
-  const { getAllMenQuery, deleteManMutation } = useMen();
+  const { getAllPaymentsQuery, deletePaymentMutation } = usePayments();
 
-  const { data, isLoading, isError } = getAllMenQuery();
-  const deleteMan = deleteManMutation(open);
+  const { data, isLoading, isError } = getAllPaymentsQuery();
+  const deletePayment = deletePaymentMutation(open);
 
   const handleDelete = async () => {
-    await deleteMan.mutateAsync().then(() => {
+    await deletePayment.mutateAsync().then(() => {
       setOpen(undefined);
     });
   };
@@ -73,73 +71,46 @@ const Men = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Erkaklar</CardTitle>
+              <CardTitle>To'lovlar</CardTitle>
               <CardDescription>
-                Erkaklarni bu yerdan boshqaring.
+                To'lovlarni bu yerdan boshqaring.
               </CardDescription>
             </div>
-            <div className="space-x-2">
-              <Button
-                onClick={() => setAddWorkDay(true)}
-                size="sm"
-                variant="outline"
-                className="gap-1"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                Yangi ish kunini qo'shish
-              </Button>
-              <Button
-                onClick={() => setOpenSheet(true)}
-                size="sm"
-                variant="outline"
-                className="gap-1"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                Qo'shish
-              </Button>
-            </div>
+            <Button
+              // onClick={() => setOpenSheet(true)}
+              size="sm"
+              variant="outline"
+              className="gap-1"
+            >
+              <PlusCircle className="h-3.5 w-3.5" />
+              Qo'shish
+            </Button>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ismi</TableHead>
-                  <TableHead>Balans</TableHead>
-                  <TableHead>Oylik turi</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Yaratilingan Sana
-                  </TableHead>
+                  <TableHead>To'lov Raqami</TableHead>
+                  <TableHead>Summa</TableHead>
+                  <TableHead>To'lov Turi</TableHead>
+                  <TableHead className="hidden md:table-cell">Sana</TableHead>
                   <TableHead>
                     <span className="sr-only">Harakatlar</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.data.map((man, index) => (
+                {data.data.map((payment, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{man.name}</TableCell>
+                    <TableCell className="font-medium">{payment.id}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          man.balance > 0
-                            ? "success"
-                            : man.balance == 0
-                              ? "outline"
-                              : "destructive"
-                        }
-                      >
-                        {formatNumberComma(man.balance)}
+                      <Badge variant="outline">
+                        {/* {formatNumberComma(payment.amount)} */}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      {man.salary_type === "monthly"
-                        ? "Oylik"
-                        : man.salary_type === "daily"
-                          ? "Kunlik"
-                          : "Mahsulot bo'yicha"}
-                    </TableCell>
+                    {/* <TableCell>{payment.type}</TableCell> */}
                     <TableCell className="hidden md:table-cell">
-                      {format(man.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(payment.created_at, "dd-MM-yyyy hh:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -156,13 +127,13 @@ const Men = () => {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
                           <DropdownMenuItem
-                            onClick={() => navigate(`/men/${man.id}`)}
+                            onClick={() => navigate(`/payments/${payment.id}`)}
                           >
                             O'zgartirish
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="focus:bg-red-100 focus:text-red-800"
-                            onClick={() => setOpen(man.id)}
+                            onClick={() => setOpen(payment.id)}
                           >
                             O'chirish
                           </DropdownMenuItem>
@@ -180,14 +151,14 @@ const Men = () => {
           >
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Siz ushbu erkakni o'chirmoqchimisiz?</DialogTitle>
+                <DialogTitle>Siz ushbu to'lovni o'chirmoqchimisiz?</DialogTitle>
                 <DialogDescription>
-                  Erkakni o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
+                  To'lovni o'chirilgandan so'ng, ortga qaytarib bo'lmaydi!
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <Button
-                  disabled={deleteMan.isPending}
+                  disabled={deletePayment.isPending}
                   variant={"destructive"}
                   onClick={handleDelete}
                 >
@@ -198,12 +169,12 @@ const Men = () => {
           </Dialog>
         </Card>
       ) : (
-        <NoItems setOpen={setOpenSheet} />
+        // <NoItems setOpen={setOpenSheet} />
+        <></>
       )}
-      <AddMan open={openSheet} setOpen={setOpenSheet} />
-      <AddWorkDay open={addWorkDay} setOpen={setAddWorkDay} />
+      {/* <AddPayment open={openSheet} setOpen={setOpenSheet} /> */}
     </>
   );
 };
 
-export default Men;
+export default Payments;

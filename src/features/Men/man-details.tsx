@@ -16,6 +16,7 @@ import { FormInput } from "@/components/form/FormInput"
 import { GetSingleManResponse, UpdateManType } from "@/types/man"
 import { updateManSchema } from "@/schema/man"
 import useMen from "@/hooks/useMen"
+import { FormSelect } from "@/components/form/FormSelect"
 
 interface ManDetailsProps {
   data: GetSingleManResponse["data"]
@@ -32,6 +33,7 @@ export const ManDetails: React.FC<ManDetailsProps> = ({ data }) => {
     name: data.name || "",
     hours_per_day: data.hours_per_day || undefined,
     payment_per_hour: data.payment_per_hour || undefined,
+    salary_type: data.salary_type || undefined,
   };
 
   const form = useForm<UpdateManType>({
@@ -88,6 +90,16 @@ export const ManDetails: React.FC<ManDetailsProps> = ({ data }) => {
                     name="payment_per_hour"
                     control={form.control}
                     label="Soatbay to'lov summasi"
+                  />
+                  <FormSelect
+                    name="salary_type"
+                    control={form.control}
+                    label="To'lov turi"
+                    options={[
+                      { label: "Oylik", value: "monthly" },
+                      { label: "Kunlik", value: "daily" },
+                      { label: "Mahsulot bo'yicha", value: "by_product" },
+                    ]}
                   />
                 </div>
               </CardContent>

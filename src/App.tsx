@@ -36,6 +36,7 @@ import Discounts from './pages/discounts';
 import Production from './pages/production';
 import Daashboard from './pages/dashboard';
 import ExpenseCategories from './pages/expense-categories';
+import Advances from './pages/advances';
 
 function App() {
   const { token } = useAuthStore()
@@ -82,6 +83,7 @@ function App() {
               <Route path='product-warehouses/:id' element={<EditProductWarehouse />} />
               <Route path='discounts' element={<Discounts />} />
               <Route path='production' element={<Production />} />
+              <Route path='advances' element={<Advances />} />
               <Route path='*' element={<>NOT FOUNND</>} />
             </Route>
           </Routes>
