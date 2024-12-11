@@ -20,7 +20,7 @@ const AddWorkDay: React.FC<SheetType> = ({ open, setOpen }) => {
   const { getAllMenQuery } = useMen()
   const { createWorkDayMutation } = useWorkDays()
 
-  const { data: men, isLoading: loadingMen } = getAllMenQuery()
+  const { data: men, isLoading: loadingMen } = getAllMenQuery({})
 
   const createWorkDay = createWorkDayMutation()
 

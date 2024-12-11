@@ -23,7 +23,7 @@ const AddBonus: React.FC<SheetType> = ({ open, setOpen }) => {
   const { getAllWomenQuery } = useWomen()
   const { getAllMenQuery } = useMen()
 
-  const { data: men, isLoading: loadingMen } = getAllMenQuery()
+  const { data: men, isLoading: loadingMen } = getAllMenQuery({})
   const { data: women, isLoading: loadingWomen } = getAllWomenQuery()
 
   const createBonus = createBonusMutation()

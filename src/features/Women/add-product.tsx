@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -38,6 +38,41 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
       date: format(new Date(), "dd-MM-yyyy"),
     },
   });
+  const [totalQuantities, setTotalQuantities] = useState<
+    Record<number, { [key: number]: number; total: number }>
+  >({});
+
+  const handleQuantityChange = (
+    womanIndex: number,
+    productIndex: number,
+    newValue: number,
+  ) => {
+    const productId = products?.data[productIndex]?.id;
+    const womanId = women?.data[womanIndex]?.id;
+
+    if (!productId || !womanId) return;
+
+    const newValueNum = Number(newValue) || 0;
+
+    setTotalQuantities((prev) => {
+      const productQuantities = { ...prev[productId] } || {};
+      const oldValue = productQuantities[womanId] || 0;
+      productQuantities[womanId] = newValueNum;
+
+      return {
+        ...prev,
+        [productId]: {
+          ...productQuantities,
+          total: (productQuantities.total || 0) + newValueNum - oldValue,
+        },
+      };
+    });
+
+    form.setValue(
+      `women.${womanIndex}.products.${productIndex}.quantity`,
+      newValueNum,
+    );
+  };
 
   useEffect(() => {
     if (women && products) {
@@ -68,6 +103,9 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
   const onSubmit = (values: z.infer<typeof womanProductsSchema>) => {
     const filteredWomen = [];
 
+    if (!values.date && values.women?.length < 0) {
+      return;
+    }
     const finalDate = values.date
       ? format(values.date, "dd-MM-yyyy")
       : format(new Date(), "dd-MM-yyyy");
@@ -121,9 +159,6 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
               </SheetHeader>
               <div className="grid gap-2 py-4">
                 <div className="relative">
-                  {/* <div className="h-[calc(100vh-400px)] overflow-x-auto">
-                    
-                  </div> */}
                   <ScrollArea className="h-[calc(100vh-260px)] w-[110vw] whitespace-nowrap rounded-md border pr-[14vw]">
                     <div className="relative flex w-max flex-col">
                       <div className="sticky top-0 z-10 mb-1 flex gap-2 border-b bg-white transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
@@ -132,13 +167,21 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                         </div>
                         {products?.data.map((product, index) => (
                           <div
-                            className="flex h-12 w-[140px] shrink-0 items-center justify-start pr-4 font-medium text-muted-foreground"
+                            className="flex h-12 w-[220px] shrink-0 items-center justify-start text-ellipsis pr-4 font-medium text-muted-foreground"
                             key={index}
                           >
-                            {product.name} (
-                            <span className="text-[12px] text-green-500">
+                            <p className="max-w-[130px] overflow-clip text-ellipsis">
+                              {product.name}
+                            </p>{" "}
+                            (
+                            <span className="text-[12px]">
                               {product.quantity}
                             </span>
+                            {totalQuantities[product.id]?.total > 0 && (
+                              <span className="text-[12px] text-green-600">
+                                +{totalQuantities[product.id]?.total || 0}
+                              </span>
+                            )}
                             )
                           </div>
                         ))}
@@ -154,7 +197,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                             </div>
                             {products?.data.map((_, productIndex) => (
                               <div
-                                className="flex h-12 w-[140px] shrink-0 items-center justify-start font-medium text-muted-foreground"
+                                className="flex h-12 w-[220px] shrink-0 items-center justify-start font-medium text-muted-foreground"
                                 key={productIndex}
                               >
                                 <FormInput
@@ -162,6 +205,13 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                                   type="number"
                                   name={`women.${womanIndex}.products.${productIndex}.quantity`}
                                   className="w-full"
+                                  onChange={(e) =>
+                                    handleQuantityChange(
+                                      womanIndex,
+                                      productIndex,
+                                      Number(e.target.value),
+                                    )
+                                  }
                                 />
                               </div>
                             ))}
@@ -174,15 +224,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                 </div>
               </div>
               <SheetFooter>
-                <Button
-                  disabled={
-                    !form.formState.isValid ||
-                    !form.formState.isDirty ||
-                    form.formState.isLoading ||
-                    createWomanProducts.isPending
-                  }
-                  type="submit"
-                >
+                <Button disabled={createWomanProducts.isPending} type="submit">
                   Saqlash
                 </Button>
               </SheetFooter>

@@ -39,6 +39,7 @@ import { format } from "date-fns";
 import useWomen from "@/hooks/useWomen";
 import AddWoman from "@/features/Women/add-woman";
 import { formatNumberComma } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Women = () => {
   const [open, setOpen] = useState<number | undefined>(undefined);
@@ -86,72 +87,76 @@ const Women = () => {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Ismi</TableHead>
-                  <TableHead>Balans</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Yaratilingan Sana
-                  </TableHead>
-                  <TableHead>
-                    <span className="sr-only">Harakatlar</span>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.data.map((woman, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{woman.name}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          woman.balance > 0
-                            ? "success"
-                            : woman.balance == 0
-                              ? "outline"
-                              : "destructive"
-                        }
-                      >
-                        {formatNumberComma(woman.balance)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {format(woman.created_at, "dd-MM-yyyy hh:mm")}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() => navigate(`/women/${woman.id}`)}
-                          >
-                            O'zgartirish
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="focus:bg-red-100 focus:text-red-800"
-                            onClick={() => setOpen(woman.id)}
-                          >
-                            O'chirish
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+          <CardContent className="m-3 rounded-lg border">
+            <ScrollArea className="h-[calc(100vh-200px)]">
+              <Table>
+                <TableHeader className="sticky top-0 bg-white">
+                  <TableRow>
+                    <TableHead>Ismi</TableHead>
+                    <TableHead>Balans</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      Yaratilingan Sana
+                    </TableHead>
+                    <TableHead>
+                      <span className="sr-only">Harakatlar</span>
+                    </TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {data.data.map((woman, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">
+                        {woman.name}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            woman.balance > 0
+                              ? "success"
+                              : woman.balance == 0
+                                ? "outline"
+                                : "destructive"
+                          }
+                        >
+                          {formatNumberComma(woman.balance)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {format(woman.created_at, "dd-MM-yyyy hh:mm")}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              aria-haspopup="true"
+                              size="icon"
+                              variant="ghost"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
+                            <DropdownMenuItem
+                              onClick={() => navigate(`/women/${woman.id}`)}
+                            >
+                              O'zgartirish
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="focus:bg-red-100 focus:text-red-800"
+                              onClick={() => setOpen(woman.id)}
+                            >
+                              O'chirish
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
           </CardContent>
           <Dialog
             open={open ? true : false}

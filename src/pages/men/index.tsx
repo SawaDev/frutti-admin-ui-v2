@@ -40,17 +40,19 @@ import { formatNumberComma } from "@/lib/utils";
 import useMen from "@/hooks/useMen";
 import AddMan from "@/features/Men/add-man";
 import AddWorkDay from "@/features/Men/add-work-day";
+import AddMonthlyPayment from "@/features/Men/add-montly-payment";
 
 const Men = () => {
   const [open, setOpen] = useState<number | undefined>(undefined);
   const [addWorkDay, setAddWorkDay] = useState<boolean>(false);
+  const [addMonthlyPayment, setAddMonthlyPayment] = useState<boolean>(false);
   const [openSheet, setOpenSheet] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
   const { getAllMenQuery, deleteManMutation } = useMen();
 
-  const { data, isLoading, isError } = getAllMenQuery();
+  const { data, isLoading, isError } = getAllMenQuery({});
   const deleteMan = deleteManMutation(open);
 
   const handleDelete = async () => {
@@ -80,13 +82,22 @@ const Men = () => {
             </div>
             <div className="space-x-2">
               <Button
+                onClick={() => setAddMonthlyPayment(true)}
+                size="sm"
+                variant="outline"
+                className="gap-1"
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                Oylikni qo'shish
+              </Button>
+              <Button
                 onClick={() => setAddWorkDay(true)}
                 size="sm"
                 variant="outline"
                 className="gap-1"
               >
                 <PlusCircle className="h-3.5 w-3.5" />
-                Yangi ish kunini qo'shish
+                Ish kunini qo'shish
               </Button>
               <Button
                 onClick={() => setOpenSheet(true)}
@@ -95,7 +106,7 @@ const Men = () => {
                 className="gap-1"
               >
                 <PlusCircle className="h-3.5 w-3.5" />
-                Qo'shish
+                Erkak Qo'shish
               </Button>
             </div>
           </CardHeader>
@@ -202,6 +213,7 @@ const Men = () => {
       )}
       <AddMan open={openSheet} setOpen={setOpenSheet} />
       <AddWorkDay open={addWorkDay} setOpen={setAddWorkDay} />
+      <AddMonthlyPayment open={addMonthlyPayment} setOpen={setAddMonthlyPayment} />
     </>
   );
 };

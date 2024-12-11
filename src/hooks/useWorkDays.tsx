@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
-import { CreateWorkDayData, GetAllWorkResponse } from "@/types/work-days";
+import { CreateMonthlyPaymentData, CreateWorkDayData, GetAllWorkResponse } from "@/types/work-days";
 
 const useWorkDays = () => {
   const queryClient = useQueryClient();
@@ -24,6 +24,28 @@ const useWorkDays = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["work-days"] });
+      queryClient.invalidateQueries({ queryKey: ["men"] });
+    }
+  })
+
+  const createMonthlyPaymentMutation = () => useMutation({
+    mutationFn: async (data: CreateMonthlyPaymentData) => {
+      try {
+        const response = await api.post(
+          '/monthly-payment',
+          data
+        );
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["monthly-payment"] });
       queryClient.invalidateQueries({ queryKey: ["men"] });
     }
   })
@@ -71,6 +93,7 @@ const useWorkDays = () => {
 
   return {
     createWorkDayMutation,
+    createMonthlyPaymentMutation,
     getAllWorkDaysQuery,
     deleteWorkDayMutation
   }

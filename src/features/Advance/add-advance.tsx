@@ -33,7 +33,7 @@ const AddAdvance: React.FC<SheetType> = ({ open, setOpen }) => {
   const { getAllWalletsQuery } = useWallets();
   const { getAllExpenseCategoriesQuery } = useExpenses();
 
-  const { data: men, isLoading: loadingMen } = getAllMenQuery();
+  const { data: men, isLoading: loadingMen } = getAllMenQuery({});
   const { data: women, isLoading: loadingWomen } = getAllWomenQuery();
   const { data: wallets, isLoading: loadingWallets } = getAllWalletsQuery();
   const { data: categories, isLoading: loadingCategories } =
@@ -129,8 +129,8 @@ const AddAdvance: React.FC<SheetType> = ({ open, setOpen }) => {
                   <FormSelect
                     control={form.control}
                     name="wallet_id"
-                    label="Schet"
-                    placeholder="Schet"
+                    label="Kassa"
+                    placeholder="Kassa"
                     className="mx-1"
                     options={
                       wallets

@@ -322,6 +322,9 @@ const Header = () => {
                 <ListItem href="/advances" title="Avanslar">
                   Avanslar haqida to'liq ma'lumot.
                 </ListItem>
+                <ListItem href="/payments" title="Oyliklar">
+                  Oyliklar haqida to'liq ma'lumot.
+                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>

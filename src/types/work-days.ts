@@ -9,17 +9,25 @@ export interface WorkDay {
   updated_at: string;
 }
 
-export type CreateWorkDay = z.infer<typeof createWorkDaySchema>
+export type CreateWorkDay = z.infer<typeof createWorkDaySchema>;
 
 export type CreateWorkDayData = {
   date: string;
   data: {
     man_id: number;
     extra_hours?: number;
-  }[]
-}
+  }[];
+};
+
+export type CreateMonthlyPaymentData = {
+  data: {
+    man_id: number;
+    amount: number;
+  }[];
+  date: string;
+};
 
 export interface GetAllWorkResponse {
-  success: boolean
-  data: WorkDay[]
+  success: boolean;
+  data: WorkDay[];
 }
