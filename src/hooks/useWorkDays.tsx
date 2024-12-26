@@ -32,7 +32,7 @@ const useWorkDays = () => {
     mutationFn: async (data: CreateMonthlyPaymentData) => {
       try {
         const response = await api.post(
-          '/monthly-payment',
+          '/monthly-payments',
           data
         );
         return response.data;
@@ -45,7 +45,7 @@ const useWorkDays = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["monthly-payment"] });
+      queryClient.invalidateQueries({ queryKey: ["monthly-payments"] });
       queryClient.invalidateQueries({ queryKey: ["men"] });
     }
   })

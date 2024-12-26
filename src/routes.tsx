@@ -34,6 +34,7 @@ const Discounts = lazy(() => import('./pages/discounts'));
 const Production = lazy(() => import('./pages/production'));
 const Advances = lazy(() => import('./pages/advances'));
 const Payments = lazy(() => import('./pages/payments'));
+const MonthlyPayments = lazy(() => import('./pages/monthly-payments'));
 
 // Route configuration object
 const routes = [
@@ -50,6 +51,7 @@ const routes = [
   { path: 'expenses', element: <Expenses /> },
   { path: 'expense-categories', element: <ExpenseCategories /> },
   { path: 'payments', element: <Payments /> },
+  { path: 'monthly-payments', element: <MonthlyPayments /> },
   { path: 'bonuses', element: <Bonuses /> },
   { path: 'fees', element: <Fees /> },
   { path: 'advances', element: <Advances /> },

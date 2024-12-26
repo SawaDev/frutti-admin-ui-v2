@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { debounce } from "lodash";
 
 import useWomen from "@/hooks/useWomen";
 import useProducts from "@/hooks/useProducts";
@@ -24,6 +25,7 @@ import { FormDatePicker } from "@/components/form/FormDatePicker";
 import { format } from "date-fns";
 
 const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
+  const [isRendering, setIsRendering] = useState(true);
   const { createWomanProductsMutation, getAllWomenQuery } = useWomen();
   const { getAllProductsQuery } = useProducts();
 
@@ -42,63 +44,63 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
     Record<number, { [key: number]: number; total: number }>
   >({});
 
-  const handleQuantityChange = (
-    womanIndex: number,
-    productIndex: number,
-    newValue: number,
-  ) => {
-    const productId = products?.data[productIndex]?.id;
-    const womanId = women?.data[womanIndex]?.id;
+  const handleQuantityChange = React.useCallback(
+    (womanIndex: number, productIndex: number, newValue: number) => {
+      const productId = products?.data[productIndex]?.id;
+      const womanId = women?.data[womanIndex]?.id;
 
-    if (!productId || !womanId) return;
+      if (!productId || !womanId) return;
 
-    const newValueNum = Number(newValue) || 0;
+      const newValueNum = Number(newValue) || 0;
 
-    setTotalQuantities((prev) => {
-      const productQuantities = { ...prev[productId] } || {};
-      const oldValue = productQuantities[womanId] || 0;
-      productQuantities[womanId] = newValueNum;
+      setTotalQuantities((prev) => {
+        const productQuantities = { ...prev[productId] } || {};
+        const oldValue = productQuantities[womanId] || 0;
+        productQuantities[womanId] = newValueNum;
 
-      return {
-        ...prev,
-        [productId]: {
-          ...productQuantities,
-          total: (productQuantities.total || 0) + newValueNum - oldValue,
-        },
-      };
-    });
+        return {
+          ...prev,
+          [productId]: {
+            ...productQuantities,
+            total: (productQuantities.total || 0) + newValueNum - oldValue,
+          },
+        };
+      });
 
-    form.setValue(
-      `women.${womanIndex}.products.${productIndex}.quantity`,
-      newValueNum,
-    );
-  };
+      form.setValue(
+        `women.${womanIndex}.products.${productIndex}.quantity`,
+        newValueNum,
+      );
+    },
+    [products, women, form],
+  );
+
+  const debouncedHandleQuantityChange = debounce(
+    (womanIndex: number, productIndex: number, newValue: number) => {
+      handleQuantityChange(womanIndex, productIndex, newValue);
+    },
+    300,
+  );
+
+  const initialFormState = React.useMemo(() => {
+    if (!women || !products) return undefined;
+
+    return {
+      women: women.data.map((woman) => ({
+        woman_id: woman.id,
+        products: products.data.map((product) => ({
+          product_id: product.id,
+          quantity: undefined,
+        })),
+      })),
+    };
+  }, [women, products]);
 
   useEffect(() => {
-    if (women && products) {
-      const newWomen = [];
-
-      for (const woman of women.data) {
-        const newProducts = [];
-
-        for (const product of products.data) {
-          newProducts.push({
-            product_id: product.id,
-            quantity: undefined,
-          });
-        }
-
-        newWomen.push({
-          woman_id: woman.id,
-          products: newProducts,
-        });
-      }
-
-      form.reset({
-        women: newWomen,
-      });
+    if (initialFormState) {
+      form.reset(initialFormState);
     }
-  }, [women, products]);
+  }, [initialFormState]);
 
   const onSubmit = (values: z.infer<typeof womanProductsSchema>) => {
     const filteredWomen = [];
@@ -133,11 +135,27 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
     });
   };
 
+  const MemoizedFormInput = React.memo(FormInput);
+
+  useEffect(() => {
+    if (open) {
+      setIsRendering(true);
+      // Use requestAnimationFrame to check after the next render
+      requestAnimationFrame(() => {
+        setIsRendering(false);
+      });
+    }
+  }, [open]);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="w-[98vw] sm:max-w-[98vw]">
-        {loadingProducts || loadingWomen ? (
-          <div className="flex flex-col">
+        {loadingProducts || loadingWomen || isRendering ? (
+          <div className="flex flex-col gap-2">
+            <SheetHeader>
+              <SheetTitle>Chiqarilgan mahsulotlarni kiritish</SheetTitle>
+              <SheetDescription>Ma'lumotlar yuklanmoqda...</SheetDescription>
+            </SheetHeader>
             {Array.from({ length: 6 }).map((_, index) => (
               <Skeleton key={index} className="h-4 w-full" />
             ))}
@@ -200,13 +218,13 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                                 className="flex h-12 w-[220px] shrink-0 items-center justify-start font-medium text-muted-foreground"
                                 key={productIndex}
                               >
-                                <FormInput
+                                <MemoizedFormInput
                                   control={form.control}
                                   type="number"
                                   name={`women.${womanIndex}.products.${productIndex}.quantity`}
                                   className="w-full"
                                   onChange={(e) =>
-                                    handleQuantityChange(
+                                    debouncedHandleQuantityChange(
                                       womanIndex,
                                       productIndex,
                                       Number(e.target.value),

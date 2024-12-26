@@ -25,9 +25,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { createMonthlyPaymentSchema } from "@/schema/work-days";
-import { CreateMonthlyPaymentData } from "@/types/work-days";
 import { FormDatePicker } from "@/components/form/FormDatePicker";
+import { createMonthlyPaymentSchema } from "./monthlyPayment.schema";
+import { CreateMonthlyPaymentType } from "./monthlyPayment.type";
 
 const AddMonthlyPayment: React.FC<SheetType> = ({ open, setOpen }) => {
   const { getAllMenQuery } = useMen();
@@ -39,7 +39,7 @@ const AddMonthlyPayment: React.FC<SheetType> = ({ open, setOpen }) => {
 
   const createMonthlyPayment = createMonthlyPaymentMutation();
 
-  const form = useForm<CreateMonthlyPaymentData>({
+  const form = useForm<CreateMonthlyPaymentType>({
     resolver: zodResolver(createMonthlyPaymentSchema),
     defaultValues: {},
   });
@@ -61,8 +61,13 @@ const AddMonthlyPayment: React.FC<SheetType> = ({ open, setOpen }) => {
     }
   }, [men]);
 
-  const onSubmit = (values: CreateMonthlyPaymentData) => {
-    const filteredMen = values.data.filter((item) => item.amount);
+  const onSubmit = (values: CreateMonthlyPaymentType) => {
+    const filteredMen = values.data
+      .filter((item) => item.amount)
+      .map(item => ({
+        man_id: item.man_id,
+        amount: Number(item.amount)
+      }));
 
     createMonthlyPayment.mutateAsync({ ...values, data: filteredMen }).then(() => {
       setOpen(false);
