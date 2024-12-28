@@ -35,6 +35,7 @@ const Production = lazy(() => import('./pages/production'));
 const Advances = lazy(() => import('./pages/advances'));
 const Payments = lazy(() => import('./pages/payments'));
 const MonthlyPayments = lazy(() => import('./pages/monthly-payments'));
+const CountChecks = lazy(() => import('./pages/count-checks'));
 
 // Route configuration object
 const routes = [
@@ -64,6 +65,7 @@ const routes = [
   { path: 'ingredient-warehouses/:id', element: <EditWarehouse /> },
   { path: 'product-warehouses', element: <ProductWarehouses /> },
   { path: 'product-warehouses/:id', element: <EditProductWarehouse /> },
+  { path: 'count-checks', element: <CountChecks /> },
   // Content Management
   { path: 'posts', element: <Posts /> },
   { path: 'posts/:id', element: <EditPost /> },

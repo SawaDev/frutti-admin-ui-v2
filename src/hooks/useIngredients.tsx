@@ -40,7 +40,7 @@ const useIngredients = () => {
       },
     });
 
-  const getAllIngredientsQuery = () =>
+  const getAllIngredientsQuery = (enabled?: boolean) =>
     useQuery<GetAllIngredientsResponse, Error>({
       queryKey: ["ingredients"],
       queryFn: async () => {
@@ -56,6 +56,7 @@ const useIngredients = () => {
           });
         }
       },
+      enabled,
     });
 
   const getSingleIngredientQuery = (id: string | undefined) =>

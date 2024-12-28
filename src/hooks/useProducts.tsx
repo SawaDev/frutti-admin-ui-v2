@@ -31,7 +31,7 @@ const useProducts = () => {
       },
     });
 
-  const getAllProductsQuery = () =>
+  const getAllProductsQuery = (enabled?: boolean) =>
     useQuery<GetAllProductsResponse, Error>({
       queryKey: ["products"],
       queryFn: async () => {
@@ -47,6 +47,7 @@ const useProducts = () => {
           });
         }
       },
+      enabled,
     });
 
   const getSingleProductQuery = (id: string | undefined) =>
