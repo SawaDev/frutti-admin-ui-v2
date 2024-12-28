@@ -81,7 +81,7 @@ const AddProduct: FC<SheetType & { edit?: Product }> = ({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent>
+      <SheetContent className="sm:max-w-[80vw]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
@@ -98,7 +98,7 @@ const AddProduct: FC<SheetType & { edit?: Product }> = ({
             </SheetHeader>
             <div className="grid gap-2 py-4">
               <ScrollArea className="mb-2 h-[calc(100vh-190px)]">
-                <div className="ml-2 mr-3 mt-3 grid grid-rows-1 items-center gap-3">
+                <div className="ml-2 mr-3 mt-3 grid grid-rows-1 sm:grid-cols-2 items-center gap-3">
                   <FormInput
                     control={form.control}
                     name="name"
@@ -148,6 +148,18 @@ const AddProduct: FC<SheetType & { edit?: Product }> = ({
                     name="production_cost"
                     type="number"
                     label={"Ishlab chiqarish narxi"}
+                  />
+                  <FormInput
+                    control={form.control}
+                    name="home_production_cost"
+                    type="number"
+                    label={"Uyda ishlab chiqarish narxi"}
+                  />
+                  <FormInput
+                    control={form.control}
+                    name="man_sale_cost"
+                    type="number"
+                    label={"Erkaklar sotuvdan ulush summasi"}
                   />
                   <FormInput
                     control={form.control}

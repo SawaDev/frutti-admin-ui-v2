@@ -117,7 +117,7 @@ const Fees = () => {
                       {formatNumberComma(fee.balance_after)}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(fee.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(fee.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

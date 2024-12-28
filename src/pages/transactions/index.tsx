@@ -110,7 +110,7 @@ const Transactions = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(transaction.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(transaction.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell className="font-medium">
                       {transaction.wallet.name}

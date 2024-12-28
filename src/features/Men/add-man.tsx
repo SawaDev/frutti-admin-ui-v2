@@ -29,15 +29,34 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
     resolver: zodResolver(createManSchema),
     defaultValues: {
       hours_per_day: 12,
+      salary_type: "monthly",
+      is_bonus_available: "false",
+      payment_per_day: 0,
     },
   });
 
   const salaryType = form.watch("salary_type");
 
   const onSubmit = (values: CreateManType) => {
-    createMan.mutateAsync(values).then(() => {
-      setOpen(false);
-    });
+    const isBonusAvailable =
+      values.is_bonus_available === "true" ? true : false;
+    if (values.salary_type === "by_product") {
+      createMan
+        .mutateAsync({
+          ...values,
+          is_bonus_available: isBonusAvailable,
+        })
+        .then(() => {
+          setOpen(false);
+        });
+    } else {
+      createMan.mutateAsync({
+        ...values,
+        is_bonus_available: undefined,
+      }).then(() => {
+        setOpen(false);
+      });
+    }
   };
 
   return (
@@ -82,7 +101,7 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                       { label: "Mahsulot bo'yicha", value: "by_product" },
                     ]}
                   />
-                  {salaryType !== "by_product" && (
+                  {salaryType !== "by_product" ? (
                     <>
                       <FormInput
                         control={form.control}
@@ -100,6 +119,20 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                         className="mx-1"
                         type="number"
                         step={0.01}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <FormSelect
+                        control={form.control}
+                        name="is_bonus_available"
+                        label="Bonusdan foyda oladimi?"
+                        placeholder="Bonusdan foyda oladimi?"
+                        className="mx-1"
+                        options={[
+                          { label: "Ha", value: "true" },
+                          { label: "Yo'q", value: "false" },
+                        ]}
                       />
                     </>
                   )}

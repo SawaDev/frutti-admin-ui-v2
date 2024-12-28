@@ -102,7 +102,7 @@ const IngredientsCategories = () => {
                   <TableRow key={index}>
                     <TableCell>{category.name}</TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(category.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(category.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

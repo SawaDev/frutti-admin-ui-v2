@@ -12,6 +12,7 @@ export interface Woman {
   name: string
   balance: number
   status: "working" | "in_holiday"
+  work_place: string
 
   products: ExtendedProduct[]
 

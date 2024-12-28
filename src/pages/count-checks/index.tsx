@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import NoItems from "@/features/NoItems";
 import useCountChecks from "@/features/CountChecks/useCountChecks";
 import AddCountCheck from "@/features/CountChecks/add-count-check";
+import CountChecksTable from "@/features/CountChecks/count-checks-table";
 
 const CountChecks = () => {
   const [addCountCheck, setAddCountCheck] = useState<string | undefined>();
@@ -68,7 +69,7 @@ const CountChecks = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {/* <MonthlyPaymentsTable data={data} /> */}
+            <CountChecksTable data={data} />
           </CardContent>
         </Card>
       ) : (

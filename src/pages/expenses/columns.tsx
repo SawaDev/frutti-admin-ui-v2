@@ -54,7 +54,7 @@ export const getColumns = (
       accessorKey: "created_at",
       header: () => <span>Yaratilingan Sana</span>,
       cell: ({ row }) => (
-        <>{format(row.getValue("created_at"), "dd-MM-yyyy hh:mm")}</>
+        <>{format(row.getValue("created_at"), "dd-MM-yyyy HH:mm")}</>
       ),
     },
     {

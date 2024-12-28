@@ -15,6 +15,7 @@ export interface Man {
   hours_per_day: number;
   payment_per_hour: number;
   salary_type: "monthly" | "daily" | "by_product";
+  is_bonus_available: boolean;
 
   work_days: ExtendedWorkDay[]
 
@@ -33,5 +34,14 @@ export interface GetSingleManResponse {
 }
 
 export type CreateManType = z.infer<typeof createManSchema>
+
+export type CreateManData = {
+  name: string;
+  balance: number;
+  hours_per_day?: number;
+  payment_per_day?: number;
+  salary_type: "monthly" | "daily" | "by_product";
+  is_bonus_available?: boolean;
+}
 
 export type UpdateManType = z.infer<typeof updateManSchema>

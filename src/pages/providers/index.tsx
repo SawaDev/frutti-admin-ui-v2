@@ -117,7 +117,7 @@ const Providers = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(provider.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(provider.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

@@ -67,7 +67,7 @@ const AddMonthlyPayment: React.FC<
       form.reset({
         data: newProducts,
         item_type,
-        status: "done",
+        status: "pending",
         date: format(new Date(), "yyyy-MM-dd"),
       });
     } else if (ingredients) {
@@ -84,7 +84,7 @@ const AddMonthlyPayment: React.FC<
       form.reset({
         data: newIngredients,
         item_type,
-        status: "done",
+        status: "pending",
         date: format(new Date(), "yyyy-MM-dd"),
       });
     }
@@ -94,15 +94,18 @@ const AddMonthlyPayment: React.FC<
     const filteredProducts = values.data
       .filter((item) => item.actual_quantity && item.item_id)
       .map((item) => ({
-        item_type: values.item_type,
-        status: values.status,
         item_id: item.item_id,
         actual_quantity: Number(item.actual_quantity),
         total_price: Number(item.total_price),
       }));
 
     createCountCheck
-      .mutateAsync({ date: values.date, data: filteredProducts })
+      .mutateAsync({
+        date: values.date,
+        data: filteredProducts,
+        item_type: values.item_type,
+        status: values.status,
+      })
       .then(() => {
         setOpen(false);
         form.reset();
@@ -152,7 +155,8 @@ const AddMonthlyPayment: React.FC<
                         <TableCell className="max-w-[200px]">
                           Mahsulotlar
                         </TableCell>
-                        <TableCell>Soni</TableCell>
+                        <TableCell>Hozirgi Soni</TableCell>
+                        <TableCell>O'zgargan Soni</TableCell>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -160,6 +164,7 @@ const AddMonthlyPayment: React.FC<
                         ? products?.data.map((product, productIndex) => (
                             <TableRow key={productIndex} className="">
                               <TableCell>{product.name}</TableCell>
+                              <TableCell>{product.quantity}</TableCell>
                               <TableCell>
                                 <FormInput
                                   control={form.control}
@@ -183,6 +188,7 @@ const AddMonthlyPayment: React.FC<
                             (ingredient, ingredientIndex) => (
                               <TableRow key={ingredientIndex} className="">
                                 <TableCell>{ingredient.name}</TableCell>
+                                <TableCell>{ingredient.quantity}</TableCell>
                                 <TableCell>
                                   <FormInput
                                     control={form.control}

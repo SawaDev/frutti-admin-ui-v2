@@ -121,7 +121,7 @@ const Bonuses = () => {
                       {bonus.method === "cash" ? "Naqd pul" : bonus.method === "card" ? "Karta" : ""}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(bonus.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(bonus.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

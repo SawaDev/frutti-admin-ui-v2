@@ -1,4 +1,4 @@
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { Download, MoreHorizontal, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -58,6 +58,14 @@ const Women = () => {
     });
   };
 
+  const handleDownload = async () => {
+		try {
+			window.open(`${import.meta.env.VITE_API_URL}/download/women`, '_blank')
+		} catch (e) {
+			console.error('Error while downloading excel file', e);
+		}
+	};
+
   if (isLoading) {
     return <>Loading...</>;
   }
@@ -76,12 +84,16 @@ const Women = () => {
               <CardDescription>Ayollarni bu yerdan boshqaring.</CardDescription>
             </div>
             <div className="space-x-2">
+              <Button onClick={handleDownload} size="sm" variant="outline" className="gap-1">
+                <Download className="h-3.5 w-3.5" />
+                Excelga yuklash
+              </Button>
               <Button
                 onClick={() => setOpenSheet(true)}
                 size="sm"
                 variant="outline"
                 className="gap-1"
-              >
+                >
                 <PlusCircle className="h-3.5 w-3.5" />
                 Ayol Qo'shish
               </Button>
@@ -94,6 +106,7 @@ const Women = () => {
                   <TableRow>
                     <TableHead>Ismi</TableHead>
                     <TableHead>Balans</TableHead>
+                    <TableHead>Ish joyi</TableHead>
                     <TableHead className="hidden md:table-cell">
                       Yaratilingan Sana
                     </TableHead>
@@ -121,8 +134,9 @@ const Women = () => {
                           {formatNumberComma(woman.balance)}
                         </Badge>
                       </TableCell>
+                      <TableCell>{woman.work_place === "work" ? "Ishxona" : "Uydan"}</TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {format(woman.created_at, "dd-MM-yyyy hh:mm")}
+                        {format(woman.created_at, "dd-MM-yyyy HH:mm")}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>

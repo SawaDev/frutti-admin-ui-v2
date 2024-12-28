@@ -106,6 +106,7 @@ const Men = () => {
                   <TableHead>Ismi</TableHead>
                   <TableHead>Balans</TableHead>
                   <TableHead>Oylik turi</TableHead>
+                  <TableHead>Bonusdan ulush</TableHead>
                   <TableHead className="hidden md:table-cell">
                     Yaratilingan Sana
                   </TableHead>
@@ -138,8 +139,13 @@ const Men = () => {
                           ? "Kunlik"
                           : "Mahsulot bo'yicha"}
                     </TableCell>
+                    <TableCell>
+                      {man.is_bonus_available
+                        ? "Ha"
+                        : "Yo'q"}
+                    </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(man.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(man.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

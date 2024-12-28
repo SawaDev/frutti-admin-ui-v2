@@ -62,7 +62,7 @@ const DiscountTable = ({ data, onDelete }: DiscountTableProps) => {
               )}
             </TableCell>
             <TableCell className="hidden md:table-cell">
-              {format(discount.created_at, "dd-MM-yyyy hh:mm")}
+              {format(discount.created_at, "dd-MM-yyyy HH:mm")}
             </TableCell>
             <TableCell>
               <DropdownMenu>

@@ -16,19 +16,9 @@ export type GetCountChecksResponse = {
   success: boolean
   data: {
     date: string
+    status: "pending" | "done"
     count_checks: CountCheck[]
   }[]
 }
 
 export type CreateCountCheckType = z.infer<typeof createCountCheckSchema>
-
-export type CreateCountCheckData = {
-  date: string
-  data: {
-    status: "pending" | "done",
-    item_type: "product" | "ingredient"
-    item_id?: number
-    actual_quantity: number
-    total_price?: number
-  }[]
-}

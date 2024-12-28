@@ -129,6 +129,9 @@ const Header = () => {
                 <ListItem href="/production" title="Ishlab chiqarish">
                   Ishlab chiqarish haqida to'liq ma'lumot.
                 </ListItem>
+                <ListItem href="/count-checks" title="Mahsulotlar soni tekshiruvi">
+                  Mahsulotlar soni tekshiruvi haqida to'liq ma'lumot.
+                </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>

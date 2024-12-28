@@ -1,15 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
-import { CreateCountCheckData, GetCountChecksResponse } from "./count-checks.type";
-
+import {
+  GetCountChecksResponse,
+  CreateCountCheckType,
+} from "./count-checks.type";
 
 const useCountChecks = () => {
   const queryClient = useQueryClient();
 
   const createCountCheckMutation = () =>
     useMutation({
-      mutationFn: async (data: CreateCountCheckData) => {
+      mutationFn: async (data: CreateCountCheckType) => {
         try {
           const response = await api.post("/count-checks", data);
           return response.data;
@@ -32,7 +34,7 @@ const useCountChecks = () => {
       queryFn: async () => {
         try {
           const response = await api.get(`/count-checks`);
-          
+
           return structuredClone(response.data);
         } catch (error: any) {
           toast({
@@ -41,6 +43,35 @@ const useCountChecks = () => {
             description: error?.response?.data?.message,
           });
         }
+      },
+    });
+
+  const updateCountCheckMutation = () =>
+    useMutation({
+      mutationFn: async (date: string | null) => {
+        try {
+          if (!date) return;
+
+          const response = await api.put(`/count-checks/${date}`, {
+            status: "done",
+          });
+
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli saqlandi!",
+            });
+          }
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["count-checks"] });
       },
     });
 
@@ -71,6 +102,7 @@ const useCountChecks = () => {
   return {
     createCountCheckMutation,
     getCountChecksQuery,
+    updateCountCheckMutation,
     deleteCountCheckMutation,
   };
 };

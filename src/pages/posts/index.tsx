@@ -148,7 +148,7 @@ const Posts = () => {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{post.description?.uz}</TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(post.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(post.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

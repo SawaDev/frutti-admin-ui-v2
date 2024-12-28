@@ -121,7 +121,7 @@ const Advances = () => {
                       {advance.method === "cash" ? "Naqd pul" : advance.method === "card" ? "Karta" : ""}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(advance.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(advance.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

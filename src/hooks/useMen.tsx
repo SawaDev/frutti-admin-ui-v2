@@ -3,7 +3,7 @@ import { api } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
 import { AxiosError } from "axios";
 import {
-  CreateManType,
+  CreateManData,
   GetAllMenResponse,
   GetSingleManResponse,
   UpdateManType,
@@ -15,7 +15,7 @@ const useMen = () => {
 
   const createMenMutation = () =>
     useMutation({
-      mutationFn: async (data: CreateManType) => {
+      mutationFn: async (data: CreateManData) => {
         try {
           const response = await api.post("/men", data);
           return response.data;

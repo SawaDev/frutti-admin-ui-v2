@@ -127,7 +127,7 @@ const Clients = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {format(client.created_at, "dd-MM-yyyy hh:mm")}
+                      {format(client.created_at, "dd-MM-yyyy HH:mm")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 import { createWomanSchema } from '@/schema/woman'
 import { SheetType } from '@/types/other'
 import { CreateWomanType } from '@/types/woman'
+import { FormSelect } from '@/components/form/FormSelect'
 
 
 const AddWoman: React.FC<SheetType> = ({ open, setOpen }) => {
@@ -20,7 +21,9 @@ const AddWoman: React.FC<SheetType> = ({ open, setOpen }) => {
 
   const form = useForm<CreateWomanType>({
     resolver: zodResolver(createWomanSchema),
-    defaultValues: {}
+    defaultValues: {
+      work_place: 'work'
+    }
   })
 
   const onSubmit = (values: CreateWomanType) => {
@@ -56,6 +59,21 @@ const AddWoman: React.FC<SheetType> = ({ open, setOpen }) => {
                     className='mx-1'
                     type='number'
                     step={0.01}
+                  />
+                  <FormSelect 
+                    control={form.control}
+                    name='work_place'
+                    label='Ish joyi'
+                    options={[
+                      {
+                        value: 'work',
+                        label: 'Ishxonada',
+                      },
+                      {
+                        value: 'home',
+                        label: 'Uydan',
+                      },
+                    ]}
                   />
                 </div>
               </ScrollArea>
