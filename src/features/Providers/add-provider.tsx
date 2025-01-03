@@ -13,22 +13,46 @@ import { CreateProviderType } from '@/types/providers'
 import useProviders from '@/hooks/useProviders'
 import { FormSelect } from '@/components/form/FormSelect'
 import { currencyOptions } from '@/constants/options'
+import { Provider } from '@/types/providers'
 
-const AddProvider: React.FC<SheetType> = ({ open, setOpen }) => {
-  const { createProviderMutation } = useProviders()
+interface AddProviderProps extends SheetType {
+  provider?: Provider
+}
+
+const AddProvider: React.FC<AddProviderProps> = ({ open, setOpen, provider }) => {
+  const { createProviderMutation, updateProviderMutation } = useProviders()
 
   const createProvider = createProviderMutation()
+  const updateProvider = updateProviderMutation(provider?.id)
 
   const form = useForm<CreateProviderType>({
     resolver: zodResolver(createProviderSchema),
     defaultValues: {
-      currency: "SUM"
+      name: provider?.name || '',
+      balance: provider?.balance || 0,
+      currency: provider?.currency || "SUM"
     }
   })
 
+  // Reset form when provider prop changes
+  React.useEffect(() => {
+    if (provider) {
+      form.reset({
+        name: provider.name,
+        balance: provider.balance,
+        currency: provider.currency ?? "SUM"
+      })
+    }
+  }, [provider, form])
+
   const onSubmit = (values: CreateProviderType) => {
-    createProvider.mutateAsync(values).then(() => {
+    const mutation = provider 
+      ? updateProvider.mutateAsync(values)
+      : createProvider.mutateAsync(values)
+
+    mutation.then(() => {
       setOpen(false)
+      form.reset()
     })
   }
 
@@ -38,9 +62,14 @@ const AddProvider: React.FC<SheetType> = ({ open, setOpen }) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
-              <SheetTitle>Yangi yetkazib beruvchini yaratish</SheetTitle>
+              <SheetTitle>
+                {provider ? "Yetkazib beruvchini tahrirlash" : "Yangi yetkazib beruvchini yaratish"}
+              </SheetTitle>
               <SheetDescription>
-                Bu yerda siz yangi yetkazib beruvchini qo'sha olasiz
+                {provider 
+                  ? "Bu yerda siz yetkazib beruvchini tahrirlashingiz mumkin"
+                  : "Bu yerda siz yangi yetkazib beruvchini qo'sha olasiz"
+                }
               </SheetDescription>
             </SheetHeader>
             <div className="grid gap-2 py-4">

@@ -268,7 +268,9 @@ const useIngredients = () => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["ingredient-transactions"] });
+        queryClient.invalidateQueries({
+          queryKey: ["ingredient-transactions"],
+        });
       },
     });
 
@@ -329,6 +331,17 @@ const useIngredients = () => {
       },
     });
 
+  const updateIngredientCategoryMutation = () =>
+    useMutation({
+      mutationFn: (data: { id: number; name: string }) =>
+        api.put(`/ingredients/categories/${data.id}`, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["ingredients", "category-options"],
+        });
+      },
+    });
+
   const deleteIngredientCategoryMutation = (id: number | undefined) =>
     useMutation({
       mutationFn: async () => {
@@ -371,6 +384,7 @@ const useIngredients = () => {
     getAllIngredientCategoriesQuery,
     createIngredientCategoryMutation,
     getAllIngredientCategoriesExpandedQuery,
+    updateIngredientCategoryMutation,
     deleteIngredientCategoryMutation,
   };
 };

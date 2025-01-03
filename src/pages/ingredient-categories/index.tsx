@@ -36,10 +36,12 @@ import NoItems from "@/features/NoItems";
 import { format } from "date-fns";
 import useIngredients from "@/hooks/useIngredients";
 import AddCategory from "@/features/Ingredients/add-category";
+import EditCategory from "@/features/IngredientCategories/edit-category";
 
 const IngredientsCategories = () => {
   const [open, setOpen] = useState<number | undefined>(undefined);
   const [openSheet, setOpenSheet] = useState<boolean>(false);
+  const [openEdit, setOpenEdit] = useState<{id: number; name: string} | undefined>();
 
   const { getAllIngredientCategoriesQuery, deleteIngredientCategoryMutation } =
     useIngredients();
@@ -119,6 +121,12 @@ const IngredientsCategories = () => {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
                           <DropdownMenuItem
+                            className="focus:bg-blue-100 focus:text-blue-800"
+                            onClick={() => setOpenEdit(category)}
+                          >
+                            O'zgartirish
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
                             className="focus:bg-red-100 focus:text-red-800"
                             onClick={() => setOpen(category.id)}
                           >
@@ -159,6 +167,7 @@ const IngredientsCategories = () => {
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddCategory open={openSheet} setOpen={setOpenSheet} />
+      <EditCategory open={!!openEdit} setOpen={() => setOpenEdit(undefined)} category={openEdit} />
     </>
   );
 };

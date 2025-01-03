@@ -27,6 +27,24 @@ const useProviders = () => {
     }
   })
 
+  const updateProviderMutation = (id: number | undefined) => useMutation({
+    mutationFn: async (data: CreateProviderType) => {
+      try {
+        const response = await api.patch(`/providers/${id}`, data);
+        return response.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: error?.response?.data?.message,
+        })
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["providers"] })
+    }
+  })
+
   const getAllProvidersQuery = () => useQuery<GetAllProvidersResponse, Error>({
     queryKey: ["providers"],
     queryFn: async () => {
@@ -71,7 +89,8 @@ const useProviders = () => {
   return {
     createProviderMutation,
     getAllProvidersQuery,
-    deleteProviderMutation
+    deleteProviderMutation,
+    updateProviderMutation
   }
 };
 
