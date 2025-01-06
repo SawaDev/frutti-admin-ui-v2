@@ -20,6 +20,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import AddCategory from "../ExpenseCategories/add-category";
+import { FormDatePicker } from "@/components/form/FormDatePicker";
+import { format } from "date-fns";
 
 interface AddExpenseProps extends SheetType {
   expense?: Expense;
@@ -44,7 +46,9 @@ const AddExpense: React.FC<AddExpenseProps> = ({ open, setOpen, expense }) => {
 
   const form = useForm<ExpenseDataType>({
     resolver: zodResolver(expenseSchema),
-    defaultValues: expense || {},
+    defaultValues: expense || {
+      date: new Date().toISOString(),
+    },
   });
 
   React.useEffect(() => {
@@ -57,6 +61,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({ open, setOpen, expense }) => {
     const data = {
       ...values,
       wallet_id: Number(values.wallet_id),
+      date: format(new Date(values.date), "yyyy-MM-dd"),
       ...(values.category_id
         ? { category_id: Number(values.category_id) }
         : { category_id: null }),
@@ -113,6 +118,11 @@ const AddExpense: React.FC<AddExpenseProps> = ({ open, setOpen, expense }) => {
                       handleNew={() => setNewCategory(true)}
                     />
                   )}
+                  <FormDatePicker
+                    control={form.control}
+                    name="date"
+                    label="Sanani kiriting"
+                  />
                   <FormInput
                     control={form.control}
                     name="amount"

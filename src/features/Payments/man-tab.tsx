@@ -20,10 +20,8 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {
-  endOfDay,
   endOfMonth,
   format,
-  startOfDay,
   startOfMonth,
 } from "date-fns";
 import {
@@ -51,8 +49,8 @@ const ManTab = () => {
   const [editPayment, setEditPayment] = useState<Payment | undefined>();
   const [deleteModal, setDeleteModal] = useState<string | null>(null);
   const [date, setDate] = useState<{ from_date: string; to_date: string }>({
-    from_date: format(currentMonthStart, "yyyy-MM-dd HH:mm:ss"),
-    to_date: format(currentMonthEnd, "yyyy-MM-dd HH:mm:ss"),
+    from_date: format(currentMonthStart, "yyyy-MM-dd"),
+    to_date: format(currentMonthEnd, "yyyy-MM-dd"),
   });
 
   const { deletePaymentMutation, getAllPaymentsQuery } = usePayments();
@@ -72,10 +70,10 @@ const ManTab = () => {
     setDate((prev) => ({
       ...prev,
       from_date: range?.from
-        ? format(startOfDay(range.from), "yyyy-MM-dd HH:mm:ss")
+        ? format(range.from, "yyyy-MM-dd")
         : "",
       to_date: range?.to
-        ? format(endOfDay(range.to), "yyyy-MM-dd HH:mm:ss")
+        ? format(range.to, "yyyy-MM-dd")
         : "",
     }));
   };

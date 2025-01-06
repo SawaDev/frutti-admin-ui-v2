@@ -218,24 +218,24 @@ const Daashboard = () => {
             </CardContent>
           </Card>
         </Link>
-        {/* <Link to={"clients"}> */}
-        <Card x-chunk="dashboard-01-chunk-3">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Ishlab Chiqarish
-            </CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumberComma(monthlyStats.total_product_quantity)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {monthlyStats.product_quantity_change}% Ohirgi oyga nisbatan
-            </p>
-          </CardContent>
-        </Card>
-        {/* </Link> */}
+        <Link to={"sales"}>
+          <Card x-chunk="dashboard-01-chunk-3">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Sotilgan Mahsulotlar
+              </CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {formatNumberComma(monthlyStats.total_product_quantity)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {monthlyStats.product_quantity_change}% Ohirgi oyga nisbatan
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
       <div className="grid gap-4 md:grid-cols-3 md:gap-8">
         <Link to={"clients"}>

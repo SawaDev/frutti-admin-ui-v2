@@ -62,6 +62,10 @@ export const getColumns = (
       header: () => <span>Kassa</span>,
     },
     {
+      accessorKey: "date",
+      header: () => <span>Sanasi</span>,
+    },
+    {
       accessorKey: "comment",
       header: () => <span>Kommentariya</span>,
     },

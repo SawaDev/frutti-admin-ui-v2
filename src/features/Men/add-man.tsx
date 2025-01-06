@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -28,16 +28,52 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
   const form = useForm<CreateManType>({
     resolver: zodResolver(createManSchema),
     defaultValues: {
-      hours_per_day: 12,
       salary_type: "monthly",
       is_bonus_available: "false",
-      payment_per_day: 0,
     },
   });
 
   const salaryType = form.watch("salary_type");
 
+  useEffect(() => {
+    form.setValue("payment_per_day", undefined);
+    form.setValue("payment_per_product", undefined);
+    if (salaryType !== "daily") {
+      form.setValue("hours_per_day", undefined);
+    } else {
+      form.setValue("hours_per_day", 12);
+    }
+  }, [salaryType, form]);
+
   const onSubmit = (values: CreateManType) => {
+    if (salaryType === "daily") {
+      if (!values.hours_per_day) {
+        form.setError("hours_per_day", {
+          message: "Kunlik ish soatini kiriting!",
+        });
+        return;
+      } else if (!values.payment_per_day) {
+        form.setError("payment_per_day", {
+          message: "Kunlik ish haqini kiriting!",
+        });
+        return;
+      }
+    } else if (salaryType === "by_product") {
+      if (!values.payment_per_product) {
+        form.setError("payment_per_product", {
+          message: "Mahsulotdan olinadigan haqini kiriting!",
+        });
+        return;
+      }
+    } else if (salaryType === "monthly") {
+      if (!values.payment_per_month) {
+        form.setError("payment_per_month", {
+          message: "Oylik ish haqini kiriting!",
+        });
+        return;
+      }
+    }
+
     const isBonusAvailable =
       values.is_bonus_available === "true" ? true : false;
     if (values.salary_type === "by_product") {
@@ -50,12 +86,14 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
           setOpen(false);
         });
     } else {
-      createMan.mutateAsync({
-        ...values,
-        is_bonus_available: undefined,
-      }).then(() => {
-        setOpen(false);
-      });
+      createMan
+        .mutateAsync({
+          ...values,
+          is_bonus_available: undefined,
+        })
+        .then(() => {
+          setOpen(false);
+        });
     }
   };
 
@@ -87,7 +125,7 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                     placeholder="Balans"
                     className="mx-1"
                     type="number"
-                    step={0.01}
+                    step={0.0001}
                   />
                   <FormSelect
                     control={form.control}
@@ -101,7 +139,20 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                       { label: "Mahsulot bo'yicha", value: "by_product" },
                     ]}
                   />
-                  {salaryType !== "by_product" ? (
+                  {salaryType === "monthly" && (
+                    <>
+                      <FormInput
+                        control={form.control}
+                        name="payment_per_month"
+                        label="Oylik to'lov summasi"
+                        placeholder="Oylik to'lov summasi"
+                        className="mx-1"
+                        type="number"
+                        step={0.0001}
+                      />
+                    </>
+                  )}
+                  {salaryType === "daily" && (
                     <>
                       <FormInput
                         control={form.control}
@@ -118,10 +169,11 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                         placeholder="Kunlik to'lov summasi"
                         className="mx-1"
                         type="number"
-                        step={0.01}
+                        step={0.0001}
                       />
                     </>
-                  ) : (
+                  )}
+                  {salaryType === "by_product" && (
                     <>
                       <FormSelect
                         control={form.control}
@@ -133,6 +185,15 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                           { label: "Ha", value: "true" },
                           { label: "Yo'q", value: "false" },
                         ]}
+                      />
+                      <FormInput
+                        control={form.control}
+                        name="payment_per_product"
+                        label="Mahsulotdan olinadigan haq"
+                        placeholder="Mahsulotdan olinadigan haq"
+                        className="mx-1"
+                        type="number"
+                        step={0.0001}
                       />
                     </>
                   )}

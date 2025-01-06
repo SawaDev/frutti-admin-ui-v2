@@ -12,8 +12,10 @@ export interface Man {
   name: string
   balance: number
   status: "working" | "in_holiday",
-  hours_per_day: number;
-  payment_per_hour: number;
+  hours_per_day: number | null;
+  payment_per_hour: number | null;
+  payment_per_product: number | null;
+  payment_per_month: number | null;
   salary_type: "monthly" | "daily" | "by_product";
   is_bonus_available: boolean;
 

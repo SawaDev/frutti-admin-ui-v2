@@ -79,7 +79,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
     (womanIndex: number, productIndex: number, newValue: number) => {
       handleQuantityChange(womanIndex, productIndex, newValue);
     },
-    300,
+    50,
   );
 
   const initialFormState = React.useMemo(() => {
@@ -134,8 +134,6 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
       setOpen(false);
     });
   };
-
-  const MemoizedFormInput = React.memo(FormInput);
 
   useEffect(() => {
     if (open) {
@@ -218,7 +216,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                                 className="flex h-12 w-[220px] shrink-0 items-center justify-start font-medium text-muted-foreground"
                                 key={productIndex}
                               >
-                                <MemoizedFormInput
+                                <FormInput
                                   control={form.control}
                                   type="number"
                                   name={`women.${womanIndex}.products.${productIndex}.quantity`}

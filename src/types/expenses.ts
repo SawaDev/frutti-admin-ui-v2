@@ -28,6 +28,7 @@ export interface Expense {
   expense_category: ExpenseCategory | null
   amount: number
   comment: string | null
+  date: string | undefined
 
   created_at: string
   updated_at: string

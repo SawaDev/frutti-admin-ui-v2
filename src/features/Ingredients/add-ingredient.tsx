@@ -57,7 +57,7 @@ const AddIngredient: React.FC<SheetType> = ({ open, setOpen }) => {
             </SheetHeader>
             <div className="grid gap-2 py-4">
               <ScrollArea className="h-[calc(100vh-190px)] mb-2">
-                <div className="grid grid-rows-1 gap-3 mt-3 ml-2 mr-3 items-center">
+                <div className="grid grid-rows-1 gap-3 my-3 ml-2 mr-3 items-center">
                   <FormInput
                     control={form.control}
                     name='name'
@@ -101,6 +101,7 @@ const AddIngredient: React.FC<SheetType> = ({ open, setOpen }) => {
                     name='cost'
                     type='number'
                     label={"Narxi"}
+                    step={0.000000001}
                   />
                 </div>
               </ScrollArea>
