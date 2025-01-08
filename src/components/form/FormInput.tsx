@@ -13,16 +13,23 @@ interface FormInputProps<T extends FieldValues> extends React.InputHTMLAttribute
 
 const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
   ({ className, type, control, name, label, ...props }, ref) => {
+    const formatNumberWithCommas = (num: number | string) => {
+      if (num === '') return '';
+      return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
     return (
       <FormField
         control={control}
         name={name}
         render={({ field: { value, onChange, ...fieldProps } }) => {
-          const handleNumberChange = (value: string) => {
-            if (value === '') {
+          const handleNumberChange = (inputValue: string) => {
+            const cleanValue = inputValue.replace(/,/g, '');
+            
+            if (cleanValue === '') {
               onChange('');
             } else {
-              onChange(+value);
+              onChange(+cleanValue);
             }
           }
 
@@ -34,8 +41,8 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
               <FormControl>
                 {type === "number" ? (
                   <Input
-                    type={type}
-                    value={value}
+                    type="text"
+                    value={formatNumberWithCommas(value)}
                     onChange={event => handleNumberChange(event.target.value)}
                     {...props}
                     {...fieldProps}
