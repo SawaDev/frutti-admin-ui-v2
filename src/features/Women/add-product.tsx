@@ -79,7 +79,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
     (womanIndex: number, productIndex: number, newValue: number) => {
       handleQuantityChange(womanIndex, productIndex, newValue);
     },
-    50,
+    50
   );
 
   const initialFormState = React.useMemo(() => {
@@ -98,7 +98,10 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
 
   useEffect(() => {
     if (initialFormState) {
-      form.reset(initialFormState);
+      form.reset({
+        ...initialFormState,
+        date: format(new Date(), "dd-MM-yyyy"),
+      });
     }
   }, [initialFormState]);
 
@@ -131,6 +134,8 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
     };
 
     createWomanProducts.mutateAsync(finalData).then(() => {
+      form.reset();
+      setTotalQuantities({});
       setOpen(false);
     });
   };
@@ -142,6 +147,12 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
       requestAnimationFrame(() => {
         setIsRendering(false);
       });
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      setTotalQuantities({});
     }
   }, [open]);
 
@@ -202,30 +213,35 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
                           </div>
                         ))}
                       </div>
-                      <div className="flex flex-col pb-3">
-                        {women?.data.map((woman, womanIndex) => (
-                          <div
-                            className="relative flex flex-row gap-2 hover:bg-muted/50"
-                            key={womanIndex}
-                          >
-                            <div className="sticky left-0 flex h-12 !w-[200px] min-w-[200px] items-center justify-start bg-white px-4 font-medium text-muted-foreground">
+                      <div className="flex gap-2">
+                        <div className="sticky left-0 flex flex-col bg-white">
+                          {women?.data.map((woman, womanIndex) => (
+                            <div
+                              key={womanIndex}
+                              className="flex h-12 !w-[200px] min-w-[200px] items-center justify-start px-4 font-medium text-muted-foreground"
+                            >
                               {woman.name}
                             </div>
-                            {products?.data.map((_, productIndex) => (
+                          ))}
+                        </div>
+                        {products?.data.map((_, productIndex) => (
+                          <div key={productIndex} className="flex flex-col">
+                            {women?.data.map((_, womanIndex) => (
                               <div
+                                key={womanIndex}
                                 className="flex h-12 w-[220px] shrink-0 items-center justify-start font-medium text-muted-foreground"
-                                key={productIndex}
                               >
                                 <FormInput
                                   control={form.control}
                                   type="number"
                                   name={`women.${womanIndex}.products.${productIndex}.quantity`}
                                   className="w-full"
-                                  onChange={(e) =>
+                                  tabIndex={womanIndex + 1}
+                                  onChange={(value) =>
                                     debouncedHandleQuantityChange(
                                       womanIndex,
                                       productIndex,
-                                      Number(e.target.value),
+                                      Number(value),
                                     )
                                   }
                                 />

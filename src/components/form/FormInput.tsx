@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Control, FieldValues, Path } from "react-hook-form";
+import { NumericFormat } from 'react-number-format';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
@@ -9,66 +10,54 @@ interface FormInputProps<T extends FieldValues> extends React.InputHTMLAttribute
   control: Control<T, any>;
   name: Path<T>;
   label?: string;
+  onInputBlur?: (value: any) => void;
 }
 
 const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
-  ({ className, type, control, name, label, ...props }, ref) => {
-    const formatNumberWithCommas = (num: number | string) => {
-      if (num === '') return '';
-      return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    };
-
+  ({ className, type, control, name, label, onChange, ...props }, ref) => {
     return (
       <FormField
         control={control}
         name={name}
-        render={({ field: { value, onChange, ...fieldProps } }) => {
-          const handleNumberChange = (inputValue: string) => {
-            const cleanValue = inputValue.replace(/,/g, '');
-            
-            if (cleanValue === '') {
-              onChange('');
-            } else {
-              onChange(+cleanValue);
-            }
-          }
-
-          return (
-            <FormItem className={className}>
-              {label && (
-                <FormLabel>{label}</FormLabel>
+        render={({ field: { value, onChange:fieldOnChange, onBlur, ...fieldProps } }) => (
+          <FormItem className={className}>
+            {label && <FormLabel>{label}</FormLabel>}
+            <FormControl>
+              {type === "number" ? (
+                <NumericFormat
+                  customInput={Input}
+                  thousandSeparator=" "
+                  decimalScale={8}
+                  value={value || ''}
+                  onValueChange={(values) => {
+                    fieldOnChange(values.floatValue);
+                    //@ts-ignore
+                    onChange?.(values.floatValue);
+                  }}
+                  onBlur={onBlur}
+                  {...fieldProps}
+                  defaultValue={undefined}
+                />
+              ) : type === 'checkbox' ? (
+                <Checkbox
+                  checked={value}
+                  onCheckedChange={(value) => fieldOnChange(value)}
+                  {...fieldProps}
+                />
+              ) : (
+                <Input
+                  type={type}
+                  value={value}
+                  onChange={event => fieldOnChange(event.target.value)}
+                  {...props}
+                  {...fieldProps}
+                  ref={ref}
+                />
               )}
-              <FormControl>
-                {type === "number" ? (
-                  <Input
-                    type="text"
-                    value={formatNumberWithCommas(value)}
-                    onChange={event => handleNumberChange(event.target.value)}
-                    {...props}
-                    {...fieldProps}
-                    ref={ref}
-                  />
-                ) : type === 'checkbox' ? (
-                  <Checkbox
-                    checked={value}
-                    onCheckedChange={(value) => onChange(value)}
-                    {...fieldProps}
-                  />
-                ) : (
-                  <Input
-                    type={type}
-                    value={value}
-                    onChange={event => onChange(event.target.value)}
-                    {...props}
-                    {...fieldProps}
-                    ref={ref}
-                  />
-                )}
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )
-        }}
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
       />
     );
   }

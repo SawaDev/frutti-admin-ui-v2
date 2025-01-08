@@ -45,6 +45,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.4",
+    "react-number-format": "^5.4.3",
     "react-router-dom": "^6.23.0",
     "react-spinners": "^0.15.0",
     "tailwind-merge": "^2.3.0",
