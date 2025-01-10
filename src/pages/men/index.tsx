@@ -1,5 +1,4 @@
 import { MoreHorizontal, PlusCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -40,13 +39,13 @@ import { formatNumberComma } from "@/lib/utils";
 import useMen from "@/hooks/useMen";
 import AddMan from "@/features/Men/add-man";
 import AddWorkDay from "@/features/Men/add-work-day";
+import { Man } from "@/types/man";
 
 const Men = () => {
   const [open, setOpen] = useState<number | undefined>(undefined);
   const [addWorkDay, setAddWorkDay] = useState<boolean>(false);
   const [openSheet, setOpenSheet] = useState<boolean>(false);
-
-  const navigate = useNavigate();
+  const [editMan, setEditMan] = useState<Man | undefined>(undefined);
 
   const { getAllMenQuery, deleteManMutation } = useMen();
 
@@ -162,7 +161,7 @@ const Men = () => {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
                           <DropdownMenuItem
-                            onClick={() => navigate(`/men/${man.id}`)}
+                            onClick={() => setEditMan(man)}
                           >
                             O'zgartirish
                           </DropdownMenuItem>
@@ -207,6 +206,11 @@ const Men = () => {
         <NoItems setOpen={setOpenSheet} />
       )}
       <AddMan open={openSheet} setOpen={setOpenSheet} />
+      <AddMan
+        open={!!editMan}
+        setOpen={() => setEditMan(undefined)}
+        data={editMan}
+      />
       <AddWorkDay open={addWorkDay} setOpen={setAddWorkDay} />
     </>
   );

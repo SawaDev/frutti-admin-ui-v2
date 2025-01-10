@@ -19,11 +19,17 @@ import { SheetType } from "@/types/other";
 import { CreateManType } from "@/types/man";
 import useMen from "@/hooks/useMen";
 import { FormSelect } from "@/components/form/FormSelect";
+import { Man } from "@/types/man";
 
-const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
-  const { createMenMutation } = useMen();
+const AddMan: React.FC<SheetType & { data?: Man }> = ({
+  open,
+  setOpen,
+  data,
+}) => {
+  const { createMenMutation, updateManMutation } = useMen();
 
   const createMan = createMenMutation();
+  const updateMan = updateManMutation(data ? data.id.toString() : undefined);
 
   const form = useForm<CreateManType>({
     resolver: zodResolver(createManSchema),
@@ -44,6 +50,21 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
       form.setValue("hours_per_day", 12);
     }
   }, [salaryType, form]);
+
+  useEffect(() => {
+    if (data) {
+      form.reset({
+        name: data.name,
+        balance: data.balance,
+        salary_type: data.salary_type,
+        payment_per_month: data.payment_per_month,
+        payment_per_day: data.payment_per_day,
+        payment_per_product: data.payment_per_product,
+        hours_per_day: data.hours_per_day,
+        is_bonus_available: data.is_bonus_available?.toString() || "false",
+      });
+    }
+  }, [data, form]);
 
   const onSubmit = (values: CreateManType) => {
     if (salaryType === "daily") {
@@ -76,25 +97,27 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
 
     const isBonusAvailable =
       values.is_bonus_available === "true" ? true : false;
-    if (values.salary_type === "by_product") {
-      createMan
-        .mutateAsync({
-          ...values,
-          is_bonus_available: isBonusAvailable,
-        })
-        .then(() => {
-          setOpen(false);
-        });
-    } else {
-      createMan
-        .mutateAsync({
-          ...values,
-          is_bonus_available: undefined,
-        })
-        .then(() => {
-          setOpen(false);
-        });
-    }
+
+    const cleanedValues = {
+      ...values,
+      hours_per_day: values.hours_per_day || undefined,
+      payment_per_day: values.payment_per_day || undefined,
+      payment_per_product: values.payment_per_product || undefined,
+      payment_per_month: values.payment_per_month || undefined,
+    };
+
+    const submitData = values.salary_type === "by_product"
+      ? { ...cleanedValues, is_bonus_available: isBonusAvailable }
+      : { ...cleanedValues, is_bonus_available: undefined };
+
+    const mutation = data
+      ? updateMan.mutateAsync(submitData)
+      : createMan.mutateAsync(submitData);
+
+    mutation.then(() => {
+      setOpen(false);
+      form.reset();
+    });
   };
 
   return (
@@ -103,9 +126,13 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
-              <SheetTitle>Yangi erkakni yaratish</SheetTitle>
+              <SheetTitle>
+                {data ? "Erkakni tahrirlash" : "Yangi erkakni yaratish"}
+              </SheetTitle>
               <SheetDescription>
-                Bu yerda siz yangi erkakni qo'sha olasiz
+                {data
+                  ? "Bu yerda siz erkakni tahrirlay olasiz"
+                  : "Bu yerda siz yangi erkakni qo'sha olasiz"}
               </SheetDescription>
             </SheetHeader>
             <div className="grid gap-2 py-4">
@@ -125,6 +152,7 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
                     placeholder="Balans"
                     className="mx-1"
                     type="number"
+                    defaultValue={data?.balance}
                     step={0.0001}
                   />
                   <FormSelect
@@ -202,11 +230,7 @@ const AddMan: React.FC<SheetType> = ({ open, setOpen }) => {
             </div>
             <SheetFooter>
               <Button
-                disabled={
-                  !form.formState.isValid ||
-                  !form.formState.isDirty ||
-                  form.formState.isLoading
-                }
+                disabled={!form.formState.isDirty || form.formState.isLoading}
                 type="submit"
               >
                 Saqlash
