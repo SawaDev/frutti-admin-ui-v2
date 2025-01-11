@@ -29,6 +29,7 @@ export const ingredientPurchaseSchema = z.object({
 });
 
 export const ingredientTransactionSchema = z.object({
+  date: z.string({ required_error: "Sana kiriting!" }),
   comment: z.string().optional(),
   ingredients: z.array(
     z.object({

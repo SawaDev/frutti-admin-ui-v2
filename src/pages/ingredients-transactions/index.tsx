@@ -80,9 +80,9 @@ const IngredientTransaction = () => {
           <Card className="mx-6 my-10">
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex flex-col">
-                <CardTitle>Ishlab chiqarilgan ingredientlar</CardTitle>
+                <CardTitle>Ishlatilgan siryolar</CardTitle>
                 <CardDescription>
-                  Ishlab chiqarilgan ingredientlar ro'yhati
+                  Ishlatilgan siryolar ro'yhati
                 </CardDescription>
               </div>
               <div className="flex flex-row items-center gap-2">
@@ -90,7 +90,7 @@ const IngredientTransaction = () => {
                   variant="outline"
                   onClick={() => setAddTransactionSheet(true)}
                 >
-                  <Plus className="mr-2 h-4 w-4" /> Yangi ishlab chiqarishni
+                  <Plus className="mr-2 h-4 w-4" />Ishlatilgan siryoni
                   qo'shish
                 </Button>
                 <DatePickerWithRange />

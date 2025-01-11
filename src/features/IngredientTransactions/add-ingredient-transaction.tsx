@@ -11,6 +11,8 @@ import { CreateIngredientTransaction } from "@/types/ingredients"
 import { ingredientTransactionSchema } from "@/schema/ingredients"
 import { createIngredientTransactionColumns } from "@/features/Ingredients/columns"
 import useIngredients from "@/hooks/useIngredients"
+import { FormDatePicker } from "@/components/form/FormDatePicker"
+import { format } from "date-fns"
 
 interface AddIngredientTransactionProps {
   open: boolean
@@ -25,7 +27,8 @@ const AddIngredientTransaction: React.FC<AddIngredientTransactionProps> = ({ ope
   const form = useForm<CreateIngredientTransaction>({
     resolver: zodResolver(ingredientTransactionSchema),
     defaultValues: {
-      ingredients: []
+      ingredients: [],
+      date: format(new Date(), "yyyy-MM-dd")
     }
   })
 
@@ -61,6 +64,12 @@ const AddIngredientTransaction: React.FC<AddIngredientTransactionProps> = ({ ope
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="space-y-4 py-4">
+              <FormDatePicker
+                name="date"
+                className="max-w-[300px]"
+                label="Ishlatilingan sana"
+                control={form.control}
+              />
               <Table>
                 <TableHeader>
                   {createIngredientTransactionTable.getHeaderGroups().map((headerGroup) => (

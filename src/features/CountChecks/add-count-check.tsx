@@ -170,14 +170,14 @@ const AddMonthlyPayment: React.FC<
                                   control={form.control}
                                   type="number"
                                   name={`data.${productIndex}.actual_quantity`}
-                                  onChange={(e) => {
+                                  onChange={(value) => {
                                     form.setValue(
                                       `data.${productIndex}.actual_quantity`,
-                                      Number(e.target.value),
+                                      Number(value),
                                     );
                                     form.setValue(
                                       `data.${productIndex}.total_price`,
-                                      Number(e.target.value) * product.price,
+                                      Number(value) * product.price,
                                     );
                                   }}
                                 />
@@ -194,11 +194,14 @@ const AddMonthlyPayment: React.FC<
                                     control={form.control}
                                     type="number"
                                     name={`data.${ingredientIndex}.actual_quantity`}
-                                    onChange={(e) => {
+                                    onChange={(value) => {
+                                      form.setValue(
+                                        `data.${ingredientIndex}.actual_quantity`,
+                                        Number(value)
+                                      );
                                       form.setValue(
                                         `data.${ingredientIndex}.total_price`,
-                                        Number(e.target.value) *
-                                          ingredient.cost,
+                                        Number(value) * ingredient.cost
                                       );
                                     }}
                                   />

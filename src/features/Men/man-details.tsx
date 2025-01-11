@@ -32,7 +32,6 @@ export const ManDetails: React.FC<ManDetailsProps> = ({ data }) => {
   const formDefaults = {
     name: data.name || "",
     hours_per_day: data.hours_per_day || undefined,
-    payment_per_hour: data.payment_per_hour || undefined,
     salary_type: data.salary_type || undefined,
   };
 
@@ -85,11 +84,6 @@ export const ManDetails: React.FC<ManDetailsProps> = ({ data }) => {
                     name="hours_per_day"
                     control={form.control}
                     label="Kunlik ish soat"
-                  />
-                  <FormInput
-                    name="payment_per_hour"
-                    control={form.control}
-                    label="Soatbay to'lov summasi"
                   />
                   <FormSelect
                     name="salary_type"

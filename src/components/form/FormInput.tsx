@@ -37,6 +37,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
                   onBlur={onBlur}
                   {...fieldProps}
                   defaultValue={undefined}
+                  autoComplete="off"
                 />
               ) : type === 'checkbox' ? (
                 <Checkbox
@@ -52,6 +53,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps<any>>(
                   {...props}
                   {...fieldProps}
                   ref={ref}
+                  autoComplete="off"
                 />
               )}
             </FormControl>

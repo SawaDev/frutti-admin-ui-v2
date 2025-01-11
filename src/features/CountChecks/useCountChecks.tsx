@@ -48,12 +48,19 @@ const useCountChecks = () => {
 
   const updateCountCheckMutation = () =>
     useMutation({
-      mutationFn: async (date: string | null) => {
+      mutationFn: async (
+        data: {
+          date: string;
+          item_type: "product" | "ingredient";
+        } | null,
+      ) => {
         try {
-          if (!date) return;
+          if (!data) return;
 
-          const response = await api.put(`/count-checks/${date}`, {
+          const response = await api.put(`/count-checks`, {
             status: "done",
+            date: data?.date,
+            item_type: data?.item_type,
           });
 
           if (response?.data) {
@@ -77,9 +84,19 @@ const useCountChecks = () => {
 
   const deleteCountCheckMutation = () =>
     useMutation({
-      mutationFn: async (date: string | null) => {
+      mutationFn: async (
+        data: {
+          date: string;
+          item_type: "product" | "ingredient";
+        } | null,
+      ) => {
         try {
-          const response = await api.delete(`/count-checks/${date}`);
+          const response = await api.delete(`/count-checks`, {
+            params: {
+              date: data?.date,
+              item_type: data?.item_type,
+            },
+          });
           if (response?.data) {
             toast({
               description: "Muvaffaqiyatli o'chirildi!",

@@ -17,6 +17,7 @@ export type GetCountChecksResponse = {
   data: {
     date: string
     status: "pending" | "done"
+    item_type: "product" | "ingredient"
     count_checks: CountCheck[]
   }[]
 }

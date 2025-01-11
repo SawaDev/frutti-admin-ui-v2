@@ -32,6 +32,7 @@ import {
 
 import { GetCountChecksResponse } from "./count-checks.type";
 import useCountChecks from "./useCountChecks";
+import { Badge } from "@/components/ui/badge";
 
 interface CountChecksTableType {
   data: GetCountChecksResponse | undefined;
@@ -40,6 +41,10 @@ interface CountChecksTableType {
 const CollapsedRows: React.FC<{
   data: GetCountChecksResponse["data"][0]["count_checks"][0];
 }> = ({ data }) => {
+  const price =
+    (data.actual_quantity - data.expected_quantity) *
+    (data.total_price / data.actual_quantity);
+
   return (
     <TableRow className="p-0" key={data.id}>
       <TableCell className="p-2 px-4">
@@ -48,15 +53,27 @@ const CollapsedRows: React.FC<{
       <TableCell className="p-2 px-4">
         {formatNumberComma(data.actual_quantity)}
       </TableCell>
+      <TableCell className="p-2 px-4">
+        <Badge variant={price > 0 ? "success" : "destructive"}>
+          {formatNumberComma(price)}
+        </Badge>
+      </TableCell>
     </TableRow>
   );
 };
 
 const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
-  const [deleteModal, setDeleteModal] = useState<string | null>(null);
-  const [saveModal, setSaveModal] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    date: string;
+    item_type: "product" | "ingredient";
+  } | null>(null);
+  const [saveModal, setSaveModal] = useState<{
+    date: string;
+    item_type: "product" | "ingredient";
+  } | null>(null);
 
-  const { deleteCountCheckMutation, updateCountCheckMutation } = useCountChecks();
+  const { deleteCountCheckMutation, updateCountCheckMutation } =
+    useCountChecks();
 
   const deleteCountCheck = deleteCountCheckMutation();
   const updateCountCheck = updateCountCheckMutation();
@@ -79,6 +96,8 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
         <TableHeader>
           <TableRow className="sticky top-0 z-[2] bg-white">
             <TableHead>Sana</TableHead>
+            <TableHead>Turi</TableHead>
+            <TableHead>Statusi</TableHead>
             <TableHead>
               <span className="sr-only">Harakatlar</span>
             </TableHead>
@@ -86,47 +105,63 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
         </TableHeader>
         <TableBody>
           {data?.data ? (
-            data.data.map((date, dateIndex) => (
+            data.data.map((item, dateIndex) => (
               <Collapsible key={dateIndex} asChild>
                 <>
                   <CollapsibleTrigger asChild>
                     <TableRow className="p-0">
-                      <TableCell className="p-2 px-4">{date.date}</TableCell>
+                      <TableCell className="p-2 px-4">{item.date}</TableCell>
                       <TableCell className="p-2 px-4">
-                        {date.status === "done"
+                        {item.item_type === "product" ? "Mahsulot" : "Siryo"}
+                      </TableCell>
+                      <TableCell className="p-2 px-4">
+                        {item.status === "done"
                           ? "Saqlangan"
                           : "Eslab qolingan"}
                       </TableCell>
                       <TableCell className="w-16">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              aria-haspopup="true"
-                              size="icon"
-                              variant="ghost"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-                            {date.status === "pending" && (
+                        {item.status === "pending" ? (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
+
                               <DropdownMenuItem
                                 className="focus:bg-green-100 focus:text-green-800"
-                                onClick={() => setSaveModal(date.date)}
+                                onClick={() =>
+                                  setSaveModal({
+                                    date: item.date,
+                                    item_type: item.item_type,
+                                  })
+                                }
                               >
                                 Saqlash
                               </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem
-                              className="focus:bg-red-100 focus:text-red-800"
-                              onClick={() => setDeleteModal(date.date)}
-                            >
-                              O'chirish
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                              <DropdownMenuItem
+                                className="focus:bg-red-100 focus:text-red-800"
+                                onClick={() =>
+                                  setDeleteModal({
+                                    date: item.date,
+                                    item_type: item.item_type,
+                                  })
+                                }
+                              >
+                                O'chirish
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        ) : (
+                          <></>
+                        )}
                       </TableCell>
                     </TableRow>
                   </CollapsibleTrigger>
@@ -140,6 +175,7 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
                                 <TableRow>
                                   <TableHead>Kutilgan Soni</TableHead>
                                   <TableHead>Hozirgi Soni</TableHead>
+                                  <TableHead>Narxi</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -208,15 +244,10 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
                 bosing
               </DialogDescription>
               <DialogFooter>
-                <Button
-                  variant={"outline"}
-                  onClick={() => setSaveModal(null)}
-                >
+                <Button variant={"outline"} onClick={() => setSaveModal(null)}>
                   Bekor qilish
                 </Button>
-                <Button onClick={handleSave}>
-                  Saqlash
-                </Button>
+                <Button onClick={handleSave}>Saqlash</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

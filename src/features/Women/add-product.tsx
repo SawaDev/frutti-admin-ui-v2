@@ -37,7 +37,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
   const form = useForm<z.infer<typeof womanProductsSchema>>({
     resolver: zodResolver(womanProductsSchema),
     defaultValues: {
-      date: format(new Date(), "dd-MM-yyyy"),
+      date: format(new Date(), "yyyy-MM-dd"),
     },
   });
   const [totalQuantities, setTotalQuantities] = useState<
@@ -100,7 +100,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
     if (initialFormState) {
       form.reset({
         ...initialFormState,
-        date: format(new Date(), "dd-MM-yyyy"),
+        date: format(new Date(), "yyyy-MM-dd"),
       });
     }
   }, [initialFormState]);
@@ -111,6 +111,7 @@ const AddProduct: React.FC<SheetType> = ({ open, setOpen }) => {
     if (!values.date && values.women?.length < 0) {
       return;
     }
+    
     const finalDate = values.date
       ? format(values.date, "dd-MM-yyyy")
       : format(new Date(), "dd-MM-yyyy");
