@@ -23,33 +23,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FormDatePicker } from "@/components/form/FormDatePicker";
-import { createCountCheckSchema } from "./count-check.schame";
-import { CreateCountCheckType } from "./count-checks.type";
+import { CountCheck, CountCheckParams } from "./count-checks.type";
 import useProducts from "@/hooks/useProducts";
 import useCountChecks from "./useCountChecks";
-import { FormSelect } from "@/components/form/FormSelect";
 import useIngredients from "@/hooks/useIngredients";
-import { format } from "date-fns";
+import { z } from "zod";
 
-const AddCountCheck: React.FC<
-  SheetType & { item_type: "product" | "ingredient" }
-> = ({ open, setOpen, item_type }) => {
+const UpdateCountCheck: React.FC<
+  SheetType & { data: (CountCheckParams & { data: CountCheck[] }) }
+> = ({ open, setOpen, data }) => {
   const { getAllProductsQuery } = useProducts();
   const { getAllIngredientsQuery } = useIngredients();
-  const { createCountCheckMutation } = useCountChecks();
+  const { updateCountCheckMutation } = useCountChecks();
 
-  const createCountCheck = createCountCheckMutation();
+  const updateCountCheck = updateCountCheckMutation();
 
   const { data: products, isLoading: loadingProducts } = getAllProductsQuery(
-    item_type === "product",
+    data.item_type === "product",
   );
   const { data: ingredients, isLoading: loadingIngredients } =
-    getAllIngredientsQuery(item_type === "ingredient");
+    getAllIngredientsQuery(data.item_type === "ingredient");
 
-  const form = useForm<CreateCountCheckType>({
-    resolver: zodResolver(createCountCheckSchema),
-    defaultValues: {},
+  const formSchema = z.object({
+    data: z.array(
+      z.object({
+        item_id: z.number(),
+        actual_quantity: z.number().optional(),
+        total_price: z.number().optional(),
+      })
+    ),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      data: [],
+    },
   });
 
   useEffect(() => {
@@ -59,16 +70,13 @@ const AddCountCheck: React.FC<
       for (const product of products.data) {
         newProducts.push({
           item_id: product.id,
-          actual_quantity: undefined,
-          total_price: undefined,
+          actual_quantity: data.data.find(item => item.item_id === product.id)?.actual_quantity,
+          total_price: data.data.find(item => item.item_id === product.id)?.total_price,
         });
       }
 
       form.reset({
         data: newProducts,
-        item_type,
-        status: "pending",
-        date: format(new Date(), "yyyy-MM-dd"),
       });
     } else if (ingredients) {
       const newIngredients = [];
@@ -76,35 +84,31 @@ const AddCountCheck: React.FC<
       for (const ingredient of ingredients.data) {
         newIngredients.push({
           item_id: ingredient.id,
-          actual_quantity: undefined,
-          total_price: undefined,
+          actual_quantity: data.data.find(item => item.item_id === ingredient.id)?.actual_quantity,
+          total_price: data.data.find(item => item.item_id === ingredient.id)?.total_price,
         });
       }
 
       form.reset({
         data: newIngredients,
-        item_type,
-        status: "pending",
-        date: format(new Date(), "yyyy-MM-dd"),
       });
     }
   }, [products, ingredients]);
 
-  const onSubmit = (values: CreateCountCheckType) => {
+  const onSubmit = (values: FormValues) => {
     const filteredProducts = values.data
       .filter((item) => item.actual_quantity && item.item_id)
       .map((item) => ({
-        item_id: item.item_id,
-        actual_quantity: Number(item.actual_quantity),
+        id: item.item_id,
+        count: Number(item.actual_quantity),
         total_price: Number(item.total_price),
       }));
 
-    createCountCheck
+    updateCountCheck
       .mutateAsync({
-        date: values.date,
-        data: filteredProducts,
-        item_type: values.item_type,
-        status: values.status,
+        date: data.date,
+        item_type: data.item_type,
+        data: filteredProducts
       })
       .then(() => {
         setOpen(false);
@@ -125,26 +129,10 @@ const AddCountCheck: React.FC<
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <SheetHeader>
-                <SheetTitle>Mahsulotlar sonini kiritish</SheetTitle>
+                <SheetTitle>Mahsulotlar sonini tekshiruvini o'zgartirish</SheetTitle>
                 <SheetDescription>
-                  Bu yerda siz mahsulotlar sonini kiritishingiz mumkin
+                  Bu yerda siz mahsulotlar sonini tekshiruvini o'zgartirishingiz mumkin
                 </SheetDescription>
-
-                <div className="mt-3 flex gap-3">
-                  <FormSelect
-                    control={form.control}
-                    name={`status`}
-                    options={[
-                      { label: "Saqlash", value: "done" },
-                      { label: "Eslab qolish", value: "pending" },
-                    ]}
-                  />
-                  <FormDatePicker
-                    control={form.control}
-                    name="date"
-                    className="w-[300px]"
-                  />
-                </div>
               </SheetHeader>
 
               <div className="grid gap-2 py-4">
@@ -160,7 +148,7 @@ const AddCountCheck: React.FC<
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {item_type === "product"
+                      {data.item_type === "product"
                         ? products?.data.map((product, productIndex) => (
                             <TableRow key={productIndex} className="">
                               <TableCell>{product.name}</TableCell>
@@ -197,11 +185,11 @@ const AddCountCheck: React.FC<
                                     onChange={(value) => {
                                       form.setValue(
                                         `data.${ingredientIndex}.actual_quantity`,
-                                        Number(value)
+                                        Number(value),
                                       );
                                       form.setValue(
                                         `data.${ingredientIndex}.total_price`,
-                                        Number(value) * ingredient.cost
+                                        Number(value) * ingredient.cost,
                                       );
                                     }}
                                   />
@@ -233,4 +221,4 @@ const AddCountCheck: React.FC<
   );
 };
 
-export default AddCountCheck;
+export default UpdateCountCheck;

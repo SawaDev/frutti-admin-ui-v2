@@ -1,10 +1,16 @@
 import { createCountCheckSchema } from "./count-check.schame"
 import { z } from "zod"
 
+export interface CountCheckParams {
+  date: string;
+  item_type: "product" | "ingredient";
+}
+
 export type CountCheck = {
   id: number
   item_id: number
   item_type: string // product or ingredient
+  name: string
   date: string
   actual_quantity: number
   expected_quantity: number

@@ -30,9 +30,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { GetCountChecksResponse } from "./count-checks.type";
+import {
+  CountCheck,
+  CountCheckParams,
+  GetCountChecksResponse,
+} from "./count-checks.type";
 import useCountChecks from "./useCountChecks";
 import { Badge } from "@/components/ui/badge";
+import UpdateCountCheck from "./update-count-check";
 
 interface CountChecksTableType {
   data: GetCountChecksResponse | undefined;
@@ -47,6 +52,7 @@ const CollapsedRows: React.FC<{
 
   return (
     <TableRow className="p-0" key={data.id}>
+      <TableCell className="p-2 px-4">{data.name}</TableCell>
       <TableCell className="p-2 px-4">
         {formatNumberComma(data.expected_quantity)}
       </TableCell>
@@ -63,20 +69,16 @@ const CollapsedRows: React.FC<{
 };
 
 const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
-  const [deleteModal, setDeleteModal] = useState<{
-    date: string;
-    item_type: "product" | "ingredient";
-  } | null>(null);
-  const [saveModal, setSaveModal] = useState<{
-    date: string;
-    item_type: "product" | "ingredient";
-  } | null>(null);
+  const [deleteModal, setDeleteModal] = useState<CountCheckParams | null>(null);
+  const [saveModal, setSaveModal] = useState<CountCheckParams | null>(null);
+  const [updateModal, setUpdateModal] = useState<
+    (CountCheckParams & { data: CountCheck[] }) | null
+  >(null);
 
-  const { deleteCountCheckMutation, updateCountCheckMutation } =
-    useCountChecks();
+  const { deleteCountCheckMutation, saveCountCheckMutation } = useCountChecks();
 
   const deleteCountCheck = deleteCountCheckMutation();
-  const updateCountCheck = updateCountCheckMutation();
+  const saveCountCheck = saveCountCheckMutation();
 
   const handleDelete = () => {
     deleteCountCheck.mutateAsync(deleteModal).then(() => {
@@ -85,7 +87,7 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
   };
 
   const handleSave = () => {
-    updateCountCheck.mutateAsync(saveModal).then(() => {
+    saveCountCheck.mutateAsync(saveModal).then(() => {
       setSaveModal(null);
     });
   };
@@ -134,7 +136,18 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuLabel>Harakatlar</DropdownMenuLabel>
-
+                              <DropdownMenuItem
+                                className="focus:bg-blue-100 focus:text-blue-800"
+                                onClick={() =>
+                                  setUpdateModal({
+                                    date: item.date,
+                                    item_type: item.item_type,
+                                    data: item.count_checks,
+                                  })
+                                }
+                              >
+                                O'zgartirish
+                              </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="focus:bg-green-100 focus:text-green-800"
                                 onClick={() =>
@@ -173,6 +186,7 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
                             <Table>
                               <TableHeader>
                                 <TableRow>
+                                  <TableHead>Mahsulot nomi</TableHead>
                                   <TableHead>Kutilgan Soni</TableHead>
                                   <TableHead>Hozirgi Soni</TableHead>
                                   <TableHead>Narxi</TableHead>
@@ -230,6 +244,14 @@ const CountChecksTable: React.FC<CountChecksTableType> = ({ data }) => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        )}
+
+        {!!updateModal && (
+          <UpdateCountCheck
+            open={!!updateModal}
+            setOpen={() => setUpdateModal(null)}
+            data={updateModal}
+          />
         )}
 
         {!!saveModal && (

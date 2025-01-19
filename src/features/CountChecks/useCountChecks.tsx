@@ -48,6 +48,49 @@ const useCountChecks = () => {
 
   const updateCountCheckMutation = () =>
     useMutation({
+      mutationFn: async ({
+        date,
+        item_type,
+        data,
+      }: {
+        date: string;
+        item_type: "product" | "ingredient";
+        data: {
+          id: number;
+          count: number;
+          total_price: number;
+        }[];
+      }) => {
+        try {
+          if (!data) return;
+
+          const response = await api.put(`/count-checks`, {
+            date,
+            item_type,
+            data,
+          });
+
+          if (response?.data) {
+            toast({
+              description: "Muvaffaqiyatli o'zgartirildi!",
+            });
+          }
+          return response.data;
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error!",
+            description: error?.response?.data?.message,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["count-checks"] });
+      },
+    });
+
+  const saveCountCheckMutation = () =>
+    useMutation({
       mutationFn: async (
         data: {
           date: string;
@@ -57,7 +100,7 @@ const useCountChecks = () => {
         try {
           if (!data) return;
 
-          const response = await api.put(`/count-checks`, {
+          const response = await api.put(`/count-checks/save`, {
             status: "done",
             date: data?.date,
             item_type: data?.item_type,
@@ -120,6 +163,7 @@ const useCountChecks = () => {
     createCountCheckMutation,
     getCountChecksQuery,
     updateCountCheckMutation,
+    saveCountCheckMutation,
     deleteCountCheckMutation,
   };
 };
